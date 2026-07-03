@@ -4,2036 +4,1002 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>200 Días — Plano de Espanhol</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500&display=swap');
-
-  :root {
-    --bg: #0f0f12;
-    --surface: #17171e;
-    --surface2: #1e1e28;
-    --border: #2a2a38;
-    --accent: #e8c547;
-    --accent2: #7c6dfa;
-    --accent3: #3ecf8e;
-    --accent4: #f87171;
-    --text: #e8e8f0;
-    --muted: #6b6b80;
-    --phase1: #7c6dfa;
-    --phase2: #e8c547;
-    --phase3: #3ecf8e;
-    --phase4: #f87171;
-    --phase5: #fb923c;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 14px;
-    line-height: 1.6;
-    min-height: 100vh;
-  }
-
-  /* HEADER */
-  header {
-    border-bottom: 1px solid var(--border);
-    padding: 24px 20px 20px;
-    background: var(--surface);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  .header-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 16px;
-  }
-
-  .logo {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-
-  .logo span { color: var(--accent); }
-
-  .day-badge {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    background: rgba(232,197,71,0.12);
-    color: var(--accent);
-    border: 1px solid rgba(232,197,71,0.3);
-    padding: 4px 12px;
-    border-radius: 2px;
-  }
-
-  /* PROGRESS BAR */
-  .progress-section {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .progress-track {
-    flex: 1;
-    height: 6px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--phase1), var(--accent), var(--accent3));
-    transition: width 0.6s ease;
-    border-radius: 3px;
-  }
-
-  .progress-labels {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 6px;
-  }
-
-  .phase-marker {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    color: var(--muted);
-    cursor: pointer;
-    transition: color 0.2s;
-  }
-
-  .phase-marker:hover { color: var(--accent); }
-
-  /* NAV TABS */
-  nav {
-    display: flex;
-    gap: 2px;
-    padding: 16px 20px 0;
-    border-bottom: 1px solid var(--border);
-    overflow-x: auto;
-    scrollbar-width: none;
-    /* Torna a barra de navegação aderente ao topo abaixo do cabeçalho */
-    position: sticky;
-    top: 64px;
-    z-index: 90;
-    background: var(--surface);
-  }
-
-  nav::-webkit-scrollbar { display: none; }
-
-  .tab {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--muted);
-    padding: 8px 16px;
-    border-radius: 4px 4px 0 0;
-    cursor: pointer;
-    white-space: nowrap;
-    border: 1px solid transparent;
-    border-bottom: none;
-    transition: all 0.2s;
-    background: none;
-    letter-spacing: 0.04em;
-  }
-
-  .tab:hover { color: var(--text); background: var(--surface2); }
-
-  .tab.active {
-    color: var(--accent);
-    background: var(--surface2);
-    border-color: var(--border);
-    border-bottom-color: var(--surface2);
-    margin-bottom: -1px;
-  }
-
-  /* MAIN CONTENT */
-  main {
-    padding: 24px 20px;
-    max-width: 900px;
-    margin: 0 auto;
-  }
-
-  .section { display: none; }
-  .section.active { display: block; }
-
-  /* CARDS */
-  .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 20px;
-    margin-bottom: 16px;
-  }
-
-  .card-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 16px;
-  }
-
-  .card-tag {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 2px;
-    border: 1px solid;
-  }
-
-  .tag-fase1 { color: var(--phase1); border-color: rgba(124,109,250,0.4); background: rgba(124,109,250,0.08); }
-  .tag-fase2 { color: var(--phase2); border-color: rgba(232,197,71,0.4); background: rgba(232,197,71,0.08); }
-  .tag-fase3 { color: var(--phase3); border-color: rgba(62,207,142,0.4); background: rgba(62,207,142,0.08); }
-  .tag-fase4 { color: var(--phase4); border-color: rgba(248,113,113,0.4); background: rgba(248,113,113,0.08); }
-  .tag-fase5 { color: var(--phase5); border-color: rgba(251,146,60,0.4); background: rgba(251,146,60,0.08); }
-  .tag-info { color: var(--accent2); border-color: rgba(124,109,250,0.4); background: rgba(124,109,250,0.08); }
-  .tag-ok { color: var(--accent3); border-color: rgba(62,207,142,0.4); background: rgba(62,207,142,0.08); }
-  .tag-warn { color: var(--accent); border-color: rgba(232,197,71,0.4); background: rgba(232,197,71,0.08); }
-
-  .card h2 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text);
-  }
-
-  /* ===== Accordion for Phases ===== */
-  .phase-block {
-    cursor: pointer;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 16px;
-    margin-bottom: 16px;
-    background: var(--surface);
-  }
-  .phase-block .phase-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .phase-block .phase-title-group {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-  .phase-block .phase-header .phase-title-group .phase-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-  }
-  .phase-block .phase-header .phase-title-group .phase-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--text);
-  }
-  .phase-block .phase-header .phase-title-group .phase-days {
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    color: var(--muted);
-  }
-  .phase-block .toggle-icon {
-    font-size: 16px;
-    color: var(--muted);
-    transition: transform 0.3s ease;
-  }
-  .phase-block.collapsed .toggle-icon {
-    transform: rotate(-90deg);
-  }
-  .phase-block .phase-body {
-    margin-top: 12px;
-  }
-  .phase-block.collapsed .phase-body {
-    display: none;
-  }
-
-  /* Scroll to top button */
-  #scrollTopBtn {
-    position: fixed;
-    bottom: 32px;
-    right: 20px;
-    background: var(--accent);
-    color: var(--bg);
-    border: none;
-    padding: 10px 14px;
-    border-radius: 4px;
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 12px;
-    cursor: pointer;
-    display: none;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  }
-  #scrollTopBtn.show {
-    display: block;
-  }
-
-  .card h3 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    margin-bottom: 10px;
-  }
-
-  /* GRID */
-  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
-
-  @media(max-width: 600px) {
-    .grid-2, .grid-3 { grid-template-columns: 1fr; }
-  }
-
-  /* PHASE TIMELINE */
-  .phase-block {
-    border-left: 3px solid;
-    padding: 16px 16px 16px 20px;
-    margin-bottom: 12px;
-    background: var(--surface2);
-    border-radius: 0 6px 6px 0;
-  }
-
-  .phase-block.p1 { border-color: var(--phase1); }
-  .phase-block.p2 { border-color: var(--phase2); }
-  .phase-block.p3 { border-color: var(--phase3); }
-  .phase-block.p4 { border-color: var(--phase4); }
-  .phase-block.p5 { border-color: var(--phase5); }
-
-  .phase-label {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  .p1 .phase-label { color: var(--phase1); }
-  .p2 .phase-label { color: var(--phase2); }
-  .p3 .phase-label { color: var(--phase3); }
-  .p4 .phase-label { color: var(--phase4); }
-  .p5 .phase-label { color: var(--phase5); }
-
-  .phase-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-
-  .phase-days {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    margin-bottom: 10px;
-  }
-
-  /* ITEM LISTS */
-  .item-list { list-style: none; }
-
-  .item-list li {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-    line-height: 1.5;
-  }
-
-  .item-list li:last-child { border-bottom: none; }
-
-  .dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    margin-top: 6px;
-    flex-shrink: 0;
-  }
-
-  .dot-accent { background: var(--accent); }
-  .dot-phase1 { background: var(--phase1); }
-  .dot-phase2 { background: var(--phase2); }
-  .dot-phase3 { background: var(--phase3); }
-  .dot-phase4 { background: var(--phase4); }
-  .dot-ok { background: var(--accent3); }
-  .dot-warn { background: var(--accent); }
-
-  /* ROUTINE BLOCKS */
-  .routine-card {
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-    margin-bottom: 16px;
-  }
-
-  .routine-header {
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .routine-header.completa { background: rgba(62,207,142,0.1); border-bottom: 1px solid rgba(62,207,142,0.2); }
-  .routine-header.padrao { background: rgba(232,197,71,0.1); border-bottom: 1px solid rgba(232,197,71,0.2); }
-  .routine-header.minima { background: rgba(248,113,113,0.1); border-bottom: 1px solid rgba(248,113,113,0.2); }
-
-  .routine-title {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-  }
-
-  .routine-header.completa .routine-title { color: var(--accent3); }
-  .routine-header.padrao .routine-title { color: var(--accent); }
-  .routine-header.minima .routine-title { color: var(--phase4); }
-
-  .routine-time {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-  }
-
-  .routine-body { padding: 16px; background: var(--surface2); }
-
-  .time-block {
-    display: flex;
-    gap: 12px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-  }
-
-  .time-block:last-child { border-bottom: none; }
-
-  .time-slot {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    width: 80px;
-    flex-shrink: 0;
-    padding-top: 2px;
-  }
-
-  .time-type {
-    font-size: 10px;
-    font-family: 'Space Mono', monospace;
-    padding: 2px 6px;
-    border-radius: 2px;
-    margin-right: 8px;
-    flex-shrink: 0;
-    height: fit-content;
-    margin-top: 1px;
-  }
-
-  .type-ativo { background: rgba(124,109,250,0.15); color: var(--phase1); }
-  .type-drops { background: rgba(232,197,71,0.15); color: var(--accent); }
-  .type-oral { background: rgba(62,207,142,0.15); color: var(--accent3); }
-  .type-audio { background: rgba(251,146,60,0.15); color: var(--phase5); }
-  .type-leve { background: rgba(107,107,128,0.3); color: var(--muted); }
-  .type-revisao { background: rgba(248,113,113,0.15); color: var(--phase4); }
-
-  /* CHECKIN FORM */
-  .form-group { margin-bottom: 16px; }
-
-  label {
-    display: block;
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    margin-bottom: 6px;
-    text-transform: uppercase;
-  }
-
-  input[type="number"], input[type="text"], select, textarea {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    padding: 10px 12px;
-    border-radius: 4px;
-    outline: none;
-    transition: border-color 0.2s;
-    -webkit-appearance: none;
-  }
-
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--accent);
-  }
-
-  textarea { resize: vertical; min-height: 70px; }
-
-  .range-group { display: flex; align-items: center; gap: 12px; }
-
-  input[type="range"] {
-    flex: 1;
-    -webkit-appearance: none;
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    border: none;
-    padding: 0;
-  }
-
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    background: var(--accent);
-    border-radius: 50%;
-    cursor: pointer;
-  }
-
-  .range-val {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    color: var(--accent);
-    width: 28px;
-    text-align: center;
-  }
-
-  .btn {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    padding: 12px 24px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: 0.04em;
-  }
-
-  .btn-primary {
-    background: var(--accent);
-    color: var(--bg);
-  }
-
-  .btn-primary:hover { background: #f0d060; transform: translateY(-1px); }
-
-  .btn-ghost {
-    background: none;
-    border: 1px solid var(--border);
-    color: var(--muted);
-  }
-
-  .btn-ghost:hover { border-color: var(--text); color: var(--text); }
-
-  /* METRICS DISPLAY */
-  .metric-stat {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 14px;
-    text-align: center;
-  }
-
-  .metric-val {
-    font-family: 'Space Mono', monospace;
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--accent);
-    margin-bottom: 4px;
-  }
-
-  .metric-label {
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.04em;
-  }
-
-  /* EVALUATION TABLE */
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 12px;
-  }
-
-  th {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    text-transform: uppercase;
-    text-align: left;
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  td {
-    padding: 10px 12px;
-    border-bottom: 1px solid rgba(42,42,56,0.5);
-  }
-
-  tr:hover td { background: var(--surface2); }
-
-  .eval-status {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    padding: 2px 8px;
-    border-radius: 2px;
-  }
-
-  .eval-pending { color: var(--muted); background: rgba(107,107,128,0.15); }
-  .eval-done { color: var(--accent3); background: rgba(62,207,142,0.12); }
-
-  /* FLUENCY PROTOCOL */
-  .protocol-step {
-    display: flex;
-    gap: 14px;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .protocol-step:last-child { border-bottom: none; }
-
-  .step-num {
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    color: var(--accent);
-    font-weight: 700;
-    width: 24px;
-    flex-shrink: 0;
-    padding-top: 1px;
-  }
-
-  .step-content strong {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    display: block;
-    margin-bottom: 2px;
-  }
-
-  .step-content span { color: var(--muted); font-size: 12px; }
-
-  /* ANALYSIS OUTPUT */
-  #analysis-output {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 16px;
-    font-size: 13px;
-    line-height: 1.8;
-    display: none;
-    white-space: pre-wrap;
-    font-family: 'Inter', sans-serif;
-  }
-
-  #analysis-output.visible { display: block; }
-
-  .analysis-section {
-    margin-bottom: 14px;
-    padding-bottom: 14px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .analysis-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-
-  .analysis-section strong {
-    font-family: 'Space Mono', monospace;
-    font-size: 10px;
-    color: var(--accent);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    display: block;
-    margin-bottom: 8px;
-  }
-
-  .loading-dots {
-    display: inline-block;
-    font-family: 'Space Mono', monospace;
-    color: var(--muted);
-    font-size: 13px;
-  }
-
-  .loading-dots::after {
-    content: '...';
-    animation: dots 1.5s steps(4, end) infinite;
-  }
-
-  @keyframes dots {
-    0%, 20% { content: '.'; }
-    40% { content: '..'; }
-    60%, 100% { content: '...'; }
-  }
-
-  /* MILESTONES */
-  .milestone {
-    display: flex;
-    gap: 16px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--border);
-    align-items: flex-start;
-  }
-
-  .milestone:last-child { border-bottom: none; }
-
-  .milestone-day {
-    font-family: 'Space Mono', monospace;
-    font-size: 22px;
-    font-weight: 700;
-    min-width: 50px;
-    line-height: 1;
-    padding-top: 2px;
-  }
-
-  .milestone-content h4 {
-    font-family: 'Space Grotesk', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    margin-bottom: 4px;
-  }
-
-  .milestone-content p { font-size: 12px; color: var(--muted); }
-
-  /* MISC */
-  .divider {
-    height: 1px;
-    background: var(--border);
-    margin: 20px 0;
-  }
-
-  .highlight {
-    background: rgba(232,197,71,0.08);
-    border: 1px solid rgba(232,197,71,0.2);
-    border-radius: 4px;
-    padding: 12px 16px;
-    font-size: 13px;
-    color: var(--text);
-    margin-bottom: 12px;
-  }
-
-  .highlight strong { color: var(--accent); }
-
-  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  @media(max-width: 580px) { .two-col { grid-template-columns: 1fr; } }
-
-  select option { background: var(--surface2); }
-
-  /* Scrollbar global */
-  ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+/* ═══ TOKENS ═══════════════════════════════════════════ */
+:root{
+  --bg:#0c0c10;--s0:#101015;--s1:#15151c;--s2:#1b1b24;--s3:#22222e;
+  --bd:#252532;--bd2:#1c1c28;
+  --tx:#e2e2ee;--tx2:#8888a0;--tx3:#484860;
+  --gold:#e8c547;--ga:rgba(232,197,71,.12);--gb:rgba(232,197,71,.26);
+  --p1:#7c6dfa;--p1a:rgba(124,109,250,.10);--p1b:rgba(124,109,250,.28);
+  --p2:#e8c547;--p2a:rgba(232,197,71,.10);--p2b:rgba(232,197,71,.28);
+  --p3:#3ecf8e;--p3a:rgba(62,207,142,.10);--p3b:rgba(62,207,142,.28);
+  --p4:#f87171;--p4a:rgba(248,113,113,.10);--p4b:rgba(248,113,113,.28);
+  --p5:#fb923c;--p5a:rgba(251,146,60,.10);--p5b:rgba(251,146,60,.28);
+  --r:6px;--r2:3px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;overflow:hidden;height:100vh}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ═══ APP SHELL ═══════════════════════════════════════ */
+#app{display:flex;flex-direction:column;height:100vh}
+#shell-body{display:flex;flex:1;min-height:0}
+
+/* ── TOPBAR ──────────────────────────────────────────── */
+#topbar{flex:0 0 56px;background:var(--s1);border-bottom:1px solid var(--bd);display:flex;align-items:center;padding:0 20px;gap:16px;z-index:50}
+.t-logo{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--tx3);text-transform:uppercase;white-space:nowrap;flex-shrink:0}
+.t-logo em{color:var(--gold);font-style:normal}
+.t-sep{width:1px;height:22px;background:var(--bd);flex-shrink:0}
+.t-track{flex:1;display:flex;flex-direction:column;gap:5px;overflow:hidden}
+.t-pips{display:flex;gap:3px;height:5px}
+.t-pip{height:5px;border-radius:2px;transition:opacity .3s;flex-shrink:0}
+.t-pip[data-p="1"]{background:var(--p1);flex:40}.t-pip[data-p="2"]{background:var(--p2);flex:40}
+.t-pip[data-p="3"]{background:var(--p3);flex:40}.t-pip[data-p="4"]{background:var(--p4);flex:40}
+.t-pip[data-p="5"]{background:var(--p5);flex:40}.t-pip.dim{opacity:.18}
+.t-labels{display:flex;justify-content:space-between}
+.t-lbl{font-family:'Space Mono',monospace;font-size:8px;color:var(--tx3);letter-spacing:.06em}
+.t-badge{font-family:'Space Mono',monospace;font-size:11px;background:var(--ga);color:var(--gold);border:1px solid var(--gb);padding:4px 12px;border-radius:2px;white-space:nowrap;flex-shrink:0}
+.t-ham{display:none;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:6px;margin-left:auto;width:30px;height:30px}
+.t-ham i{
+  position:relative;display:block;width:18px;height:2px;background:var(--tx2);border-radius:1px;
+  box-shadow:0 -6px 0 var(--tx2),0 6px 0 var(--tx2);
+}
+
+/* ── SIDEBAR ─────────────────────────────────────────── */
+#sidebar{flex:0 0 220px;background:var(--s0);border-right:1px solid var(--bd);overflow-y:auto;display:flex;flex-direction:column;padding:10px 0 20px}
+.s-sec{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.14em;color:var(--tx3);text-transform:uppercase;padding:14px 16px 5px}
+.s-item{display:flex;align-items:center;gap:10px;padding:9px 16px;background:none;border:none;width:100%;text-align:left;color:var(--tx2);font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;position:relative;transition:background .14s,color .14s}
+.s-item:hover{background:var(--s2);color:var(--tx)}
+.s-item.on{background:var(--s2);color:var(--tx)}
+.s-item.on::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--gold);border-radius:0 2px 2px 0}
+.s-ico{width:15px;height:15px;opacity:.55;flex-shrink:0;transition:opacity .14s}
+.s-item:hover .s-ico,.s-item.on .s-ico{opacity:1}
+
+/* ── CONTENT ─────────────────────────────────────────── */
+#content{flex:1;min-width:0;overflow-y:auto;background:var(--bg);padding:28px 32px 48px}
+.inner{max-width:820px}
+.pg{display:none}
+.pg.on{display:block;animation:fi .16s ease}
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.pg-h{margin-bottom:22px}
+.pg-title{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:3px}
+.pg-sub{font-size:13px;color:var(--tx2)}
+
+/* ═══ CARDS ═══════════════════════════════════════════ */
+.card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:20px;margin-bottom:14px}
+.card-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.card-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--tx)}
+.card-sub{font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.55}
+
+/* ═══ TAGS ════════════════════════════════════════════ */
+.tag{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:2px;border:1px solid;flex-shrink:0}
+.tg{color:var(--gold);border-color:var(--gb);background:var(--ga)}
+.t1{color:var(--p1);border-color:var(--p1b);background:var(--p1a)}
+.t2{color:var(--p2);border-color:var(--p2b);background:var(--p2a)}
+.t3{color:var(--p3);border-color:var(--p3b);background:var(--p3a)}
+.t4{color:var(--p4);border-color:var(--p4b);background:var(--p4a)}
+.t5{color:var(--p5);border-color:var(--p5b);background:var(--p5a)}
+
+/* ═══ GRIDS ═══════════════════════════════════════════ */
+.g2{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:14px}
+.g2>*{flex:1 1 calc(50% - 7px);min-width:0}
+.g3{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:14px}
+.g3>*{flex:1 1 calc(33.333% - 8px);min-width:0}
+.g5{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.g5>*{flex:1 1 calc(20% - 8px);min-width:0}
+@media(max-width:680px){.g2>*,.g3>*,.g5>*{flex:1 1 100%}}
+
+/* ═══ STAT TILES ══════════════════════════════════════ */
+.stat{background:var(--s2);border:1px solid var(--bd2);border-radius:var(--r);padding:16px;text-align:center}
+.stat-v{font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--gold);margin-bottom:4px;line-height:1}
+.stat-l{font-size:11px;color:var(--tx3);letter-spacing:.03em}
+
+/* ═══ ITEM LISTS ══════════════════════════════════════ */
+.ilist{list-style:none}
+.ilist li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd2);font-size:13px;line-height:1.55}
+.ilist li:last-child{border-bottom:none}
+.dot{width:6px;height:6px;border-radius:50%;margin-top:6px;flex-shrink:0}
+.dg{background:var(--gold)}.d1{background:var(--p1)}.d2{background:var(--p2)}
+.d3{background:var(--p3)}.d4{background:var(--p4)}.d5{background:var(--p5)}
+
+/* ═══ ALERT ═══════════════════════════════════════════ */
+.alert{background:var(--ga);border:1px solid var(--gb);border-radius:var(--r2);padding:11px 15px;font-size:13px;margin-bottom:14px;line-height:1.55}
+.alert strong{color:var(--gold)}
+
+/* ═══ ACCORDIONS — FASES ═══════════════════════════════ */
+.acc{border:1px solid var(--bd);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
+.acc-head{display:flex;align-items:center;gap:14px;padding:14px 18px;cursor:pointer;user-select:none;background:var(--s1);transition:background .14s}
+.acc-head:hover{background:var(--s2)}
+.acc-num{font-family:'Space Mono',monospace;font-size:11px;font-weight:700;padding:3px 9px;border-radius:2px;flex-shrink:0}
+.a1 .acc-num{background:var(--p1a);color:var(--p1);border:1px solid var(--p1b)}
+.a2 .acc-num{background:var(--p2a);color:var(--p2);border:1px solid var(--p2b)}
+.a3 .acc-num{background:var(--p3a);color:var(--p3);border:1px solid var(--p3b)}
+.a4 .acc-num{background:var(--p4a);color:var(--p4);border:1px solid var(--p4b)}
+.a5 .acc-num{background:var(--p5a);color:var(--p5);border:1px solid var(--p5b)}
+.acc-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;flex:1}
+.acc-span{font-family:'Space Mono',monospace;font-size:10px;color:var(--tx3)}
+.acc-chev{color:var(--tx3);font-size:11px;transition:transform .2s;flex-shrink:0}
+.acc.open .acc-chev{transform:rotate(90deg)}
+.acc-body{display:none;padding:0 18px 16px;background:var(--s0);border-top:1px solid var(--bd)}
+.acc.open .acc-body{display:block}
+.acc-desc{font-size:13px;color:var(--tx2);margin:13px 0 11px;line-height:1.55}
+.acc-marco{margin-top:13px;padding:10px 13px;border-radius:var(--r2);border:1px solid;font-size:12px;line-height:1.55}
+.a1 .acc-marco{border-color:var(--p1b);background:var(--p1a);color:var(--tx2)}.a1 .acc-marco strong{color:var(--p1)}
+.a2 .acc-marco{border-color:var(--p2b);background:var(--p2a);color:var(--tx2)}.a2 .acc-marco strong{color:var(--p2)}
+.a3 .acc-marco{border-color:var(--p3b);background:var(--p3a);color:var(--tx2)}.a3 .acc-marco strong{color:var(--p3)}
+.a4 .acc-marco{border-color:var(--p4b);background:var(--p4a);color:var(--tx2)}.a4 .acc-marco strong{color:var(--p4)}
+.a5 .acc-marco{border-color:var(--p5b);background:var(--p5a);color:var(--tx2)}.a5 .acc-marco strong{color:var(--p5)}
+
+/* ═══ ACCORDIONS — ROTINAS ══════════════════════════════ */
+.rot{border:1px solid var(--bd);border-radius:var(--r);margin-bottom:10px;overflow:hidden}
+.rot-head{display:flex;align-items:center;justify-content:space-between;padding:12px 17px;cursor:pointer}
+.rot-head.rc{background:rgba(62,207,142,.08);border-bottom:1px solid rgba(62,207,142,.18)}
+.rot-head.rp{background:rgba(232,197,71,.08);border-bottom:1px solid rgba(232,197,71,.18)}
+.rot-head.rm{background:rgba(248,113,113,.08);border-bottom:1px solid rgba(248,113,113,.18)}
+.rot-label{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600}
+.rot-head.rc .rot-label{color:var(--p3)}.rot-head.rp .rot-label{color:var(--p2)}.rot-head.rm .rot-label{color:var(--p4)}
+.rot-meta{display:flex;align-items:center;gap:10px;font-family:'Space Mono',monospace;font-size:10px;color:var(--tx3)}
+.rot-chev{font-size:10px;transition:transform .2s}
+.rot.open .rot-chev{transform:rotate(90deg)}
+.rot-body{display:none;padding:14px 16px;background:var(--s2)}
+.rot.open .rot-body{display:block}
+.trow{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd2);font-size:13px;line-height:1.5;align-items:flex-start}
+.trow:last-child{border-bottom:none}
+.tslot{font-family:'Space Mono',monospace;font-size:9px;color:var(--tx3);width:70px;flex-shrink:0;padding-top:3px;letter-spacing:.06em;text-transform:uppercase}
+.tpill{font-family:'Space Mono',monospace;font-size:9px;padding:2px 7px;border-radius:2px;flex-shrink:0;height:fit-content;margin-top:2px}
+.tp-at{background:var(--p1a);color:var(--p1)}.tp-dr{background:var(--p2a);color:var(--p2)}
+.tp-or{background:var(--p3a);color:var(--p3)}.tp-au{background:var(--p5a);color:var(--p5)}
+.tp-lv{background:rgba(72,72,96,.25);color:var(--tx3)}.tp-rv{background:var(--p4a);color:var(--p4)}
+
+/* ═══ PROTOCOL STEPS ══════════════════════════════════ */
+.steps{counter-reset:s}
+.step{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--bd2);counter-increment:s}
+.step:last-child{border-bottom:none}
+.step-n{font-family:'Space Mono',monospace;font-size:13px;font-weight:700;color:var(--gold);width:20px;flex-shrink:0}
+.step-n::before{content:counter(s)}
+.step-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;margin-bottom:2px}
+.step-desc{font-size:12px;color:var(--tx2);line-height:1.5}
+
+/* ═══ CHECKIN FORM ═════════════════════════════════════ */
+.fg{display:flex;flex-direction:column;gap:6px}
+.fg label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.1em;color:var(--tx3);text-transform:uppercase}
+.frow{display:flex;flex-wrap:wrap;gap:14px}
+.frow>*{flex:1 1 calc(50% - 7px);min-width:0}
+@media(max-width:580px){.frow>*{flex:1 1 100%}}
+input[type="number"],input[type="text"],input[type="password"],select,textarea{
+  width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);
+  font-family:'Inter',sans-serif;font-size:13px;padding:9px 12px;
+  border-radius:var(--r2);outline:none;transition:border-color .18s;
+  -webkit-appearance:none;appearance:none;
+}
+input:focus,select:focus,textarea:focus{border-color:var(--gold)}
+textarea{resize:vertical;min-height:68px}
+select option{background:var(--s2)}
+.rng-wrap{display:flex;align-items:center;gap:12px;min-height:16px}
+input[type="range"]{
+  flex:1;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;
+  border:none;padding:0;margin:0;cursor:pointer;display:block;
+  background:linear-gradient(var(--gold),var(--gold)) no-repeat var(--bd);
+  background-size:40% 100%;
+}
+input[type="range"]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;background:var(--gold);border-radius:50%;cursor:pointer;box-shadow:0 0 0 3px var(--ga)}
+input[type="range"]::-moz-range-thumb{width:16px;height:16px;background:var(--gold);border-radius:50%;border:none;cursor:pointer}
+.rval{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:var(--gold);width:36px;text-align:right;flex-shrink:0}
+.fcard{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+.fcard-head{display:flex;align-items:center;gap:10px;padding:12px 18px;border-bottom:1px solid var(--bd);background:var(--s0)}
+.fcard-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600}
+.fcard-body{padding:16px 18px;display:flex;flex-direction:column;gap:14px}
+
+/* ═══ BUTTONS ════════════════════════════════════════ */
+.btns{display:flex;gap:8px;flex-wrap:wrap;padding-top:4px}
+.btn{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border:none;border-radius:var(--r2);cursor:pointer;transition:background .15s,transform .1s,opacity .15s;letter-spacing:.03em}
+.btn:active{transform:translateY(1px)}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
+.btn-p{background:var(--gold);color:#0c0c10}.btn-p:hover{background:#f0d060}
+.btn-g{background:none;border:1px solid var(--bd);color:var(--tx2)}.btn-g:hover{border-color:var(--tx2);color:var(--tx)}
+
+/* ═══ ANALYSIS OUTPUT ════════════════════════════════ */
+#analysis-out{display:none;margin-top:14px;background:var(--s0);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+#analysis-out.vis{display:block}
+.ao-sec{padding:14px 18px;border-bottom:1px solid var(--bd2);font-size:13px;line-height:1.72}
+.ao-sec:last-child{border-bottom:none}
+.ao-lbl{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;color:var(--gold);text-transform:uppercase;margin-bottom:6px}
+.ao-loading{padding:20px 18px;font-family:'Space Mono',monospace;font-size:12px;color:var(--tx3)}
+.ao-loading::after{content:'';animation:ell 1.4s infinite}
+@keyframes ell{0%{content:'.'}34%{content:'..'}67%{content:'...'}}
+
+/* ═══ TABLE ══════════════════════════════════════════ */
+.ev-table{width:100%;border-collapse:collapse;font-size:13px}
+.ev-table th{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);padding:9px 13px;border-bottom:1px solid var(--bd);text-align:left}
+.ev-table td{padding:10px 13px;border-bottom:1px solid var(--bd2)}
+.ev-table tr:last-child td{border-bottom:none}
+.ev-table tr:hover td{background:var(--s2)}
+.ev-pill{font-family:'Space Mono',monospace;font-size:9px;padding:3px 8px;border-radius:2px}
+.ev-pend{color:var(--tx3);background:rgba(72,72,96,.2)}.ev-done{color:var(--p3);background:var(--p3a)}
+
+/* ═══ TIMELINE ═══════════════════════════════════════ */
+.tl{position:relative;padding-left:26px}
+.tl::before{content:'';position:absolute;left:8px;top:8px;bottom:8px;width:1px;background:var(--bd)}
+.tl-item{position:relative;display:flex;gap:16px;align-items:flex-start;margin-bottom:20px}
+.tl-item:last-child{margin-bottom:0}
+.tl-dot{position:absolute;left:-22px;top:5px;width:9px;height:9px;border-radius:50%;border:2px solid var(--bg);flex-shrink:0}
+.tl-day{font-family:'Space Mono',monospace;font-size:20px;font-weight:700;line-height:1;min-width:58px;padding-top:2px;flex-shrink:0}
+.tl-h{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;margin-bottom:2px}
+.tl-p{font-size:12px;color:var(--tx2);line-height:1.5}
+
+/* ═══ METRICS BAR ════════════════════════════════════ */
+.mrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd2)}
+.mrow:last-child{border-bottom:none}
+.mrow-lbl{font-size:13px;min-width:190px}
+.mrow-lbl small{display:block;font-size:11px;color:var(--tx3);margin-top:1px}
+.mrow-track{flex:1;height:4px;background:var(--bd);border-radius:2px;overflow:hidden}
+.mrow-fill{height:100%;border-radius:2px}
+.mrow-target{font-family:'Space Mono',monospace;font-size:10px;color:var(--tx3);white-space:nowrap}
+
+/* ═══ TOAST ══════════════════════════════════════════ */
+#toast{position:fixed;bottom:24px;right:24px;background:var(--s3);border:1px solid var(--bd);color:var(--tx);font-size:13px;padding:10px 16px;border-radius:var(--r2);opacity:0;transform:translateY(10px);transition:all .24s;z-index:999;pointer-events:none;max-width:280px}
+#toast.show{opacity:1;transform:none}
+#toast.ok{border-left:3px solid var(--p3)}
+#toast.err{border-left:3px solid var(--p4)}
+
+/* ═══ MISC ═══════════════════════════════════════════ */
+.divider{height:1px;background:var(--bd);margin:18px 0}
+
+/* ═══ MOBILE ═════════════════════════════════════════ */
+@media(max-width:768px){
+  #sidebar{position:fixed;left:0;top:56px;bottom:0;width:220px;z-index:40;transform:translateX(-100%);transition:transform .24s;border-right:1px solid var(--bd)}
+  #sidebar.open{transform:none;box-shadow:8px 0 32px rgba(0,0,0,.5)}
+  .t-ham{display:flex}.t-track{display:none}.t-sep{display:none}
+  #content{padding:18px 16px 48px}
+  .tl{padding-left:20px}.tl-day{font-size:17px;min-width:48px}
+}
 </style>
 </head>
 <body>
+<div id="app">
 
-<header>
-  <div class="header-top">
-    <div class="logo">200 <span>DÍAS</span> — Plan de español</div>
-    <div class="day-badge" id="current-day-badge">DIA 1/200</div>
-  </div>
-  <div class="progress-section">
-    <div style="flex:1">
-      <div class="progress-track">
-        <div class="progress-fill" id="progress-fill" style="width:0.5%"></div>
-      </div>
-      <div class="progress-labels">
-        <span class="phase-marker" onclick="switchTab('fases')" title="Início da Fase 1 (Dia 1)" data-target="fase1">F1 D1</span>
-        <span class="phase-marker" onclick="switchTab('fases')" title="Início da Fase 2 (Dia 41)" data-target="fase2">F2 D41</span>
-        <span class="phase-marker" onclick="switchTab('fases')" title="Início da Fase 3 (Dia 81)" data-target="fase3">F3 D81</span>
-        <span class="phase-marker" onclick="switchTab('fases')" title="Início da Fase 4 (Dia 121)" data-target="fase4">F4 D121</span>
-        <span class="phase-marker" onclick="switchTab('fases')" title="Início da Fase 5 (Dia 161)" data-target="fase5">F5 D161</span>
-      </div>
+<!-- ═══════════ TOPBAR ══════════════════════════════ -->
+<header id="topbar">
+  <div class="t-logo">200 <em>DÍAS</em></div>
+  <div class="t-sep"></div>
+  <div class="t-track">
+    <div class="t-pips">
+      <div class="t-pip" data-p="1" title="F1 Dias 1–40"></div>
+      <div class="t-pip dim" data-p="2" title="F2 Dias 41–80"></div>
+      <div class="t-pip dim" data-p="3" title="F3 Dias 81–120"></div>
+      <div class="t-pip dim" data-p="4" title="F4 Dias 121–160"></div>
+      <div class="t-pip dim" data-p="5" title="F5 Dias 161–200"></div>
+    </div>
+    <div class="t-labels">
+      <span class="t-lbl">F1 · D1</span><span class="t-lbl">F2 · D41</span>
+      <span class="t-lbl">F3 · D81</span><span class="t-lbl">F4 · D121</span>
+      <span class="t-lbl">F5 · D161</span>
     </div>
   </div>
+  <div class="t-badge" id="day-badge">DIA 1 / 200</div>
+  <button class="t-ham" onclick="toggleSidebar()" aria-label="Menu">
+    <i></i>
+  </button>
 </header>
 
-<nav>
-  <button class="tab active" onclick="switchTab('visao')">Visão Geral</button>
-  <button class="tab" onclick="switchTab('fases')">Fases</button>
-  <button class="tab" onclick="switchTab('rotinas')">Rotinas</button>
-  <button class="tab" onclick="switchTab('metodo')">Método</button>
-  <button class="tab" onclick="switchTab('checkin')">Check-in</button>
-  <button class="tab" onclick="switchTab('avaliacoes')">Avaliações</button>
-  <button class="tab" onclick="switchTab('metricas')">Métricas</button>
-  <button class="tab" onclick="switchTab('extras')">Extras</button>
+<div id="shell-body">
+<!-- ═══════════ SIDEBAR ═════════════════════════════ -->
+<nav id="sidebar">
+  <div class="s-sec">Programa</div>
+  <button class="s-item on" onclick="go('visao',this)">
+    <svg class="s-ico" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 5.5V8l1.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Visão Geral
+  </button>
+  <button class="s-item" onclick="go('fases',this)">
+    <svg class="s-ico" fill="none" viewBox="0 0 16 16"><rect x="1.5" y="10" width="2.5" height="4" rx="1" fill="currentColor"/><rect x="5.5" y="7" width="2.5" height="7" rx="1" fill="currentColor"/><rect x="9.5" y="4" width="2.5" height="10" rx="1" fill="currentColor"/><rect x="13.5" y="2" width="1" height="12" rx=".5" fill="currentColor" opacity=".4"/></svg>Fases
+  </button>
+  <button class="s-item" onclick="go('rotinas',this)">
+    <svg class="s-ico" fill="none" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 1v3M11 1v3M2 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Rotinas
+  </button>
+  <button class="s-item" onclick="go('metodo',this)">
+    <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M8 2a6 6 0 100 12A6 6 0 008 2z" stroke="currentColor" stroke-width="1.5"/><path d="M8 6.5V9M7 11h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Método
+  </button>
+  <div class="s-sec">Acompanhamento</div>
+  <button class="s-item" onclick="go('checkin',this)">
+    <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Check-in
+  </button>
+  <button class="s-item" onclick="go('avaliacoes',this)">
+    <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M8 2l1.8 3.5L14 6.4l-3 2.9.7 4.1L8 11.4l-3.7 2 .7-4.1-3-2.9 4.2-.8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Avaliações
+  </button>
+  <button class="s-item" onclick="go('metricas',this)">
+    <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M2 13l3-4 3 2 3-5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Métricas
+  </button>
+  <div class="s-sec">Extra</div>
+  <button class="s-item" onclick="go('extras',this)">
+    <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M2 4h12v8a1 1 0 01-1 1H3a1 1 0 01-1-1V4z" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h6M5 10h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Recursos
+  </button>
 </nav>
 
-<main>
+<!-- ═══════════ CONTENT ══════════════════════════════ -->
+<main id="content">
 
-<!-- ===================== VISÃO GERAL ===================== -->
-<div class="section active" id="visao">
+<!-- ─── VISÃO GERAL ─────────────────────────────── -->
+<div class="pg on inner" id="visao">
+  <div class="pg-h"><div class="pg-title">Visão Geral</div><div class="pg-sub">Estrutura, pilares e regras do programa de 200 dias.</div></div>
 
-  <div class="card">
-    <div class="card-header">
-      <span class="card-tag tag-warn">OBJETIVO</span>
-      <h2>Domínio funcional geral do espanhol</h2>
-    </div>
-    <div class="highlight">
-      <strong>Meta:</strong> Reduzir progressivamente a dependência de tradução e do portunhol, alcançando compreensão auditiva autônoma, fala automática e vocabulário funcional em contextos reais.
-    </div>
-    <div class="grid-3">
-      <div class="metric-stat">
-        <div class="metric-val">6–10h</div>
-        <div class="metric-label">contato/semana</div>
-      </div>
-      <div class="metric-stat">
-        <div class="metric-val">30–60</div>
-        <div class="metric-label">min Fluency/dia</div>
-      </div>
-      <div class="metric-stat">
-        <div class="metric-val">10–15</div>
-        <div class="metric-label">min Drops/dia</div>
-      </div>
-    </div>
+  <div class="alert"><strong>Objetivo:</strong> Domínio funcional geral do espanhol — reduzir progressivamente a dependência de tradução e do portunhol, alcançando compreensão auditiva autônoma, fala automática e vocabulário funcional em contextos reais.</div>
+
+  <div class="g3">
+    <div class="stat"><div class="stat-v">6–10h</div><div class="stat-l">contato / semana</div></div>
+    <div class="stat"><div class="stat-v">30–60</div><div class="stat-l">min Fluency / dia</div></div>
+    <div class="stat"><div class="stat-v">10–15</div><div class="stat-l">min Drops / dia</div></div>
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-tag tag-info">PILARES</span>
-      <h2>Estrutura do programa</h2>
-    </div>
-    <ul class="item-list">
-      <li><span class="dot dot-accent"></span><div><strong>Fluency Academy</strong> — espinha dorsal. 30–60 min de estudo ativo guiado com protocolo de escuta fixo.</div></li>
-      <li><span class="dot dot-phase1"></span><div><strong>Drops</strong> — vocabulário visual. 10–15 min diários, focado em temas cotidianos funcionais.</div></li>
-      <li><span class="dot dot-phase5"></span><div><strong>Escuta no Uber</strong> — input extensivo seguro. Podcasts, músicas, séries em áudio, shadowing em voz alta.</div></li>
-      <li><span class="dot dot-phase3"></span><div><strong>Oral diário</strong> — fala desde o Dia 1. Shadowing, respostas, resumos, gravações de voz.</div></li>
-      <li><span class="dot dot-warn"></span><div><strong>Desportuguesização</strong> — módulo permanente. Falsos cognatos, pronúncia, construções reais no lugar de portunhol.</div></li>
+    <div class="card-row"><span class="tag t1">Pilares</span><div class="card-title">Estrutura do programa</div></div>
+    <ul class="ilist">
+      <li><span class="dot dg"></span><div><strong>Fluency Academy</strong> — espinha dorsal. 30–60 min de estudo ativo guiado com protocolo de escuta fixo.</div></li>
+      <li><span class="dot d1"></span><div><strong>Drops</strong> — vocabulário visual. 10–15 min diários, focado em temas cotidianos funcionais.</div></li>
+      <li><span class="dot d5"></span><div><strong>Escuta no Uber</strong> — input extensivo seguro. Podcasts, músicas, séries em áudio, shadowing em voz alta. Sem celular na mão.</div></li>
+      <li><span class="dot d3"></span><div><strong>Oral diário</strong> — fala desde o Dia 1. Shadowing, respostas, resumos, gravações de voz.</div></li>
+      <li><span class="dot dg"></span><div><strong>Desportuguesização</strong> — módulo permanente. Falsos cognatos, pronúncia, construções reais no lugar de portunhol.</div></li>
     </ul>
   </div>
 
-  <div class="two-col">
+  <div class="g2">
     <div class="card">
-      <h3>Prioridades de habilidade</h3>
-      <ul class="item-list">
-        <li><span class="dot dot-accent"></span>Compreensão auditiva</li>
-        <li><span class="dot dot-accent"></span>Reconhecimento de padrões</li>
-        <li><span class="dot dot-accent"></span>Vocabulário funcional</li>
-        <li><span class="dot dot-accent"></span>Pronúncia e ritmo</li>
-        <li><span class="dot dot-accent"></span>Construção de frases</li>
-        <li><span class="dot dot-accent"></span>Fala automática</li>
+      <div class="card-title" style="margin-bottom:12px">Prioridades de habilidade</div>
+      <ul class="ilist">
+        <li><span class="dot dg"></span>Compreensão auditiva</li><li><span class="dot dg"></span>Reconhecimento de padrões</li>
+        <li><span class="dot dg"></span>Vocabulário funcional</li><li><span class="dot dg"></span>Pronúncia e ritmo</li>
+        <li><span class="dot dg"></span>Construção de frases</li><li><span class="dot dg"></span>Fala automática</li>
       </ul>
     </div>
     <div class="card">
-      <h3>Conteúdo compatível</h3>
-      <ul class="item-list">
-        <li><span class="dot dot-phase1"></span>Músicas e reacts musicais</li>
-        <li><span class="dot dot-phase1"></span>Séries e filmes (áudio/legenda)</li>
-        <li><span class="dot dot-phase1"></span>Podcasts e entrevistas</li>
-        <li><span class="dot dot-phase1"></span>Jogos em espanhol</li>
-        <li><span class="dot dot-phase1"></span>Cultura pop hispano-americana</li>
-      <li><span class="dot dot-phase1"></span>Reacts e vídeos analíticos</li>
-      <!-- Integração com profissão de criador: canais de YouTube e criação de conteúdo -->
-      <li><span class="dot dot-phase1"></span>Canais de YouTube em espanhol e criação de conteúdo</li>
+      <div class="card-title" style="margin-bottom:12px">Conteúdo compatível</div>
+      <ul class="ilist">
+        <li><span class="dot d1"></span>Músicas e reacts musicais</li><li><span class="dot d1"></span>Séries e filmes (áudio/legenda)</li>
+        <li><span class="dot d1"></span>Podcasts e entrevistas</li><li><span class="dot d1"></span>Jogos em espanhol</li>
+        <li><span class="dot d1"></span>Cultura pop hispano-americana</li><li><span class="dot d1"></span>Reacts e vídeos analíticos</li><li><span class="dot d1"></span>Canais de YouTube em espanhol e criação de conteúdo</li>
       </ul>
     </div>
   </div>
 
   <div class="card">
-    <h3>Escala de trabalho — 24h/72h</h3>
-    <ul class="item-list">
-      <li><span class="dot dot-phase4"></span><strong>Dia de plantão (24h):</strong> Sessão mínima. Tarefas curtas, conteúdo familiar, escuta passiva no Uber. Zero pressão cognitiva.</li>
-      <li><span class="dot dot-warn"></span><strong>Pós-plantão (recuperação):</strong> Sessão mínima ou padrão leve. Drops, revisão, escuta extensiva. Nada de conteúdo novo.</li>
-      <li><span class="dot dot-phase3"></span><strong>Dias de folga (recuperado):</strong> Sessão completa ou padrão. Aulas novas, escuta ativa, produção oral, gravações.</li>
+    <div class="card-row"><span class="tag t4">Escala 24/72</span><div class="card-title">Sessão por tipo de dia</div></div>
+    <ul class="ilist">
+      <li><span class="dot d3"></span><div><strong>Folga recuperado:</strong> Sessão completa ou padrão. Aulas novas, escuta ativa, produção oral, gravações.</div></li>
+      <li><span class="dot dg"></span><div><strong>Pós-plantão (recuperação):</strong> Sessão mínima ou padrão leve. Drops, revisão, escuta extensiva. Nada de conteúdo novo.</div></li>
+      <li><span class="dot d4"></span><div><strong>Dia de plantão (24h):</strong> Sessão mínima. Tarefas curtas, conteúdo familiar, escuta passiva no Uber. Zero pressão cognitiva.</div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ─── FASES ────────────────────────────────────── -->
+<div class="pg inner" id="fases">
+  <div class="pg-h"><div class="pg-title">Fases do Programa</div><div class="pg-sub">5 fases progressivas — clique em cada uma para expandir.</div></div>
+
+  <div class="acc a1 open" onclick="toggleAcc(this)">
+    <div class="acc-head"><span class="acc-num">F1</span><span class="acc-name">Fundação Sonora</span><span class="acc-span">Dias 1–40 · ~6 sem.</span><span class="acc-chev">▶</span></div>
+    <div class="acc-body">
+      <p class="acc-desc">Construir a base auditiva, desmontar o portunhol, internalizar os sons do espanhol e criar hábito de exposição diária.</p>
+      <ul class="ilist">
+        <li><span class="dot d1"></span>Diagnóstico Dia 1: gravação oral + teste de compreensão de entrada</li>
+        <li><span class="dot d1"></span>Fluency Academy: unidades básicas com foco em som e ritmo da língua</li>
+        <li><span class="dot d1"></span>Drops: categorias — saudações, números, rotina, corpo, família, alimentos</li>
+        <li><span class="dot d1"></span>Uber: músicas lentas em espanhol (reggaeton lento, baladas), podcasts para iniciantes</li>
+        <li><span class="dot d1"></span>Oral: shadowing de frases da aula, descrição da rotina em 3–5 frases simples</li>
+        <li><span class="dot d1"></span>Desportuguesização: RR vs R, LL/Y, vogais abertas, H mudo, J/G</li>
+        <li><span class="dot d1"></span>Gramática: apenas presente e ser/estar quando necessário para produção</li>
+      </ul>
+      <div class="acc-marco"><strong>MARCO — DIA 40:</strong> Compreender 30–40% de input simples e lento. Apresentar-se em espanhol sem portunhol. Reconhecer sons característicos do idioma.</div>
+    </div>
+  </div>
+
+  <div class="acc a2" onclick="toggleAcc(this)">
+    <div class="acc-head"><span class="acc-num">F2</span><span class="acc-name">Vocabulário Funcional</span><span class="acc-span">Dias 41–80 · ~6 sem.</span><span class="acc-chev">▶</span></div>
+    <div class="acc-body">
+      <p class="acc-desc">Expandir vocabulário cotidiano funcional, construir frases mais longas, começar a contornar palavras desconhecidas.</p>
+      <ul class="ilist">
+        <li><span class="dot d2"></span>Fluency Academy: unidades intermediárias baixas com frases em contexto</li>
+        <li><span class="dot d2"></span>Drops: trabalho, transporte, sentimentos, lazer, lugares, viagem</li>
+        <li><span class="dot d2"></span>Uber: Español con Juan, Dreaming Spanish nível iniciante/básico</li>
+        <li><span class="dot d2"></span>Oral: substituição de elementos em frases, respostas pessoais, 2–3 min sem roteiro</li>
+        <li><span class="dot d2"></span>Séries: La Casa de Papel ou Club de Cuervos com legenda em espanhol</li>
+        <li><span class="dot d2"></span>Gramática: pretérito indefinido, verbos reflexivos, quando bloqueiam a compreensão</li>
+      </ul>
+      <div class="acc-marco"><strong>MARCO — DIA 80:</strong> 50–60% de compreensão auditiva em input adaptado. Falar por 3–5 min sobre temas conhecidos. Dependência do portunhol: baixa.</div>
+    </div>
+  </div>
+
+  <div class="acc a3" onclick="toggleAcc(this)">
+    <div class="acc-head"><span class="acc-num">F3</span><span class="acc-name">Fluência Progressiva</span><span class="acc-span">Dias 81–120 · ~6 sem.</span><span class="acc-chev">▶</span></div>
+    <div class="acc-body">
+      <p class="acc-desc">Aumentar velocidade de processamento, reduzir pausas, consumir conteúdo mais natural com menos suporte.</p>
+      <ul class="ilist">
+        <li><span class="dot d3"></span>Fluency Academy: nível intermediário, conteúdos mais rápidos e naturais</li>
+        <li><span class="dot d3"></span>Drops: música, cinema, jogos, negócios, tecnologia</li>
+        <li><span class="dot d3"></span>Uber: podcasts nativos (lento-médio), episódios de séries em áudio</li>
+        <li><span class="dot d3"></span>Oral: reconto de histórias, resumos de episódios, gravações de 3–5 min</li>
+        <li><span class="dot d3"></span>Redução gradual de legendas: espanhol → sem legenda em trechos curtos</li>
+        <li><span class="dot d3"></span>Introdução de leitura: artigos curtos, letras de músicas analisadas</li>
+      </ul>
+      <div class="acc-marco"><strong>MARCO — DIA 120:</strong> 65–70% compreensão em conteúdo semi-natural. Falar 5+ min sobre qualquer tema familiar. Pausas notavelmente reduzidas.</div>
+    </div>
+  </div>
+
+  <div class="acc a4" onclick="toggleAcc(this)">
+    <div class="acc-head"><span class="acc-num">F4</span><span class="acc-name">Autonomia Comunicativa</span><span class="acc-span">Dias 121–160 · ~6 sem.</span><span class="acc-chev">▶</span></div>
+    <div class="acc-body">
+      <p class="acc-desc">Expor-se a espanhol nativo sem suporte. Desenvolver estratégias para contornar vocabulário desconhecido. Consolidar fala espontânea.</p>
+      <ul class="ilist">
+        <li><span class="dot d4"></span>Fluency Academy: conteúdos nativos, variedades regionais</li>
+        <li><span class="dot d4"></span>Uber: podcasts nativos em velocidade normal, notícias em espanhol</li>
+        <li><span class="dot d4"></span>Oral: improviso sobre temas novos, defesa de opiniões, narração de experiências</li>
+        <li><span class="dot d4"></span>Interação: comentários em espanhol, encontrar parceiro de conversação</li>
+        <li><span class="dot d4"></span>Jogos: jogar em espanhol, interagir em comunidades hispânicas</li>
+      </ul>
+      <div class="acc-marco"><strong>MARCO — DIA 160:</strong> 75–80% compreensão em fala nativa. Comunicação funcional real com falantes nativos. Mínima dependência de tradução.</div>
+    </div>
+  </div>
+
+  <div class="acc a5" onclick="toggleAcc(this)">
+    <div class="acc-head"><span class="acc-num">F5</span><span class="acc-name">Consolidação e Domínio</span><span class="acc-span">Dias 161–200 · ~6 sem.</span><span class="acc-chev">▶</span></div>
+    <div class="acc-body">
+      <p class="acc-desc">Estabilizar o nível alcançado, aprofundar em temas de interesse e preparar-se para manutenção pós-programa.</p>
+      <ul class="ilist">
+        <li><span class="dot d5"></span>Conteúdo exclusivamente nativo e autêntico</li>
+        <li><span class="dot d5"></span>Uber: qualquer podcast ou conteúdo de interesse real</li>
+        <li><span class="dot d5"></span>Oral: debates, explicações, monólogos de 10+ min, gravações completas</li>
+        <li><span class="dot d5"></span>Fluency Academy: consolidação das lacunas identificadas ao longo do plano</li>
+        <li><span class="dot d5"></span>Produção de conteúdo em espanhol (roteiro, texto ou diário) — para prática e portfólio</li>
+        <li><span class="dot d5"></span>Plano de manutenção pós-Dia 200</li>
+      </ul>
+      <div class="acc-marco"><strong>MARCO — DIA 200:</strong> Domínio funcional geral. B1–B2 estimado. Compreensão auditiva autônoma. Fala espontânea real. Portunhol eliminado.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ROTINAS ───────────────────────────────────── -->
+<div class="pg inner" id="rotinas">
+  <div class="pg-h"><div class="pg-title">Rotinas</div><div class="pg-sub">Três formatos de sessão adaptados ao tipo de dia.</div></div>
+  <div class="alert"><strong>Regra:</strong> Sessão completa nos dias de folga recuperado · Padrão nos dias normais · Mínima no plantão, pós-plantão e dias de baixa energia.</div>
+
+  <div class="rot open">
+    <div class="rot-head rc" onclick="toggleRot(this.parentElement)">
+      <span class="rot-label">✦ SESSÃO COMPLETA</span>
+      <div class="rot-meta"><span>~90–120 min total</span><span class="rot-chev">▶</span></div>
+    </div>
+    <div class="rot-body">
+      <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-at">ATIVO</span><div>Fluency Academy 45–60 min com protocolo completo: escuta global → transcrição → consulta pontual → repetição em voz alta → shadowing → frases pessoais</div></div>
+      <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-dr">DROPS</span><div>10–15 min · Vocabulário novo + revisão de categorias ativas · Reutilize ao menos 3 palavras em frases orais após</div></div>
+      <div class="trow"><div class="tslot">Uber</div><span class="tpill tp-au">ÁUDIO</span><div>Escuta extensiva segura · Podcasts, músicas, episódios em áudio · Shadowing em voz alta quando sozinho · Sem leitura ou celular</div></div>
+      <div class="trow"><div class="tslot">Tarde</div><span class="tpill tp-or">ORAL</span><div>15–20 min · Gravação de voz: resumo do que aprendeu, reconto de história, improviso sobre tema · Ouça e anote 1 correção prioritária</div></div>
+      <div class="trow"><div class="tslot">Banho</div><span class="tpill tp-au">ÁUDIO</span><div>Shadowing ou revisão oral de expressões da aula · 5–10 min</div></div>
+      <div class="trow"><div class="tslot">Noite</div><span class="tpill tp-lv">LEVE</span><div>5–10 min · Série ou vídeo em espanhol · Exposição leve, sem pressão · Pode ser com legenda em espanhol</div></div>
+    </div>
+  </div>
+
+  <div class="rot">
+    <div class="rot-head rp" onclick="toggleRot(this.parentElement)">
+      <span class="rot-label">◈ SESSÃO PADRÃO</span>
+      <div class="rot-meta"><span>~60–75 min total</span><span class="rot-chev">▶</span></div>
+    </div>
+    <div class="rot-body">
+      <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-at">ATIVO</span><div>Fluency Academy 30–40 min · Protocolo completo mas reduzido: foco nas etapas de escuta, repetição e shadowing</div></div>
+      <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-dr">DROPS</span><div>10 min · Vocabulário prioritário do dia · Ao menos 2 frases orais com as palavras novas</div></div>
+      <div class="trow"><div class="tslot">Uber</div><span class="tpill tp-au">ÁUDIO</span><div>Escuta extensiva · Conteúdo familiar ou conteúdo novo com dificuldade moderada</div></div>
+      <div class="trow"><div class="tslot">Noite</div><span class="tpill tp-or">ORAL</span><div>10 min · Descrição da rotina do dia em espanhol · Shadowing de trecho da aula</div></div>
+    </div>
+  </div>
+
+  <div class="rot">
+    <div class="rot-head rm" onclick="toggleRot(this.parentElement)">
+      <span class="rot-label">· SESSÃO MÍNIMA</span>
+      <div class="rot-meta"><span>~25–35 min total</span><span class="rot-chev">▶</span></div>
+    </div>
+    <div class="rot-body">
+      <div class="trow"><div class="tslot">Qualquer</div><span class="tpill tp-dr">DROPS</span><div>10 min Drops · Apenas revisão de palavras já estudadas · Sem vocabulário novo</div></div>
+      <div class="trow"><div class="tslot">Uber</div><span class="tpill tp-au">ÁUDIO</span><div>Conteúdo familiar e fácil · Músicas, podcast já ouvido, episódio revisitado · Sem exigência de compreensão total</div></div>
+      <div class="trow"><div class="tslot">Banho</div><span class="tpill tp-rv">REVISÃO</span><div>5 min · Revisitar expressões e frases já aprendidas · Repetição oral simples</div></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:4px">
+    <div class="card-title" style="margin-bottom:12px">⚠ Regras de ajuste de dificuldade</div>
+    <ul class="ilist">
+      <li><span class="dot d4"></span><div><strong>Compreensão baixa (&lt;40%):</strong> Reduza velocidade, encurte o trecho, volte para conteúdo mais familiar. Não force.</div></li>
+      <li><span class="dot dg"></span><div><strong>Compreensão alta consistente (&gt;75%):</strong> Retire apoios gradualmente. Introduza conteúdo mais natural e rápido.</div></li>
+      <li><span class="dot d3"></span><div><strong>Um dia ruim:</strong> Use sessão mínima, não altere a metodologia. Consistência &gt; intensidade.</div></li>
+      <li><span class="dot d1"></span><div><strong>Portunhol recorrente:</strong> Ative módulo de desportuguesização focando na construção específica que está sendo improvisada.</div></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ─── MÉTODO ───────────────────────────────────── -->
+<div class="pg inner" id="metodo">
+  <div class="pg-h"><div class="pg-title">Método</div><div class="pg-sub">Protocolos fixos para Fluency Academy, Drops e prática oral.</div></div>
+
+  <div class="card">
+    <div class="card-row"><span class="tag tg">Protocolo</span><div class="card-title">Fluency Academy — sequência obrigatória</div></div>
+    <p class="card-sub">Siga esta ordem em toda aula, sem pular etapas:</p>
+    <div class="steps">
+      <div class="step"><div class="step-n"></div><div><div class="step-title">Escuta global sem tradução</div><div class="step-desc">Ouça toda a aula ou trecho uma vez. Não pause. Não traduza. Anote o que entendeu.</div></div></div>
+      <div class="step"><div class="step-n"></div><div><div class="step-title">Nova escuta com transcrição em espanhol</div><div class="step-desc">Leia a transcrição em espanhol enquanto ouve. Identifique onde estava falhando.</div></div></div>
+      <div class="step"><div class="step-n"></div><div><div class="step-title">Consulta pontual ao português</div><div class="step-desc">Só traduza o que bloqueia a compreensão. Não traduza tudo. Priorize sentido geral.</div></div></div>
+      <div class="step"><div class="step-n"></div><div><div class="step-title">Repetição em voz alta</div><div class="step-desc">Repita as expressões e frases do trecho em voz alta, com entonação natural.</div></div></div>
+      <div class="step"><div class="step-n"></div><div><div class="step-title">Shadowing</div><div class="step-desc">Fale junto com o áudio, sobrepondo sua voz à original. Foque no ritmo e no som.</div></div></div>
+      <div class="step"><div class="step-n"></div><div><div class="step-title">Uso em frases pessoais</div><div class="step-desc">Use as expressões aprendidas em 3–5 frases suas, sobre sua própria vida ou rotina.</div></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-row"><span class="tag t3">Permanente</span><div class="card-title">Módulo de desportuguesização</div></div>
+    <p class="card-sub">Presente em todas as fases. Foco em eliminar transferências do português:</p>
+    <ul class="ilist">
+      <li><span class="dot d3"></span><div><strong>Sons:</strong> RR vs R, vogais abertas, LL/Y, H mudo, J/G (jota espanhola), -ción vs -ção</div></li>
+      <li><span class="dot d3"></span><div><strong>Falsos cognatos:</strong> embarazada ≠ envergonhada · borracha ≠ bêbada · eventualmente ≠ às vezes</div></li>
+      <li><span class="dot d3"></span><div><strong>Construções:</strong> "eu gosto de" ≠ "me gusta" · artigos · verbos irregulares — não assumir igual ao português</div></li>
+      <li><span class="dot d3"></span><div><strong>Portunhol:</strong> Não improvisar — buscar o bloco real. "Estoy bien" não "estoy bueno"</div></li>
+      <li><span class="dot d3"></span><div><strong>Acento tônico:</strong> Espanhol tem acento marcado e previsível — treinar perceber e reproduzir</div></li>
     </ul>
   </div>
 
+  <div class="g2">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px">Técnicas de produção oral</div>
+      <ul class="ilist">
+        <li><span class="dot dg"></span><div><strong>Shadowing</strong> — desde o Dia 1</div></li>
+        <li><span class="dot dg"></span><div><strong>Substituição</strong> — mudar elementos em frases-modelo</div></li>
+        <li><span class="dot dg"></span><div><strong>Descrição da rotina</strong> — 3–5 frases diárias</div></li>
+        <li><span class="dot dg"></span><div><strong>Respostas pessoais</strong> — responder em 1ª pessoa</div></li>
+        <li><span class="dot dg"></span><div><strong>Resumos</strong> — recontar episódio ou podcast</div></li>
+        <li><span class="dot dg"></span><div><strong>Gravações</strong> — registrar e ouvir para autopercepção</div></li>
+        <li><span class="dot dg"></span><div><strong>Improviso</strong> — 2–10 min sem roteiro sobre qualquer tema</div></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:12px">Protocolo Drops</div>
+      <ul class="ilist">
+        <li><span class="dot dg"></span>Prioridade: cotidiano, trabalho, transporte, alimentação, lazer, sentimentos, viagem, música, cinema, jogos</li>
+        <li><span class="dot dg"></span>Palavra isolada ≠ domínio da língua</li>
+        <li><span class="dot dg"></span>Após cada sessão: 2–3 palavras usadas em frases orais</li>
+        <li><span class="dot dg"></span>Revisão semanal: reutilizar palavras antigas espontaneamente</li>
+      </ul>
+      <div class="divider"></div>
+      <div class="card-title" style="margin-bottom:10px">Tipos de exposição</div>
+      <ul class="ilist">
+        <li><span class="dot d1"></span><div><strong>Estudo ativo:</strong> Fluency Academy (atenção concentrada, protocolo fixo)</div></li>
+        <li><span class="dot d2"></span><div><strong>Escuta extensiva:</strong> Uber/banho — Dreaming Spanish, Easy Spanish, El Español y yo, podcasts leves</div></li>
+        <li><span class="dot d3"></span><div><strong>Revisão:</strong> Episódios já vistos, músicas já ouvidas, aulas revisitadas</div></li>
+        <li><span class="dot d4"></span><div><strong>Prática oral:</strong> Shadowing, gravações, improviso, descrição de rotina</div></li>
+        <li><span class="dot d5"></span><div><strong>Exposição leve:</strong> Séries antes de dormir, vídeos no feed, reacts em espanhol</div></li>
+      </ul>
+    </div>
+  </div>
 </div>
 
-<!-- ===================== FASES ===================== -->
-<div class="section" id="fases">
+<!-- ─── CHECK-IN ─────────────────────────────────── -->
+<div class="pg inner" id="checkin">
+  <div class="pg-h"><div class="pg-title">Check-in Diário</div><div class="pg-sub">Registre o dia e receba análise com orientação para o próximo ciclo.</div></div>
 
-  <div class="phase-block p1">
-    <div class="phase-header">
-      <div class="phase-title-group">
-        <div class="phase-label">Fase 1</div>
-        <div class="phase-title">Fundação Sonora</div>
-        <div class="phase-days">Dias 1–40 · ~6 semanas</div>
+  <div class="fcard">
+    <div class="fcard-head"><span class="tag tg">Contexto</span><span class="fcard-title">Informações do dia</span></div>
+    <div class="fcard-body">
+      <div class="frow">
+        <div class="fg"><label>Dia do programa (1–200)</label><input type="number" id="ci-dia" min="1" max="200" value="1" placeholder="Ex: 14" oninput="onDayChange(this.value)"></div>
+        <div class="fg"><label>Tipo de dia</label><select id="ci-tipo-dia"><option value="">Selecione...</option><option value="folga-ok">Folga recuperado</option><option value="folga-cansado">Folga cansado</option><option value="pos-plantao">Pós-plantão</option><option value="plantao">Plantão (24h)</option></select></div>
       </div>
-      <div class="toggle-icon">▼</div>
+      <div class="fg"><label>Tipo de sessão hoje</label><select id="ci-sessao"><option value="">Selecione...</option><option value="completa">Completa (90–120 min)</option><option value="padrao">Padrão (60–75 min)</option><option value="minima">Mínima (25–35 min)</option><option value="zero">Sem estudo hoje</option></select></div>
     </div>
-    <div class="phase-body">
-      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Construir a base auditiva, desmontar o portunhol, internalizar os sons do espanhol e criar hábito de exposição diária.</p>
-      <ul class="item-list">
-        <li><span class="dot dot-phase1"></span>Diagnóstico Dia 1: gravação oral + teste de compreensão de entrada</li>
-        <li><span class="dot dot-phase1"></span>Fluency Academy: unidades básicas com foco em som e ritmo da língua</li>
-        <li><span class="dot dot-phase1"></span>Drops: categorias — saudações, números, rotina, corpo, família, alimentos</li>
-        <li><span class="dot dot-phase1"></span>Uber: músicas lentas em espanhol (reggaeton lento, baladas), podcasts para iniciantes</li>
-        <li><span class="dot dot-phase1"></span>Oral: shadowing de frases da aula, descrição da rotina em 3–5 frases simples</li>
-        <li><span class="dot dot-phase1"></span>Desportuguesização: RR vs R, LL/Y, vogais abertas, H mudo, J/G</li>
-        <li><span class="dot dot-phase1"></span>Gramática: apenas presente e ser/estar quando necessário para produção</li>
-      </ul>
-      <div style="margin-top:14px;">
-        <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase1);">MARCO — DIA 40:</strong>
-        <p style="font-size:12px; margin-top:4px;">Compreender 30–40% de input simples e lento. Apresentar-se em espanhol sem portunhol. Reconhecer sons característicos do idioma.</p>
+  </div>
+
+  <div class="fcard">
+    <div class="fcard-head"><span class="tag t1">Atividades</span><span class="fcard-title">O que foi feito</span></div>
+    <div class="fcard-body">
+      <div class="fg"><label>Fluency Academy — o que foi estudado</label><input type="text" id="ci-fluency" placeholder="Ex: Unidade 3 — verbos de movimento, shadowing feito"></div>
+      <div class="fg"><label>Drops — tempo e categorias</label><input type="text" id="ci-drops" placeholder="Ex: 12 min, transporte e sentimentos"></div>
+      <div class="fg"><label>Escuta ativa — conteúdo e tempo</label><input type="text" id="ci-escuta-ativa" placeholder="Ex: Dreaming Spanish 20 min, ~50% compreensão"></div>
+      <div class="fg"><label>Escuta no Uber — somente áudio (sem mexer no celular)</label><input type="text" id="ci-escuta-morto" placeholder="Ex: 45 min de música em espanhol, shadowing"></div>
+      <div class="fg"><label>Criação de conteúdo em espanhol (opcional)</label><input type="text" id="ci-criacao" placeholder="Ex: Roteiro de 5 min escrito em espanhol"></div>
+    </div>
+  </div>
+
+  <div class="fcard">
+    <div class="fcard-head"><span class="tag t3">Métricas</span><span class="fcard-title">Avaliação do dia</span></div>
+    <div class="fcard-body">
+      <div class="fg"><label>Compreensão estimada — <span id="compr-val">40</span>%</label><div class="rng-wrap"><input type="range" id="ci-compreensao" min="0" max="100" value="40" oninput="updateRange(this,'compr-val','%')"></div></div>
+      <div class="fg"><label>Energia e motivação — <span id="energ-val">7</span>/10</label><div class="rng-wrap"><input type="range" id="ci-energia" min="0" max="10" value="7" oninput="updateRange(this,'energ-val','')"></div></div>
+      <div class="frow">
+        <div class="fg"><label>Minutos de fala sem roteiro</label><input type="number" id="ci-fala" min="0" max="60" placeholder="Ex: 5"></div>
+        <div class="fg"><label>Dependência do portunhol</label><select id="ci-portuhol"><option value="">Selecione...</option><option value="baixa">Baixa</option><option value="media">Média</option><option value="alta">Alta</option></select></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label>Principal dificuldade</label><textarea id="ci-dificuldade" placeholder="Ex: Velocidade do áudio, pronúncia do RR..."></textarea></div>
+        <div class="fg"><label>Principal avanço</label><textarea id="ci-avanco" placeholder="Ex: Entendi trecho inteiro sem pausar..."></textarea></div>
       </div>
     </div>
   </div>
 
-  <div class="phase-block p2 collapsed">
-    <div class="phase-header">
-      <div class="phase-title-group">
-        <div class="phase-label">Fase 2</div>
-        <div class="phase-title">Vocabulário Funcional</div>
-        <div class="phase-days">Dias 41–80 · ~6 semanas</div>
-      </div>
-      <div class="toggle-icon">▼</div>
-    </div>
-    <div class="phase-body">
-      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Expandir vocabulário cotidiano funcional, construir frases mais longas, começar a contornar palavras desconhecidas.</p>
-      <ul class="item-list">
-        <li><span class="dot dot-phase2"></span>Fluency Academy: unidades intermediárias baixas com frases em contexto</li>
-        <li><span class="dot dot-phase2"></span>Drops: trabalho, transporte, sentimentos, lazer, lugares, viagem</li>
-        <li><span class="dot dot-phase2"></span>Uber: Español con Juan, Dreaming Spanish nível iniciante/básico</li>
-        <li><span class="dot dot-phase2"></span>Oral: substituição de elementos em frases, respostas pessoais, 2–3 min sem roteiro</li>
-        <li><span class="dot dot-phase2"></span>Séries: La Casa de Papel ou Club de Cuervos com legenda em espanhol</li>
-        <li><span class="dot dot-phase2"></span>Gramática: pretérito indefinido, verbos reflexivos, quando bloqueiam a compreensão</li>
-      </ul>
-      <div style="margin-top:14px;">
-        <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase2);">MARCO — DIA 80:</strong>
-        <p style="font-size:12px; margin-top:4px;">50–60% de compreensão auditiva em input adaptado. Falar por 3–5 min sobre temas conhecidos. Dependência do portunhol: baixa.</p>
-      </div>
-    </div>
+  <div class="btns">
+    <button class="btn btn-p" onclick="analisarLocal()">Análise local</button>
+    <button class="btn btn-p" id="btn-ia" onclick="analisarIA()">Análise IA</button>
+    <button class="btn btn-g" onclick="salvarCheckin()">Salvar</button>
+    <button class="btn btn-g" onclick="exportarCheckins()">Exportar JSON</button>
+    <button class="btn btn-g" onclick="limparCheckin()">Limpar</button>
   </div>
 
-  <div class="phase-block p3 collapsed">
-    <div class="phase-header">
-      <div class="phase-title-group">
-        <div class="phase-label">Fase 3</div>
-        <div class="phase-title">Fluência Progressiva</div>
-        <div class="phase-days">Dias 81–120 · ~6 semanas</div>
-      </div>
-      <div class="toggle-icon">▼</div>
-    </div>
-    <div class="phase-body">
-      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Aumentar velocidade de processamento, reduzir pausas, consumir conteúdo mais natural com menos suporte.</p>
-      <ul class="item-list">
-        <li><span class="dot dot-phase3"></span>Fluency Academy: nível intermediário, conteúdos mais rápidos e naturais</li>
-        <li><span class="dot dot-phase3"></span>Drops: música, cinema, jogos, negócios, tecnologia</li>
-        <li><span class="dot dot-phase3"></span>Uber: podcasts nativos (lento-médio), episódios de séries em áudio</li>
-        <li><span class="dot dot-phase3"></span>Oral: reconto de histórias, resumos de episódios, gravações de 3–5 min</li>
-        <li><span class="dot dot-phase3"></span>Redução gradual de legendas: espanhol → sem legenda em trechos curtos</li>
-        <li><span class="dot dot-phase3"></span>Introdução de leitura: artigos curtos, letras de músicas analisadas</li>
-      </ul>
-      <div style="margin-top:14px;">
-        <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase3);">MARCO — DIA 120:</strong>
-        <p style="font-size:12px; margin-top:4px;">65–70% compreensão em conteúdo semi-natural. Falar 5+ min sobre qualquer tema familiar. Pausas notavelmente reduzidas.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="phase-block p4 collapsed">
-    <div class="phase-header">
-      <div class="phase-title-group">
-        <div class="phase-label">Fase 4</div>
-        <div class="phase-title">Autonomia Comunicativa</div>
-        <div class="phase-days">Dias 121–160 · ~6 semanas</div>
-      </div>
-      <div class="toggle-icon">▼</div>
-    </div>
-    <div class="phase-body">
-      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Expor-se a espanhol nativo sem suporte. Desenvolver estratégias para contornar vocabulário desconhecido. Consolidar fala espontânea.</p>
-      <ul class="item-list">
-        <li><span class="dot dot-phase4"></span>Fluency Academy: conteúdos nativos, variedades regionais</li>
-        <li><span class="dot dot-phase4"></span>Uber: podcasts nativos em velocidade normal, notícias em espanhol</li>
-        <li><span class="dot dot-phase4"></span>Oral: improviso sobre temas novos, defesa de opiniões, narração de experiências</li>
-        <li><span class="dot dot-phase4"></span>Interação: comentários em espanhol, encontrar parceiro de conversação</li>
-        <li><span class="dot dot-phase4"></span>Jogos: jogar em espanhol, interagir em comunidades hispânicas</li>
-      </ul>
-      <div style="margin-top:14px;">
-        <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase4);">MARCO — DIA 160:</strong>
-        <p style="font-size:12px; margin-top:4px;">75–80% compreensão em fala nativa. Comunicação funcional real com falantes nativos. Mínima dependência de tradução.</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="phase-block p5 collapsed">
-    <div class="phase-header">
-      <div class="phase-title-group">
-        <div class="phase-label">Fase 5</div>
-        <div class="phase-title">Consolidação e Domínio</div>
-        <div class="phase-days">Dias 161–200 · ~6 semanas</div>
-      </div>
-      <div class="toggle-icon">▼</div>
-    </div>
-    <div class="phase-body">
-      <p style="font-size:13px; color:var(--muted); margin-bottom:12px;">Estabilizar o nível alcançado, aprofundar em temas de interesse e preparar-se para manutenção pós-programa.</p>
-      <ul class="item-list">
-        <li><span class="dot dot-phase5"></span>Conteúdo exclusivamente nativo e autêntico</li>
-        <li><span class="dot dot-phase5"></span>Uber: qualquer podcast ou conteúdo de interesse real</li>
-        <li><span class="dot dot-phase5"></span>Oral: debates, explicações, monólogos de 10+ min, gravações completas</li>
-        <li><span class="dot dot-phase5"></span>Fluency Academy: consolidação das lacunas identificadas ao longo do plano</li>
-        <!-- Novo item: prática de criação de conteúdo em espanhol para consolidar fluência -->
-        <li><span class="dot dot-phase5"></span>Produção de conteúdo em espanhol (roteiro, texto ou diário) para prática e portfólio</li>
-        <li><span class="dot dot-phase5"></span>Plano de manutenção pós-Dia 200</li>
-      </ul>
-      <div style="margin-top:14px;">
-        <strong style="font-size:11px; font-family:'Space Mono'; color:var(--phase5);">MARCO — DIA 200:</strong>
-        <p style="font-size:12px; margin-top:4px;">Domínio funcional geral. B1–B2 estimado. Compreensão auditiva autônoma. Fala espontânea real. Portunhol eliminado.</p>
-      </div>
-    </div>
-  </div>
-
+  <div id="analysis-out"></div>
 </div>
 
-<!-- ===================== ROTINAS ===================== -->
-<div class="section" id="rotinas">
-
-  <div class="highlight">
-    <strong>Regra de uso:</strong> Sessão completa nos dias de folga recuperado · Padrão nos dias normais · Mínima no plantão, pós-plantão e dias de baixa energia
-  </div>
-
-  <div class="routine-card">
-    <div class="routine-header completa">
-      <div class="routine-title">✦ SESSÃO COMPLETA</div>
-      <div class="routine-time">~90–120 min total</div>
-    </div>
-    <div class="routine-body">
-      <div class="time-block">
-        <div class="time-slot">MANHÃ</div>
-        <span class="time-type type-ativo">ATIVO</span>
-        <div>Fluency Academy 45–60 min com protocolo completo: escuta global → transcrição → consulta pontual → repetição em voz alta → shadowing → frases pessoais</div>
-      </div>
-      <div class="time-block">
-        <div class="time-slot">MANHÃ</div>
-        <span class="time-type type-drops">DROPS</span>
-        <div>10–15 min · Vocabulário novo + revisão de categorias ativas · Reutilize ao menos 3 palavras em frases orais após</div>
-      </div>
-      <div class="time-block">
-        <div class="time-slot">UBER</div>
-        <span class="time-type type-audio">ÁUDIO</span>
-        <div>Escuta extensiva segura · Podcasts, músicas, episódios em áudio · Shadowing em voz alta quando sozinho · Sem leitura ou celular</div>
-      </div>
-      <div class="time-block">
-        <div class="time-slot">TARDE</div>
-        <span class="time-type type-oral">ORAL</span>
-        <div>15–20 min · Gravação de voz: resumo do que aprendeu, reconto de história, improviso sobre tema · Ouça e anote 1 correção prioritária</div>
-      </div>
-      <div class="time-block">
-        <div class="time-slot">BANHO</div>
-        <span class="time-type type-audio">ÁUDIO</span>
-        <div>Shadowing ou revisão oral de expressões da aula · 5–10 min</div>
-      </div>
-      <div class="time-block">
-        <div class="time-slot">ANTES DORMIR</div>
-        <span class="time-type type-leve">LEVE</span>
-        <div>5–10 min · Série ou vídeo em espanhol · Exposição leve, sem pressão · Pode ser com legenda em espanhol</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="routine-card">
-    <div class="routine-header padrao">
-      <div class="routine-title">◈ SESSÃO PADRÃO</div>
-      <div class="routine-time">~60–75 min total</div>
-    </div>
-    <div class="routine-body">
-      <div class="time-block">
-        <div class="time-slot">MANHÃ</div>
-        <span class="time-type type-ativo">ATIVO</span>
-        <div>Fluency Academy 30–40 min · Protocolo completo mas reduzido: foco nas etapas de escuta, repetição e shadowing</div>
-      </div>
-      <div class="time-block">
-        <div class="time-slot">MANHÃ</div>
-        <span class="time-type type-drops">DROPS</span>
-        <div>10 min · Vocabulário prioritário do dia · Ao menos 2 frases orais com as palavras novas</div>
-      </div>
-      <div class="time-block">
-        <div class="time-slot">UBER</div>
-        <span class="time-type type-audio">ÁUDIO</span>
-        <div>Escuta extensiva · Conteúdo familiar ou conteúdo novo com dificuldade moderada</div>
-      </div>
-      <div class="time-block">
-        <div class="time-slot">NOITE</div>
-        <span class="time-type type-oral">ORAL</span>
-        <div>10 min · Descrição da rotina do dia em espanhol · Shadowing de trecho da aula</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="routine-card">
-    <div class="routine-header minima">
-      <div class="routine-title">· SESSÃO MÍNIMA</div>
-      <div class="routine-time">~25–35 min total</div>
-    </div>
-    <div class="routine-body">
-      <div class="time-block">
-        <div class="time-slot">QUALQUER</div>
-        <span class="time-type type-drops">DROPS</span>
-        <div>10 min Drops · Apenas revisão de palavras já estudadas · Sem vocabulário novo</div>
-      </div>
-      <div class="time-block">
-        <div class="time-slot">UBER</div>
-        <span class="time-type type-audio">ÁUDIO</span>
-        <div>Conteúdo familiar e fácil · Músicas, podcast já ouvido, episódio revisitado · Sem exigência de compreensão total</div>
-      </div>
-      <div class="time-block">
-        <div class="time-slot">BANHO/CASA</div>
-        <span class="time-type type-revisao">REVISÃO</span>
-        <div>5 min · Revisitar expressões e frases já aprendidas · Repetição oral simples</div>
-      </div>
-    </div>
-  </div>
+<!-- ─── AVALIAÇÕES ───────────────────────────────── -->
+<div class="pg inner" id="avaliacoes">
+  <div class="pg-h"><div class="pg-title">Avaliações Periódicas</div><div class="pg-sub">9 pontos de avaliação ao longo dos 200 dias.</div></div>
+  <div class="alert"><strong>Avaliações programadas:</strong> Dias 1, 25, 50, 75, 100, 125, 150, 175 e 200. Cada avaliação inclui teste auditivo, gravação oral, análise das métricas e <em>apenas um ajuste prioritário</em> para o ciclo seguinte.</div>
 
   <div class="card">
-    <h3>⚠ Regras de ajuste de dificuldade</h3>
-    <ul class="item-list">
-      <li><span class="dot dot-phase4"></span><strong>Compreensão baixa (&lt;40%):</strong> Reduza velocidade, encurte o trecho, volte para conteúdo mais familiar. Não force.</li>
-      <li><span class="dot dot-warn"></span><strong>Compreensão alta consistente (&gt;75%):</strong> Retire apoios gradualmente. Introduza conteúdo mais natural e rápido.</li>
-      <li><span class="dot dot-phase3"></span><strong>Um dia ruim:</strong> Use sessão mínima, não altere a metodologia. Consistência &gt; intensidade.</li>
-      <li><span class="dot dot-phase1"></span><strong>Portunhol recorrente:</strong> Ative o módulo de desportuguesização com foco específico na construção que está sendo improvisada.</li>
+    <div class="card-row"><span class="tag t1">Estrutura</span><div class="card-title">O que cada avaliação contém</div></div>
+    <ul class="ilist">
+      <li><span class="dot dg"></span><div><strong>Teste auditivo:</strong> Trecho de áudio novo, estimativa de compreensão sem apoio</div></li>
+      <li><span class="dot dg"></span><div><strong>Gravação oral:</strong> 2–5 min sobre tema proposto, comparada com a avaliação anterior</div></li>
+      <li><span class="dot dg"></span><div><strong>Análise das métricas:</strong> Exposição acumulada, compreensão média, consistência, fala, portunhol</div></li>
+      <li><span class="dot dg"></span><div><strong>Um ajuste prioritário:</strong> A única mudança metodológica do próximo ciclo — não reforma total</div></li>
     </ul>
   </div>
 
-</div>
-
-<!-- ===================== MÉTODO ===================== -->
-<div class="section" id="metodo">
-
-  <div class="card">
-    <div class="card-header">
-      <span class="card-tag tag-warn">PROTOCOLO</span>
-      <h2>Protocolo Fluency Academy</h2>
-    </div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">Siga esta sequência em toda aula, sem pular etapas:</p>
-    <div class="protocol-step">
-      <div class="step-num">1</div>
-      <div class="step-content"><strong>Escuta global sem tradução</strong><span>Ouça toda a aula ou trecho uma vez. Não pause. Não traduza. Anote o que entendeu.</span></div>
-    </div>
-    <div class="protocol-step">
-      <div class="step-num">2</div>
-      <div class="step-content"><strong>Nova escuta com transcrição em espanhol</strong><span>Leia a transcrição em espanhol enquanto ouve. Identifique onde estava falhando.</span></div>
-    </div>
-    <div class="protocol-step">
-      <div class="step-num">3</div>
-      <div class="step-content"><strong>Consulta pontual ao português</strong><span>Só traduza o que bloqueia a compreensão. Não traduza tudo. Priorize sentido geral.</span></div>
-    </div>
-    <div class="protocol-step">
-      <div class="step-num">4</div>
-      <div class="step-content"><strong>Repetição em voz alta</strong><span>Repita as expressões e frases do trecho em voz alta, com entonação natural.</span></div>
-    </div>
-    <div class="protocol-step">
-      <div class="step-num">5</div>
-      <div class="step-content"><strong>Shadowing</strong><span>Fale junto com o áudio, sobrepondo sua voz à original. Foque no ritmo e som.</span></div>
-    </div>
-    <div class="protocol-step">
-      <div class="step-num">6</div>
-      <div class="step-content"><strong>Uso em frases pessoais</strong><span>Use as expressões aprendidas em 3–5 frases suas, sobre sua própria vida ou rotina.</span></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <span class="card-tag tag-ok">DESPORTUGUESIZAÇÃO</span>
-      <h2>Módulo Permanente</h2>
-    </div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">Presente em todas as fases. Foco em eliminar transferências do português:</p>
-    <ul class="item-list">
-      <li><span class="dot dot-phase3"></span><strong>Sons:</strong> RR vs R, vogais abertas, LL/Y, H mudo, J/G (jota espanhola), -ción vs -ção</li>
-      <li><span class="dot dot-phase3"></span><strong>Falsos cognatos:</strong> embarazada ≠ envergonhada · borracha ≠ bêbada · eventualmente ≠ às vezes</li>
-      <li><span class="dot dot-phase3"></span><strong>Construções:</strong> "eu gosto de" ≠ "me gusta" · artigos · verbos irregulares comuns não assumir igual</li>
-      <li><span class="dot dot-phase3"></span><strong>Portunhol:</strong> Não improvisar — buscar o bloco real. "Estoy bien" não "estoy bueno"</li>
-      <li><span class="dot dot-phase3"></span><strong>Acento tônico:</strong> espanhol tem acento marcado e previsível — treinar perceber e reproduzir</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <span class="card-tag tag-info">PRÁTICA ORAL</span>
-      <h2>Técnicas de produção</h2>
-    </div>
-    <div class="grid-2">
-      <div>
-        <h3>Técnicas progressivas</h3>
-        <ul class="item-list">
-          <li><span class="dot dot-accent"></span><strong>Shadowing</strong> — desde o Dia 1</li>
-          <li><span class="dot dot-accent"></span><strong>Substituição</strong> — mudar elementos dentro de frases-modelo</li>
-          <li><span class="dot dot-accent"></span><strong>Descrição da rotina</strong> — 3–5 frases diárias sobre o próprio dia</li>
-          <li><span class="dot dot-accent"></span><strong>Respostas pessoais</strong> — responder perguntas da aula em 1a pessoa</li>
-          <li><span class="dot dot-accent"></span><strong>Resumos</strong> — recontar episódio ou podcast em espanhol</li>
-          <li><span class="dot dot-accent"></span><strong>Gravações</strong> — registrar e ouvir para autopercepção</li>
-          <li><span class="dot dot-accent"></span><strong>Improviso</strong> — 2–10 min sem roteiro sobre qualquer tema</li>
-        </ul>
-      </div>
-      <div>
-        <h3>Drops — protocolo</h3>
-        <ul class="item-list">
-          <li><span class="dot dot-warn"></span>Categorias prioritárias: cotidiano, trabalho, transporte, alimentação, lazer, sentimentos, viagem, música, cinema, jogos</li>
-          <li><span class="dot dot-warn"></span>Palavra isolada ≠ domínio da língua</li>
-          <li><span class="dot dot-warn"></span>Após cada sessão: 2–3 palavras usadas em frases orais</li>
-          <li><span class="dot dot-warn"></span>Revisão semanal: reutilizar palavras antigas espontaneamente</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Conteúdo por tipo de exposição</h3>
-    <ul class="item-list">
-      <li><span class="dot dot-phase1"></span><strong>Estudo ativo:</strong> Fluency Academy (atenção concentrada, protocolo fixo)</li>
-      <li><span class="dot dot-phase2"></span><strong>Escuta extensiva:</strong> Uber/banho — Dreaming Spanish, Easy Spanish, El Español y yo, podcasts leves</li>
-      <li><span class="dot dot-phase3"></span><strong>Revisão:</strong> Episódios já vistos, músicas já ouvidas, aulas revisitadas</li>
-      <li><span class="dot dot-phase4"></span><strong>Prática oral:</strong> Shadowing, gravações, improviso, descrição de rotina</li>
-      <li><span class="dot dot-phase5"></span><strong>Exposição leve:</strong> Séries antes de dormir, vídeos no feed, reacts em espanhol</li>
-    </ul>
-  </div>
-
-</div>
-
-<!-- ===================== CHECK-IN ===================== -->
-<div class="section" id="checkin">
-
-  <div class="card">
-    <div class="card-header">
-      <span class="card-tag tag-warn">CHECK-IN</span>
-      <h2>Registro diário + análise</h2>
-    </div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:20px;">Preencha os dados do dia e receba uma análise personalizada com orientação para o próximo ciclo.</p>
-
-    <!-- Removeu-se os campos de chave de API e tipo de autenticação, pois o acesso à IA será feito via backend seguro (Cloudflare Worker). -->
-
-    <div class="form-group">
-      <label>Dia do programa (1–200)</label>
-      <input type="number" id="ci-dia" min="1" max="200" value="1" placeholder="Ex: 14" title="Informe o dia atual do plano de 1 a 200.">
-    </div>
-
-    <div class="two-col">
-      <div class="form-group">
-        <label>Tipo de sessão hoje</label>
-        <select id="ci-sessao" title="Escolha o tipo de sessão realizada hoje.">
-          <option value="">Selecione...</option>
-          <option value="completa">Completa (90–120 min)</option>
-          <option value="padrao">Padrão (60–75 min)</option>
-          <option value="minima">Mínima (25–35 min)</option>
-          <option value="zero">Sem estudo hoje</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Tipo de dia</label>
-        <select id="ci-tipo-dia" title="Selecione o tipo de dia (folga, pós‑plantão, plantão etc.).">
-          <option value="">Selecione...</option>
-          <option value="folga-ok">Folga recuperado</option>
-          <option value="folga-cansado">Folga cansado</option>
-          <option value="pos-plantao">Pós-plantão</option>
-          <option value="plantao">Plantão (24h)</option>
-        </select>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>Fluency Academy — o que foi estudado</label>
-      <input type="text" id="ci-fluency" placeholder="Ex: Unidade 3 — verbos de movimento, shadowing feito" title="Descreva resumidamente a unidade ou tema estudado na Fluency Academy.">
-    </div>
-
-    <div class="form-group">
-      <label>Drops — feito? (tempo e categorias)</label>
-      <input type="text" id="ci-drops" placeholder="Ex: 12 min, categorias: transporte e sentimentos" title="Informe quanto tempo dedicou ao Drops e quais categorias revisou.">
-    </div>
-
-    <div class="form-group">
-      <label>Escuta ativa (conteúdo e tempo)</label>
-      <input type="text" id="ci-escuta-ativa" placeholder="Ex: Dreaming Spanish 20 min, entendi umas 50%" title="Descreva o conteúdo e duração da sua escuta ativa (podcast, vídeo, etc.).">
-    </div>
-
-    <div class="form-group">
-      <label>Escuta no tempo morto / Uber (somente áudio)</label>
-      <!-- Updated placeholder to emphasize safe listening without manipulating the phone while driving -->
-      <input type="text" id="ci-escuta-morto" placeholder="Ex: 45 min de música em espanhol, shadowing (sem mexer no celular)" title="Anote o áudio ouvido durante deslocamentos, sem leitura ou manipulação do celular.">
-    </div>
-
-    <div class="form-group">
-      <label>Compreensão estimada (%)</label>
-      <div class="range-group">
-        <input type="range" id="ci-compreensao" min="0" max="100" value="40" title="Deslize para estimar o percentual de compreensão do conteúdo." oninput="document.getElementById('compr-val').textContent=this.value">
-        <div class="range-val" id="compr-val">40</div>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>Minutos de fala sem roteiro</label>
-      <input type="number" id="ci-fala" min="0" max="60" placeholder="Ex: 5" title="Quanto tempo você conseguiu falar em espanhol sem roteiro hoje.">
-    </div>
-
-    <div class="form-group">
-      <label>Dependência do portunhol</label>
-      <select id="ci-portuhol" title="Avalie seu nível de dependência do portunhol no dia.">
-        <option value="">Selecione...</option>
-        <option value="baixa">Baixa</option>
-        <option value="media">Média</option>
-        <option value="alta">Alta</option>
-      </select>
-    </div>
-
-    <!-- Campo adicional: criação de conteúdo em espanhol / YouTube -->
-    <div class="form-group">
-      <label>Criação de conteúdo em espanhol (opcional)</label>
-      <textarea id="ci-criacao" placeholder="Ex: Escrevi um roteiro, texto ou diário de 5 min em espanhol" title="Descreva qualquer conteúdo criado em espanhol (roteiro, texto, diário)."></textarea>
-    </div>
-
-    <div class="two-col">
-      <div class="form-group">
-        <label>Principal dificuldade</label>
-        <textarea id="ci-dificuldade" placeholder="Ex: Velocidade do áudio, vocabulário de sentimentos, pronúncia do RR..." title="Relate a maior dificuldade encontrada no estudo de hoje."></textarea>
-      </div>
-      <div class="form-group">
-        <label>Principal avanço</label>
-        <textarea id="ci-avanco" placeholder="Ex: Entendi um trecho inteiro sem pausar, usei 'sin embargo' espontaneamente..." title="Descreva o principal progresso ou conquista do dia."></textarea>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label>Energia e motivação (0–10)</label>
-      <div class="range-group">
-        <input type="range" id="ci-energia" min="0" max="10" value="7" title="Avalie sua energia e motivação de 0 a 10." oninput="document.getElementById('energ-val').textContent=this.value;updateEnergyColor(parseInt(this.value));">
-        <div class="range-val" id="energ-val">7</div>
-      </div>
-    </div>
-
-    <div style="display:flex; gap:10px; margin-top:8px;">
-      <!-- Botão para análise local baseada em regras JavaScript -->
-      <button class="btn btn-primary" onclick="analisarLocal()">Análise local</button>
-      <!-- Botão para análise avançada via IA usando backend (Cloudflare Worker). -->
-      <button class="btn btn-primary" onclick="analisarCheckinIA()">Análise IA</button>
-      <button class="btn btn-ghost" onclick="limparCheckin()">Limpar</button>
-      <button class="btn btn-ghost" onclick="salvarCheckin()">Salvar check-in</button>
-      <button class="btn btn-ghost" onclick="exportarCheckins()">Exportar JSON</button>
-    </div>
-  </div>
-
-  <div id="analysis-output" class="card"></div>
-
-</div>
-
-<!-- ===================== AVALIAÇÕES ===================== -->
-<div class="section" id="avaliacoes">
-
-  <div class="highlight">
-    <strong>Avaliações programadas:</strong> Dias 1, 25, 50, 75, 100, 125, 150, 175 e 200. Cada avaliação inclui teste auditivo, gravação oral, análise das métricas e <em>apenas um ajuste prioritário</em> para o ciclo seguinte.
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <span class="card-tag tag-info">ESTRUTURA</span>
-      <h2>O que cada avaliação contém</h2>
-    </div>
-    <ul class="item-list">
-      <li><span class="dot dot-accent"></span><strong>Teste auditivo:</strong> Trecho de áudio novo, estimativa de compreensão sem apoio</li>
-      <li><span class="dot dot-accent"></span><strong>Gravação oral:</strong> 2–5 min sobre tema proposto, comparada com a avaliação anterior</li>
-      <li><span class="dot dot-accent"></span><strong>Análise das métricas:</strong> Exposição acumulada, compreensão média, consistência, fala, portunhol</li>
-      <li><span class="dot dot-accent"></span><strong>Um ajuste prioritário:</strong> A única mudança metodológica do próximo ciclo — não reforma total</li>
-    </ul>
-  </div>
-
-  <div class="card">
-    <table>
-      <thead>
-        <tr>
-          <th>Dia</th>
-          <th>Fase</th>
-          <th>Foco da avaliação</th>
-          <th>Status</th>
-        </tr>
-      </thead>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="ev-table">
+      <thead><tr><th>Dia</th><th>Fase</th><th>Foco da avaliação</th><th>Status</th></tr></thead>
       <tbody>
-        <tr>
-          <td><strong>1</strong></td>
-          <td><span style="color:var(--phase1)">F1</span></td>
-          <td>Diagnóstico de entrada · gravação inicial · linha de base</td>
-          <td><span class="eval-status eval-pending">Pendente</span></td>
-        </tr>
-        <tr>
-          <td><strong>25</strong></td>
-          <td><span style="color:var(--phase1)">F1</span></td>
-          <td>Hábito formado? Sons sendo diferenciados? Portunhol reduzindo?</td>
-          <td><span class="eval-status eval-pending">Pendente</span></td>
-        </tr>
-        <tr>
-          <td><strong>50</strong></td>
-          <td><span style="color:var(--phase2)">F2</span></td>
-          <td>Vocabulário funcional ativo · compreensão 40–50%? · fala em frases</td>
-          <td><span class="eval-status eval-pending">Pendente</span></td>
-        </tr>
-        <tr>
-          <td><strong>75</strong></td>
-          <td><span style="color:var(--phase2)">F2</span></td>
-          <td>Frases maiores · contornar palavras desconhecidas · 3 min de fala</td>
-          <td><span class="eval-status eval-pending">Pendente</span></td>
-        </tr>
-        <tr>
-          <td><strong>100</strong></td>
-          <td><span style="color:var(--phase3)">F3</span></td>
-          <td>Metade do caminho · compreensão 55–65% · pausas reduzidas</td>
-          <td><span class="eval-status eval-pending">Pendente</span></td>
-        </tr>
-        <tr>
-          <td><strong>125</strong></td>
-          <td><span style="color:var(--phase3)">F3</span></td>
-          <td>Input natural sem legenda em trechos · resumos orais funcionando</td>
-          <td><span class="eval-status eval-pending">Pendente</span></td>
-        </tr>
-        <tr>
-          <td><strong>150</strong></td>
-          <td><span style="color:var(--phase4)">F4</span></td>
-          <td>Comunicação real possível · 70–75% compreensão · fala 5–8 min</td>
-          <td><span class="eval-status eval-pending">Pendente</span></td>
-        </tr>
-        <tr>
-          <td><strong>175</strong></td>
-          <td><span style="color:var(--phase4)">F4</span></td>
-          <td>Autonomia comunicativa consolidada · mínima dependência de tradução</td>
-          <td><span class="eval-status eval-pending">Pendente</span></td>
-        </tr>
-        <tr>
-          <td><strong>200</strong></td>
-          <td><span style="color:var(--phase5)">F5</span></td>
-          <td>Avaliação final · domínio funcional geral · plano de manutenção</td>
-          <td><span class="eval-status eval-pending">Pendente</span></td>
-        </tr>
+        <tr><td><strong>1</strong></td><td style="color:var(--p1)">F1</td><td>Diagnóstico de entrada · gravação inicial · linha de base</td><td><span class="ev-pill ev-pend">Pendente</span></td></tr>
+        <tr><td><strong>25</strong></td><td style="color:var(--p1)">F1</td><td>Hábito formado? Sons sendo diferenciados? Portunhol reduzindo?</td><td><span class="ev-pill ev-pend">Pendente</span></td></tr>
+        <tr><td><strong>50</strong></td><td style="color:var(--p2)">F2</td><td>Vocabulário funcional ativo · compreensão 40–50%? · fala em frases</td><td><span class="ev-pill ev-pend">Pendente</span></td></tr>
+        <tr><td><strong>75</strong></td><td style="color:var(--p2)">F2</td><td>Frases maiores · contornar palavras desconhecidas · 3 min de fala</td><td><span class="ev-pill ev-pend">Pendente</span></td></tr>
+        <tr><td><strong>100</strong></td><td style="color:var(--p3)">F3</td><td>Metade do caminho · compreensão 55–65% · pausas reduzidas</td><td><span class="ev-pill ev-pend">Pendente</span></td></tr>
+        <tr><td><strong>125</strong></td><td style="color:var(--p3)">F3</td><td>Input natural sem legenda em trechos · resumos orais funcionando</td><td><span class="ev-pill ev-pend">Pendente</span></td></tr>
+        <tr><td><strong>150</strong></td><td style="color:var(--p4)">F4</td><td>Comunicação real possível · 70–75% compreensão · fala 5–8 min</td><td><span class="ev-pill ev-pend">Pendente</span></td></tr>
+        <tr><td><strong>175</strong></td><td style="color:var(--p4)">F4</td><td>Autonomia comunicativa consolidada · mínima dependência de tradução</td><td><span class="ev-pill ev-pend">Pendente</span></td></tr>
+        <tr><td><strong>200</strong></td><td style="color:var(--p5)">F5</td><td>Avaliação final · domínio funcional geral · plano de manutenção</td><td><span class="ev-pill ev-pend">Pendente</span></td></tr>
       </tbody>
     </table>
   </div>
 
   <div class="card">
-    <h3>Marcos do programa</h3>
-    <div class="milestone">
-      <div class="milestone-day" style="color:var(--phase1)">D1</div>
-      <div class="milestone-content">
-        <h4>Diagnóstico + Gravação Zero</h4>
-        <p>Registro da linha de base: compreensão estimada, apresentação pessoal em espanhol, inventário de portunhol frequente</p>
-      </div>
-    </div>
-    <div class="milestone">
-      <div class="milestone-day" style="color:var(--phase1)">D40</div>
-      <div class="milestone-content">
-        <h4>Sons internalizados</h4>
-        <p>Reconhecer os sons característicos do espanhol. Não pronunciar como português. Falar sem portunhol em frases simples.</p>
-      </div>
-    </div>
-    <div class="milestone">
-      <div class="milestone-day" style="color:var(--phase2)">D80</div>
-      <div class="milestone-content">
-        <h4>Vocabulário funcional ativo</h4>
-        <p>500+ palavras ativas. Falar 3–5 min sobre temas conhecidos. Dependência do portunhol baixa consistentemente.</p>
-      </div>
-    </div>
-    <div class="milestone">
-      <div class="milestone-day" style="color:var(--phase3)">D120</div>
-      <div class="milestone-content">
-        <h4>Processamento automático</h4>
-        <p>Entender sem traduzir. Falar 5+ min sem roteiro. Pausas mínimas. Começar a consumir conteúdo nativo com algum conforto.</p>
-      </div>
-    </div>
-    <div class="milestone">
-      <div class="milestone-day" style="color:var(--phase4)">D160</div>
-      <div class="milestone-content">
-        <h4>Comunicação real</h4>
-        <p>Interação funcional com falantes nativos. Conteúdo nativo compreensível. Fala espontânea sobre qualquer tema.</p>
-      </div>
-    </div>
-    <div class="milestone">
-      <div class="milestone-day" style="color:var(--phase5)">D200</div>
-      <div class="milestone-content">
-        <h4>Domínio funcional geral (B1–B2)</h4>
-        <p>Objetivo cumprido. Espanhol autônomo. Portunhol eliminado. Plano de manutenção definido.</p>
-      </div>
+    <div class="card-title" style="margin-bottom:20px">Marcos do programa</div>
+    <div class="tl">
+      <div class="tl-item"><div class="tl-dot" style="background:var(--p1)"></div><div class="tl-day" style="color:var(--p1)">D1</div><div><div class="tl-h">Diagnóstico + Gravação Zero</div><p class="tl-p">Linha de base: compreensão estimada, apresentação pessoal em espanhol, inventário de portunhol frequente</p></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--p1)"></div><div class="tl-day" style="color:var(--p1)">D40</div><div><div class="tl-h">Sons internalizados</div><p class="tl-p">Reconhecer sons do espanhol. Não pronunciar como português. Falar sem portunhol em frases simples.</p></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--p2)"></div><div class="tl-day" style="color:var(--p2)">D80</div><div><div class="tl-h">Vocabulário funcional ativo</div><p class="tl-p">500+ palavras ativas. Falar 3–5 min sobre temas conhecidos. Dependência do portunhol baixa consistentemente.</p></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--p3)"></div><div class="tl-day" style="color:var(--p3)">D120</div><div><div class="tl-h">Processamento automático</div><p class="tl-p">Entender sem traduzir. Falar 5+ min sem roteiro. Pausas mínimas. Consumir conteúdo nativo com conforto.</p></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--p4)"></div><div class="tl-day" style="color:var(--p4)">D160</div><div><div class="tl-h">Comunicação real</div><p class="tl-p">Interação funcional com falantes nativos. Fala espontânea sobre qualquer tema.</p></div></div>
+      <div class="tl-item"><div class="tl-dot" style="background:var(--p5)"></div><div class="tl-day" style="color:var(--p5)">D200</div><div><div class="tl-h">Domínio funcional geral (B1–B2)</div><p class="tl-p">Objetivo cumprido. Espanhol autônomo. Portunhol eliminado. Plano de manutenção definido.</p></div></div>
     </div>
   </div>
-
 </div>
 
-<!-- ===================== MÉTRICAS ===================== -->
-<div class="section" id="metricas">
+<!-- ─── MÉTRICAS ─────────────────────────────────── -->
+<div class="pg inner" id="metricas">
+  <div class="pg-h"><div class="pg-title">Métricas</div><div class="pg-sub">3 métricas principais + 5 secundárias para acompanhar a evolução.</div></div>
 
-  <div class="two-col">
-    <div class="card">
-      <h3>Métricas Principais</h3>
-      <ul class="item-list">
-        <li><span class="dot dot-accent"></span>
-          <div><strong>Tempo de exposição</strong><br><span style="color:var(--muted);font-size:12px">Acumulado semanal + diário. Meta: 6–10h/semana.</span></div>
-        </li>
-        <li><span class="dot dot-accent"></span>
-          <div><strong>Compreensão estimada</strong><br><span style="color:var(--muted);font-size:12px">% estimada no check-in. Meta: crescimento progressivo de 30% → 80%.</span></div>
-        </li>
-        <li><span class="dot dot-accent"></span>
-          <div><strong>Consistência semanal</strong><br><span style="color:var(--muted);font-size:12px">Dias com algum estudo / 7. Meta: mínimo 5/7 (sessão mínima conta).</span></div>
-        </li>
-      </ul>
-    </div>
-    <div class="card">
-      <h3>Métricas Secundárias</h3>
-      <ul class="item-list">
-        <li><span class="dot dot-phase1"></span><div><strong>Minutos de fala sem roteiro</strong><br><span style="color:var(--muted);font-size:12px">Registrado no check-in. Meta F1: 2 min → F5: 10+ min.</span></div></li>
-        <li><span class="dot dot-phase1"></span><div><strong>Dependência do português</strong><br><span style="color:var(--muted);font-size:12px">Alta / Média / Baixa. Meta: baixa a partir do Dia 80.</span></div></li>
-        <li><span class="dot dot-phase1"></span><div><strong>Quantidade de pausas</strong><br><span style="color:var(--muted);font-size:12px">Subjetivo na gravação oral. Percepção de fluidez.</span></div></li>
-        <li><span class="dot dot-phase1"></span><div><strong>Capacidade de contornar</strong><br><span style="color:var(--muted);font-size:12px">Usa paráfrase ou contexto em vez de travar? 0–5.</span></div></li>
-        <li><span class="dot dot-phase1"></span><div><strong>Expressões reutilizadas</strong><br><span style="color:var(--muted);font-size:12px">Quantas expressões aprendidas usou espontaneamente esta semana.</span></div></li>
-      </ul>
-    </div>
+  <div class="card">
+    <div class="card-row"><span class="tag tg">Principais</span><div class="card-title">3 métricas centrais</div></div>
+    <div class="mrow"><div class="mrow-lbl"><strong>Tempo de exposição</strong><small>Acumulado semanal + diário · Meta: 6–10h / semana</small></div><div class="mrow-track"><div class="mrow-fill" style="width:70%;background:var(--gold)"></div></div><div class="mrow-target">6–10h/sem</div></div>
+    <div class="mrow"><div class="mrow-lbl"><strong>Compreensão estimada</strong><small>Crescimento 30% → 80%</small></div><div class="mrow-track"><div class="mrow-fill" style="width:40%;background:var(--p1)"></div></div><div class="mrow-target">30→80%</div></div>
+    <div class="mrow"><div class="mrow-lbl"><strong>Consistência semanal</strong><small>Meta: mínimo 5/7 dias</small></div><div class="mrow-track"><div class="mrow-fill" style="width:71%;background:var(--p3)"></div></div><div class="mrow-target">5/7 dias</div></div>
   </div>
 
   <div class="card">
-    <h3>Metas progressivas de compreensão auditiva</h3>
-    <div class="grid-3" style="margin-top:4px;">
-      <div class="metric-stat"><div class="metric-val" style="color:var(--phase1)">30–40%</div><div class="metric-label">Dia 40 (F1)</div></div>
-      <div class="metric-stat"><div class="metric-val" style="color:var(--phase2)">50–60%</div><div class="metric-label">Dia 80 (F2)</div></div>
-      <div class="metric-stat"><div class="metric-val" style="color:var(--phase3)">65–70%</div><div class="metric-label">Dia 120 (F3)</div></div>
-      <div class="metric-stat"><div class="metric-val" style="color:var(--phase4)">75–80%</div><div class="metric-label">Dia 160 (F4)</div></div>
-      <div class="metric-stat"><div class="metric-val" style="color:var(--phase5)">80–85%</div><div class="metric-label">Dia 200 (F5)</div></div>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Critérios de avanço, revisão e ajuste</h3>
-    <ul class="item-list">
-      <li><span class="dot dot-phase3"></span><strong>Avançar para próxima fase:</strong> Atingir meta de compreensão + consistência ≥5/7 por 2 semanas seguidas + marco de fala atingido</li>
-      <li><span class="dot dot-warn"></span><strong>Revisar:</strong> Compreensão estagnada por 2+ semanas → reduzir dificuldade, revisar protocolo Fluency, adicionar conteúdo familiar</li>
-      <li><span class="dot dot-phase4"></span><strong>Simplificar:</strong> Consistência caindo (&lt;4/7 por semana) → reduzir exigência, focar em sessão mínima até retomar ritmo</li>
-      <li><span class="dot dot-phase1"></span><strong>Aumentar dificuldade:</strong> Compreensão consistentemente &gt;75% por 10+ dias → retirar apoios, introduzir conteúdo nativo mais veloz</li>
+    <div class="card-row"><span class="tag t1">Secundárias</span><div class="card-title">5 métricas de apoio</div></div>
+    <ul class="ilist">
+      <li><span class="dot d1"></span><div><strong>Minutos de fala sem roteiro</strong><br><span style="color:var(--tx2);font-size:12px">Meta F1: 2 min → F5: 10+ min</span></div></li>
+      <li><span class="dot d1"></span><div><strong>Dependência do português</strong><br><span style="color:var(--tx2);font-size:12px">Alta/Média/Baixa. Meta: baixa a partir do Dia 80</span></div></li>
+      <li><span class="dot d1"></span><div><strong>Quantidade de pausas</strong><br><span style="color:var(--tx2);font-size:12px">Subjetivo na gravação oral. Percepção de fluidez</span></div></li>
+      <li><span class="dot d1"></span><div><strong>Capacidade de contornar</strong><br><span style="color:var(--tx2);font-size:12px">Usa paráfrase ou contexto em vez de travar? 0–5</span></div></li>
+      <li><span class="dot d1"></span><div><strong>Expressões reutilizadas</strong><br><span style="color:var(--tx2);font-size:12px">Quantas expressões aprendidas usou espontaneamente esta semana</span></div></li>
     </ul>
   </div>
 
+  <div class="card">
+    <div class="card-title" style="margin-bottom:14px">Metas de compreensão por fase</div>
+    <div class="g5">
+      <div class="stat"><div class="stat-v" style="color:var(--p1)">30–40%</div><div class="stat-l">Dia 40 (F1)</div></div>
+      <div class="stat"><div class="stat-v" style="color:var(--p2)">50–60%</div><div class="stat-l">Dia 80 (F2)</div></div>
+      <div class="stat"><div class="stat-v" style="color:var(--p3)">65–70%</div><div class="stat-l">Dia 120 (F3)</div></div>
+      <div class="stat"><div class="stat-v" style="color:var(--p4)">75–80%</div><div class="stat-l">Dia 160 (F4)</div></div>
+      <div class="stat"><div class="stat-v" style="color:var(--p5)">80–85%</div><div class="stat-l">Dia 200 (F5)</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" style="margin-bottom:12px">Critérios de avanço, revisão e ajuste</div>
+    <ul class="ilist">
+      <li><span class="dot d3"></span><div><strong>Avançar:</strong> Meta de compreensão atingida + consistência ≥5/7 por 2 semanas + marco de fala atingido</div></li>
+      <li><span class="dot dg"></span><div><strong>Revisar:</strong> Compreensão estagnada por 2+ semanas → reduzir dificuldade, revisar protocolo Fluency, adicionar conteúdo familiar</div></li>
+      <li><span class="dot d4"></span><div><strong>Simplificar:</strong> Consistência &lt;4/7 por semana → reduzir exigência, focar em sessão mínima até retomar ritmo</div></li>
+      <li><span class="dot d1"></span><div><strong>Aumentar dificuldade:</strong> Compreensão &gt;75% por 10+ dias → retirar apoios, introduzir conteúdo nativo mais veloz</div></li>
+    </ul>
+  </div>
 </div>
 
-<!-- ===================== EXTRAS ===================== -->
-<div class="section" id="extras">
+<!-- ─── EXTRAS ───────────────────────────────────── -->
+<div class="pg inner" id="extras">
+  <div class="pg-h"><div class="pg-title">Recursos Adicionais</div><div class="pg-sub">Ferramentas, canais e projetos para complementar o aprendizado.</div></div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-tag tag-info">RECURSOS</span>
-      <h2>Recursos adicionais</h2>
-    </div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">Aqui estão sugestões de conteúdos e ferramentas para complementar seu aprendizado e integrar sua profissão de criador de conteúdo.</p>
-    <ul class="item-list">
-      <li><span class="dot dot-phase1"></span><div><strong>Canais de YouTube (aprendizagem):</strong><br><span style="color:var(--muted); font-size:12px">Dreaming Spanish, Español con Juan, Easy Spanish, Why Not Spanish, Butterfly Spanish — todos com abordagens de input compreensível.</span></div></li>
-      <li><span class="dot dot-phase1"></span><div><strong>Canais de cultura pop:</strong><br><span style="color:var(--muted); font-size:12px">Visita canais de resenhas de filmes, música e games em espanhol para manter o interesse alinhado com seus hobbies.</span></div></li>
-      <li><span class="dot dot-phase1"></span><div><strong>Ferramentas de pronúncia:</strong><br><span style="color:var(--muted); font-size:12px">Use WordReference para definições e Forvo/YouGlish para ouvir pronúncia de palavras em diferentes sotaques.</span></div></li>
-      <li><span class="dot dot-phase1"></span><div><strong>Troca de idiomas:</strong><br><span style="color:var(--muted); font-size:12px">Apps como Tandem e HelloTalk conectam você com falantes nativos para praticar conversação.</span></div></li>
-      <li><span class="dot dot-phase1"></span><div><strong>Inspiração para criação:</strong><br><span style="color:var(--muted); font-size:12px">Assista a vlogs, entrevistas e documentários em espanhol para analisar estilos de narrativa e edição.</span></div></li>
+    <div class="card-row"><span class="tag t1">YouTube</span><div class="card-title">Canais de input compreensível</div></div>
+    <ul class="ilist">
+      <li><span class="dot d1"></span><div><strong>Dreaming Spanish</strong> — input compreensível em vários níveis, ideal para Fase 1 em diante</div></li>
+      <li><span class="dot d1"></span><div><strong>Español con Juan</strong> — estruturado, excelente para Fase 2</div></li>
+      <li><span class="dot d1"></span><div><strong>Easy Spanish</strong> — entrevistas na rua, sotaques variados, muito natural</div></li>
+      <li><span class="dot d1"></span><div><strong>Why Not Spanish / Butterfly Spanish</strong> — explicações claras para dúvidas pontuais</div></li>
+      <li><span class="dot d1"></span><div><strong>Canais de cultura pop</strong> — resenhas de filmes, música e games em espanhol</div></li>
+      <li><span class="dot d1"></span><div><strong>Inspiração para criação</strong> — vlogs, entrevistas e documentários em espanhol para analisar estilos de narrativa e edição</div></li>
     </ul>
   </div>
 
   <div class="card">
-    <div class="card-header">
-      <span class="card-tag tag-ok">CRIAÇÃO</span>
-      <h2>Ideias de projetos em espanhol</h2>
-    </div>
-    <p style="font-size:13px; color:var(--muted); margin-bottom:16px;">Para incorporar sua profissão de youtuber ao plano, sugerimos projetos pequenos para praticar roteiro e fala.</p>
-    <ul class="item-list">
-      <li><span class="dot dot-phase3"></span>Criar uma apresentação pessoal em espanhol (texto ou áudio de 1–2 min) na Fase 2.</li>
-      <li><span class="dot dot-phase3"></span>Fazer um comentário ou react em espanhol a um clipe musical ou trailer de filme durante a Fase 3 (pode ser apenas gravação de áudio).</li>
-      <li><span class="dot dot-phase3"></span>Escrever um roteiro ou texto curto em espanhol sobre um tema do seu interesse (3–5 min) na Fase 4 e, se desejar, narrar em áudio.</li>
-      <li><span class="dot dot-phase3"></span>Criar um mini-relato ou tutorial em espanhol na Fase 5 para consolidar a fluência (gravação opcional em vídeo ou áudio).</li>
-      <li><span class="dot dot-phase3"></span>Refletir no check-in sobre o processo de criação: dificuldades, acertos e planos de melhoria.</li>
+    <div class="card-row"><span class="tag t3">Ferramentas</span><div class="card-title">Pronúncia e interação</div></div>
+    <ul class="ilist">
+      <li><span class="dot d3"></span><div><strong>Forvo / YouGlish</strong> — ouvir pronúncia em diferentes sotaques</div></li>
+      <li><span class="dot d3"></span><div><strong>WordReference</strong> — definições, usos, foros de dúvidas reais</div></li>
+      <li><span class="dot d3"></span><div><strong>Tandem / HelloTalk</strong> — troca de idiomas com falantes nativos (Fase 4+)</div></li>
     </ul>
   </div>
 
+  <div class="card">
+    <div class="card-row"><span class="tag t2">Projetos</span><div class="card-title">Criação de conteúdo em espanhol</div></div>
+    <p class="card-sub">Projetos pequenos para integrar o canal ao aprendizado:</p>
+    <ul class="ilist">
+      <li><span class="dot d2"></span><div><strong>Fase 2:</strong> Apresentação pessoal em espanhol — texto ou áudio de 1–2 min</div></li>
+      <li><span class="dot d2"></span><div><strong>Fase 3:</strong> React ou comentário em espanhol a um clipe musical ou trailer (gravação de áudio)</div></li>
+      <li><span class="dot d2"></span><div><strong>Fase 4:</strong> Roteiro ou texto curto de 3–5 min sobre tema do seu interesse</div></li>
+      <li><span class="dot d2"></span><div><strong>Fase 5:</strong> Mini-relato ou tutorial completo — gravação de vídeo ou áudio</div></li>
+      <li><span class="dot d2"></span><div><strong>Check-in:</strong> Registrar dificuldades e acertos do processo de criação em cada check-in</div></li>
+    </ul>
+  </div>
 </div>
 
 </main>
+</div><!-- /shell-body -->
+</div><!-- /app -->
+
+<div id="toast"></div>
 
 <script>
-// Defina o endpoint do seu backend (Cloudflare Worker) que fará a chamada à IA.
-// Altere esta URL para o endereço do Worker que você implantar.
-const ANALISE_API_URL = 'https://seu-worker-exemplo.workers.dev/analisar';
-// ===================== TAB SYSTEM =====================
-function switchTab(id) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  // Lista de seções e abas em ordem (adicionado 'extras')
-  const tabs = ['visao','fases','rotinas','metodo','checkin','avaliacoes','metricas','extras'];
-  const tabEls = document.querySelectorAll('.tab');
-  const idx = tabs.indexOf(id);
-  if (idx >= 0) tabEls[idx].classList.add('active');
+'use strict';
+
+// ─── CONFIGURA AQUI o endpoint do Cloudflare Worker ───────
+const WORKER_URL = 'https://seu-worker.workers.dev/analisar';
+
+// ─── NAVEGAÇÃO ─────────────────────────────────────────────
+function go(id, btn) {
+  document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.s-item').forEach(s => s.classList.remove('on'));
+  document.getElementById(id).classList.add('on');
+  if (btn) btn.classList.add('on');
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('content').scrollTo(0, 0);
 }
 
-// ===================== PROGRESS DAY =====================
-function updateDay(day) {
-  const pct = Math.max(0.5, (day / 200) * 100);
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('current-day-badge').textContent = 'DIA ' + day + '/200';
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
 }
 
-document.getElementById('ci-dia').addEventListener('input', function() {
-  updateDay(parseInt(this.value) || 1);
+document.getElementById('content').addEventListener('click', function() {
+  if (window.innerWidth <= 768)
+    document.getElementById('sidebar').classList.remove('open');
 });
 
-// ===================== CHECK-IN ANALYSIS (IA via backend) =====================
-async function analisarCheckinIA() {
-  const dia = document.getElementById('ci-dia').value;
-  const sessao = document.getElementById('ci-sessao').value;
-  const tipoDia = document.getElementById('ci-tipo-dia').value;
-  const fluency = document.getElementById('ci-fluency').value;
-  const drops = document.getElementById('ci-drops').value;
-  const escutaAtiva = document.getElementById('ci-escuta-ativa').value;
-  const escutaMorto = document.getElementById('ci-escuta-morto').value;
-  const compreensao = document.getElementById('ci-compreensao').value;
-  const fala = document.getElementById('ci-fala').value;
-  const portuhol = document.getElementById('ci-portuhol').value;
-  const dificuldade = document.getElementById('ci-dificuldade').value;
-  const avanco = document.getElementById('ci-avanco').value;
-  const energia = document.getElementById('ci-energia').value;
+// ─── ACCORDIONS ────────────────────────────────────────────
+function toggleAcc(el) { el.classList.toggle('open'); }
+function toggleRot(el) { el.classList.toggle('open'); }
 
-  // Campo opcional: criação de conteúdo em espanhol
-  const criacao = document.getElementById('ci-criacao')?.value || '';
+// ─── DIA + PROGRESS PIPS ───────────────────────────────────
+function onDayChange(val) {
+  const day = Math.min(200, Math.max(1, parseInt(val) || 1));
+  document.getElementById('day-badge').textContent = 'DIA ' + day + ' / 200';
+  const phase = day <= 40 ? 1 : day <= 80 ? 2 : day <= 120 ? 3 : day <= 160 ? 4 : 5;
+  document.querySelectorAll('.t-pip').forEach(pip => {
+    pip.classList.toggle('dim', parseInt(pip.dataset.p) > phase);
+  });
+}
 
-  const output = document.getElementById('analysis-output');
-  output.classList.add('visible');
-  output.innerHTML = `<div style="color:var(--muted); font-family:'Space Mono', monospace; font-size:12px;">analisando check-in<span class="loading-dots"></span></div>`;
+// ─── RANGE FILL ────────────────────────────────────────────
+function updateRange(el, labelId, suffix) {
+  const pct = ((el.value - el.min) / (el.max - el.min)) * 100;
+  el.style.backgroundSize = pct + '% 100%';
+  document.getElementById(labelId).textContent = el.value + suffix;
+}
 
-  // Determinar fase atual
-  let fase = 1;
-  if (dia >= 41 && dia <= 80) fase = 2;
-  else if (dia >= 81 && dia <= 120) fase = 3;
-  else if (dia >= 121 && dia <= 160) fase = 4;
-  else if (dia >= 161) fase = 5;
+function initRanges() {
+  document.querySelectorAll('input[type="range"]').forEach(r => {
+    const pct = ((r.value - r.min) / (r.max - r.min)) * 100;
+    r.style.backgroundSize = pct + '% 100%';
+  });
+}
 
-  const prompt = `Você é o agente de acompanhamento do plano de espanhol de 200 dias. Analise este check-in e forneça uma resposta estruturada em PT-BR.
+// ─── TOAST ─────────────────────────────────────────────────
+function toast(msg, type) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'show ' + (type || 'ok');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(function() { t.className = ''; }, 3000);
+}
 
-CONTEXTO DO PLANO:
-- Iniciante com portunhol. Meta: domínio funcional geral ao Dia 200.
-- Ferramentas: Fluency Academy (espinha dorsal), Drops (vocabulário), escuta no Uber (input extensivo seguro).
-- Escala de trabalho: 24h serviço / 72h folga.
-- Fases: F1 D1-40 (fundação sonora), F2 D41-80 (vocabulário funcional), F3 D81-120 (fluência progressiva), F4 D121-160 (autonomia comunicativa), F5 D161-200 (consolidação).
-- Metas de compreensão: F1→30-40%, F2→50-60%, F3→65-70%, F4→75-80%.
-- Módulo permanente: desportuguesização (sons, falsos cognatos, portunhol).
-- Princípio: preservar continuidade. Nunca mudar toda a metodologia por um dia ruim.
-- Sessões: completa (90-120min, dias de folga recuperado), padrão (60-75min), mínima (25-35min, plantão/pós-plantão).
+// ─── COLETA DO FORM ────────────────────────────────────────
+function collectForm() {
+  return {
+    dia:         parseInt(document.getElementById('ci-dia').value) || 1,
+    sessao:      document.getElementById('ci-sessao').value,
+    tipoDia:     document.getElementById('ci-tipo-dia').value,
+    fluency:     document.getElementById('ci-fluency').value,
+    drops:       document.getElementById('ci-drops').value,
+    escutaAtiva: document.getElementById('ci-escuta-ativa').value,
+    escutaMorto: document.getElementById('ci-escuta-morto').value,
+    criacao:     document.getElementById('ci-criacao').value,
+    compreensao: parseInt(document.getElementById('ci-compreensao').value) || 0,
+    fala:        parseInt(document.getElementById('ci-fala').value) || 0,
+    portuhol:    document.getElementById('ci-portuhol').value,
+    dificuldade: document.getElementById('ci-dificuldade').value,
+    avanco:      document.getElementById('ci-avanco').value,
+    energia:     parseInt(document.getElementById('ci-energia').value) || 0
+  };
+}
 
-CHECK-IN — DIA ${dia}/200:
-Fase atual: ${fase}
-Tipo de dia: ${tipoDia}
-Tipo de sessão: ${sessao}
-Fluency Academy: ${fluency || 'não informado'}
-Drops: ${drops || 'não informado'}
-Escuta ativa: ${escutaAtiva || 'não realizada'}
-Escuta tempo morto / Uber: ${escutaMorto || 'não informado'}
-Compreensão estimada: ${compreensao}%
-Minutos de fala sem roteiro: ${fala || 0} min
-Dependência do portunhol: ${portuhol}
- Criação de conteúdo: ${criacao || 'não informado'}
-Principal dificuldade: ${dificuldade || 'não informado'}
-Principal avanço: ${avanco || 'não informado'}
-Energia e motivação: ${energia}/10
+// ─── ANÁLISE LOCAL (regras JS) ─────────────────────────────
+function analisarLocal() {
+  var f = collectForm();
+  var fase = f.dia <= 40 ? 1 : f.dia <= 80 ? 2 : f.dia <= 120 ? 3 : f.dia <= 160 ? 4 : 5;
+  var compMeta = {1:{min:30,max:40},2:{min:50,max:60},3:{min:65,max:70},4:{min:75,max:80},5:{min:80,max:85}};
+  var talkMeta = {1:2,2:3,3:4,4:5,5:6};
+  var faseFocus = {1:'familiarizar-se com sons e pronúncia básicos',2:'construir vocabulário funcional e frases de sobrevivência',3:'conectar blocos de linguagem e aumentar a fluência',4:'narrar experiências no passado, presente e futuro',5:'consolidar o conhecimento e ganhar autonomia com conteúdos autênticos'};
+  var sessaoMap = {completa:'completa',padrao:'padrão',minima:'mínima',zero:'sem estudo'};
+  var diaMap = {'folga-ok':'folga recuperada','folga-cansado':'folga cansado','pos-plantao':'pós-plantão','plantao':'plantão'};
+  var dayRec = {'plantao':'minima','pos-plantao':'minima','folga-cansado':'padrao','folga-ok':'completa'};
+  var meta = compMeta[fase];
+  var falaMeta = talkMeta[fase];
 
-Responda com estas seções exatas, sem markdown, sem asteriscos, sem emojis:
+  var diag = 'Hoje foi um dia de ' + (diaMap[f.tipoDia]||'tipo não informado') + ' e você escolheu uma sessão ' + (sessaoMap[f.sessao]||'não informada') + '.';
+  var exp = dayRec[f.tipoDia];
+  if (exp && f.sessao && f.sessao !== exp) diag += ' A sessão não está alinhada com a recomendação para esse tipo de dia (o ideal seria ' + (sessaoMap[exp]||exp) + ').';
+  diag += ' Você está na Fase ' + fase + ', cujo foco é ' + faseFocus[fase] + '.';
 
-DIAGNÓSTICO DO DIA
-[2-3 frases avaliando o dia: sessão adequada para o tipo de dia, coerência com a fase, destaques]
+  var metr = 'Compreensão: ' + f.compreensao + '% (meta ' + meta.min + '–' + meta.max + '%). ';
+  metr += f.compreensao < meta.min ? 'Abaixo do mínimo previsto para a fase.' : f.compreensao > meta.max ? 'Acima do limite — ótimo!' : 'Dentro da faixa ideal.';
+  metr += ' Fala: ' + f.fala + ' min (meta ≥' + falaMeta + ' min). ';
+  metr += f.fala < falaMeta ? 'Ampliar a prática oral.' : 'Tempo adequado.';
+  if (f.portuhol) metr += ' Portunhol: ' + f.portuhol + '.';
 
-MÉTRICAS EM FOCO
-[Compreensão vs meta da fase atual. Fala vs meta. Consistência do portunhol. O que está progredindo.]
+  var alrt = '';
+  if (f.compreensao < meta.min) alrt += 'Compreensão abaixo da meta — reveja materiais mais simples e repita diálogos. ';
+  if (f.fala < falaMeta) alrt += 'Tempo de fala abaixo do esperado — dedique minutos extras para narrar a rotina ou fazer shadowing. ';
+  if (f.portuhol === 'alta' || f.portuhol === 'media') alrt += 'Dependência de portunhol perceptível — pratique desportuguesização, imite sons específicos, evite falsos cognatos. ';
+  if (!alrt) alrt = 'Todos os parâmetros principais dentro do esperado. Continue com as técnicas atuais e mantenha a consistência.';
 
-ALERTA OU REFORÇO
-[SE houver algo que exige atenção: um alerta específico e acionável. SE estiver tudo bem: reforço do que está funcionando.]
+  var ajuste = '';
+  if (f.compreensao < meta.min) ajuste = 'Repita aulas ou áudios que já estudou até atingir ao menos ' + meta.min + '% de compreensão. Reduza velocidade ou use legendas em espanhol.';
+  else if (f.fala < falaMeta) ajuste = 'Inclua ' + Math.max(1, falaMeta - f.fala) + ' min extra de fala sem roteiro — grave áudios ou pratique shadowing.';
+  else if (f.portuhol === 'alta' || f.portuhol === 'media') ajuste = 'Priorize exercícios de pronúncia e atenção a falsos cognatos para reduzir a influência do português.';
+  else ajuste = 'Mantenha o ritmo e consolide o vocabulário e estruturas já aprendidos.';
 
-AJUSTE PRIORITÁRIO
-[Apenas UMA coisa para focar amanhã ou no próximo ciclo. Específica e simples.]
+  var prox = 'Adapte a sessão ao cronograma: plantão/pós-plantão → mínima; folga → completa ou padrão conforme energia.';
+  if (f.compreensao < meta.min) prox += ' Priorize conteúdos já estudados até ganhar confiança.';
+  else if (f.fala < falaMeta) prox += ' Reserve minutos extras para falar em voz alta sobre sua rotina.';
+  else if (f.portuhol === 'alta' || f.portuhol === 'media') prox += ' Trabalhe expressões autênticas sem traduzir palavra por palavra.';
+  else prox += ' Avance nas aulas da Fluency Academy e varie o input com músicas, séries e podcasts de interesse.';
 
-PRÓXIMO DIA
-[Recomendação concreta: que tipo de sessão fazer, qual conteúdo priorizar, se deve avançar ou revisar.]
+  renderAnalysis([
+    {label:'DIAGNÓSTICO DO DIA', text:diag},
+    {label:'MÉTRICAS EM FOCO',   text:metr},
+    {label:'ALERTA OU REFORÇO',  text:alrt.trim()},
+    {label:'AJUSTE PRIORITÁRIO', text:ajuste},
+    {label:'PRÓXIMO DIA',        text:prox}
+  ]);
+}
 
-Seja direto, analítico, sem elogios excessivos. Tom técnico e orientado a resultados.`;
+// ─── ANÁLISE IA (Cloudflare Worker) ───────────────────────
+async function analisarIA() {
+  var f = collectForm();
+  var fase = f.dia <= 40 ? 1 : f.dia <= 80 ? 2 : f.dia <= 120 ? 3 : f.dia <= 160 ? 4 : 5;
+  var out = document.getElementById('analysis-out');
+  out.classList.add('vis');
+  out.innerHTML = '<div class="ao-loading">Analisando check-in</div>';
+  var btn = document.getElementById('btn-ia');
+  btn.disabled = true;
+
+  var prompt = 'Você é o agente de acompanhamento do plano de espanhol de 200 dias. Analise este check-in em PT-BR.\n\nCONTEXTO:\n- Iniciante com portunhol. Meta: domínio funcional geral ao Dia 200.\n- Fluency Academy (espinha dorsal), Drops (vocabulário), escuta no Uber (input extensivo).\n- Escala: 24h serviço / 72h folga.\n- F1 D1-40, F2 D41-80, F3 D81-120, F4 D121-160, F5 D161-200.\n- Metas compreensão: F1→30-40%, F2→50-60%, F3→65-70%, F4→75-80%.\n- Princípio: preservar continuidade. Nunca mudar toda a metodologia por um dia ruim.\n\nCHECK-IN DIA ' + f.dia + '/200 (Fase ' + fase + '):\nTipo dia: ' + (f.tipoDia||'nd') + '\nSessão: ' + (f.sessao||'nd') + '\nFluency: ' + (f.fluency||'nd') + '\nDrops: ' + (f.drops||'nd') + '\nEscuta ativa: ' + (f.escutaAtiva||'nd') + '\nEscuta Uber: ' + (f.escutaMorto||'nd') + '\nCriação: ' + (f.criacao||'nd') + '\nCompreensão: ' + f.compreensao + '%\nFala: ' + f.fala + ' min\nPortunhol: ' + (f.portuhol||'nd') + '\nDificuldade: ' + (f.dificuldade||'nd') + '\nAvanço: ' + (f.avanco||'nd') + '\nEnergia: ' + f.energia + '/10\n\nResponda com estas seções exatas, sem markdown, sem asteriscos:\n\nDIAGNÓSTICO DO DIA\nMÉTRICAS EM FOCO\nALERTA OU REFORÇO\nAJUSTE PRIORITÁRIO\nPRÓXIMO DIA\n\nTom técnico, direto.';
 
   try {
-    // Enviar o prompt para o backend de análise (Cloudflare Worker). A chave da IA é mantida no servidor.
-    const response = await fetch(ANALISE_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ prompt })
+    var res = await fetch(WORKER_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({prompt:prompt})
     });
-
-    const data = await response.json();
-    // O backend pode retornar texto simples ou um objeto estruturado. Extrair da propriedade apropriada.
-    let text = '';
-    if (typeof data === 'string') {
-      text = data;
-    } else if (Array.isArray(data?.content)) {
-      text = data.content.map(b => b.text || '').join('');
-    } else if (typeof data?.analysis === 'string') {
-      text = data.analysis;
-    } else if (typeof data?.result === 'string') {
-      text = data.result;
-    } else {
-      text = JSON.stringify(data);
-    }
-
-    // Parse sections
-    const sections = ['DIAGNÓSTICO DO DIA', 'MÉTRICAS EM FOCO', 'ALERTA OU REFORÇO', 'AJUSTE PRIORITÁRIO', 'PRÓXIMO DIA'];
-    let html = '';
-    let remaining = text;
-
-    for (let i = 0; i < sections.length; i++) {
-      const sectionName = sections[i];
-      const nextSection = sections[i + 1];
-      const startIdx = remaining.indexOf(sectionName);
-      if (startIdx === -1) continue;
-      const contentStart = startIdx + sectionName.length;
-      const endIdx = nextSection ? remaining.indexOf(nextSection) : remaining.length;
-      const content = remaining.slice(contentStart, endIdx !== -1 ? endIdx : remaining.length).replace(/^[\s:\n]+/, '').trim();
-      html += `<div class="analysis-section"><strong>${sectionName}</strong><div>${content}</div></div>`;
-    }
-
-    output.innerHTML = html || `<div>${text}</div>`;
-
-  } catch (err) {
-    output.innerHTML = `<div style="color:var(--phase4); font-family:'Space Mono'; font-size:12px;">Erro na análise: ${err.message}. Verifique a conexão ou o endpoint do backend.</div>`;
+    var data = await res.json();
+    var text = '';
+    if (typeof data === 'string') text = data;
+    else if (Array.isArray(data && data.content)) text = data.content.map(function(b){return b.text||''}).join('');
+    else if (typeof (data && data.analysis) === 'string') text = data.analysis;
+    else if (typeof (data && data.result) === 'string') text = data.result;
+    else text = JSON.stringify(data);
+    parseSections(text);
+  } catch(err) {
+    out.innerHTML = '<div class="ao-sec"><div class="ao-lbl" style="color:var(--p4)">Erro de conexão</div><div>' + err.message + '</div></div>';
   }
-
-// ===================== CHECK-IN ANALYSIS (LOCAL RULES) =====================
-function analisarLocal() {
-  const output = document.getElementById('analysis-output');
-  if (!output) return;
-
-  // Obter campos do check-in
-  const dia = parseInt(document.getElementById('ci-dia').value) || 0;
-  const sessao = document.getElementById('ci-sessao').value || '';
-  const tipoDia = document.getElementById('ci-tipo-dia').value || '';
-  const fluency = document.getElementById('ci-fluency').value || '';
-  const drops = document.getElementById('ci-drops').value || '';
-  const escutaAtiva = document.getElementById('ci-escuta-ativa').value || '';
-  const escutaMorto = document.getElementById('ci-escuta-morto').value || '';
-  const compreensao = parseInt(document.getElementById('ci-compreensao').value) || 0;
-  const fala = parseInt(document.getElementById('ci-fala').value) || 0;
-  const portuhol = document.getElementById('ci-portuhol').value || '';
-  const criacao = document.getElementById('ci-criacao')?.value || '';
-  const dificuldade = document.getElementById('ci-dificuldade').value || '';
-  const avanco = document.getElementById('ci-avanco').value || '';
-  const energia = parseInt(document.getElementById('ci-energia').value) || 0;
-
-  // Determinar fase com base no dia
-  let fase = 1;
-  if (dia >= 41 && dia <= 80) fase = 2;
-  else if (dia >= 81 && dia <= 120) fase = 3;
-  else if (dia >= 121 && dia <= 160) fase = 4;
-  else if (dia >= 161) fase = 5;
-
-  // Metas de compreensão por fase
-  const compMeta = {
-    1: { min: 30, max: 40 },
-    2: { min: 50, max: 60 },
-    3: { min: 65, max: 70 },
-    4: { min: 75, max: 80 },
-    5: { min: 80, max: 85 }
-  };
-
-  // Metas de minutos de fala (aproximação)
-  const talkMeta = {
-    1: 2,
-    2: 3,
-    3: 4,
-    4: 5,
-    5: 6
-  };
-
-  // Foco de cada fase (descrição simplificada)
-  const faseFocus = {
-    1: 'familiarizar-se com sons e pronúncia básicos',
-    2: 'construir vocabulário funcional e frases de sobrevivência',
-    3: 'conectar blocos de linguagem e aumentar a fluência',
-    4: 'narrar experiências no passado, presente e futuro',
-    5: 'consolidar o conhecimento e ganhar autonomia com conteúdos autênticos'
-  };
-
-  // Mapeamento de sessões para texto amigável
-  function mapSessao(value) {
-    switch (value) {
-      case 'completa': return 'completa';
-      case 'padrao': return 'padrão';
-      case 'minima': return 'mínima';
-      case 'zero': return 'sem estudo';
-      default: return 'não informada';
-    }
-  // nothing else changed here
-  }
-  // Mapeamento de tipo de dia para texto amigável
-  function mapTipoDia(value) {
-    switch (value) {
-      case 'folga-ok': return 'folga recuperada';
-      case 'folga-cansado': return 'folga cansado';
-      case 'pos-plantao': return 'pós-plantão';
-      case 'plantao': return 'plantão';
-      default: return 'tipo de dia não informado';
-    }
-  }
-
-  // Recomendação de sessão por tipo de dia
-  const dayRec = {
-    'plantao': 'minima',
-    'pos-plantao': 'minima',
-    'folga-cansado': 'padrao',
-    'folga-ok': 'completa'
-  };
-  const expectedSessao = dayRec[tipoDia] || '';
-
-  // Construir diagnóstico do dia
-  let diag = '';
-  diag += `Hoje foi um dia de ${mapTipoDia(tipoDia)} e você escolheu uma sessão ${mapSessao(sessao)}.`;
-  if (expectedSessao && sessao && sessao !== expectedSessao) {
-    diag += ` A sessão escolhida não está alinhada com a recomendação para esse tipo de dia (o ideal seria uma sessão ${mapSessao(expectedSessao)}).`;
-  }
-  if (!sessao) {
-    diag += ' Você não selecionou o tipo de sessão realizada.';
-  }
-  diag += ` Você está na fase ${fase}, cujo foco é ${faseFocus[fase]}.`;
-
-  // Construir métricas em foco
-  const meta = compMeta[fase];
-  let metricas = '';
-  metricas += `Sua compreensão foi de ${compreensao}% (meta: ${meta.min}–${meta.max}%).`;
-  if (compreensao < meta.min) metricas += ' Está abaixo do mínimo previsto para a fase.';
-  else if (compreensao > meta.max) metricas += ' Está acima do limite superior — ótimo!';
-  else metricas += ' Dentro da faixa ideal.';
-
-  const falaMeta = talkMeta[fase] || 3;
-  metricas += ` Você falou por ${fala} minutos sem roteiro (meta: ≥${falaMeta} min).`;
-  if (fala < falaMeta) metricas += ' Precisa ampliar a prática oral.';
-  else metricas += ' Tempo de fala adequado.';
-
-  if (portuhol) metricas += ` Dependência do portunhol: ${portuhol}.`;
-  if (fluency) metricas += ` Fluency Academy: ${fluency}.`;
-  if (drops) metricas += ` Drops: ${drops}.`;
-  if (escutaAtiva) metricas += ` Escuta ativa: ${escutaAtiva}.`;
-  if (escutaMorto) metricas += ` Escuta no tempo morto: ${escutaMorto}.`;
-  if (criacao) metricas += ` Criação de conteúdo: ${criacao}.`;
-
-  // Construir alerta ou reforço
-  let alerta = '';
-  // Se estiver abaixo na compreensão ou fala ou portunhol alto
-  if (compreensao < meta.min) {
-    alerta += 'Compreensão abaixo da meta; reveja materiais mais simples e repita diálogos para melhorar a percepção auditiva. ';
-  }
-  if (fala < falaMeta) {
-    alerta += 'Tempo de fala abaixo do esperado; dedique alguns minutos adicionais para narrar sua rotina ou fazer shadowing. ';
-  }
-  if (portuhol === 'alta' || portuhol === 'media') {
-    alerta += 'Dependência de portunhol perceptível; pratique “desportuguesização” imitando sons específicos e evitando falsos cognatos. ';
-  }
-  if (alerta === '') {
-    alerta = 'Todos os parâmetros principais estão dentro do esperado. Continue utilizando as técnicas atuais e mantenha a consistência.';
-  }
-
-  // Construir ajuste prioritário
-  let ajuste = '';
-  if (compreensao < meta.min) {
-    ajuste = 'Foque em repetir aulas ou áudios que já estudou até atingir pelo menos ' + meta.min + '% de compreensão. Diminua a velocidade ou use legendas em espanhol para facilitar.';
-  } else if (fala < falaMeta) {
-    ajuste = 'Inclua ao menos ' + (falaMeta - fala > 0 ? falaMeta - fala : falaMeta) + ' minuto(s) extra(s) de fala sem roteiro, gravando áudios ou praticando shadowing.';
-  } else if (portuhol === 'alta' || portuhol === 'media') {
-    ajuste = 'Priorize exercícios de pronúncia e atenção aos falsos cognatos para reduzir a influência do português nas frases.';
-  } else {
-    ajuste = 'Mantenha o ritmo atual e concentre-se em consolidar o vocabulário e estruturas já aprendidos.';
-  }
-
-  // Construir recomendação para o próximo dia
-  let prox = '';
-  prox += 'No próximo dia, adapte a sessão ao seu cronograma: em plantão ou pós-plantão, faça uma sessão mínima; em folga, opte por sessão completa ou padrão conforme sua energia.';
-  if (compreensao < meta.min) {
-    prox += ' Priorize conteúdos que já estudou e revise até ganhar confiança.';
-  } else if (fala < falaMeta) {
-    prox += ' Dedique alguns minutos a mais para falar em voz alta sobre sua rotina ou interesses.';
-  } else if (portuhol === 'alta' || portuhol === 'media') {
-    prox += ' Reserve tempo para prática de pronúncia e trabalhe expressões autênticas sem traduzir palavra por palavra.';
-  } else {
-    prox += ' Continue avançando nas aulas da Fluency Academy e varie o input com músicas, séries e podcasts que lhe interessem.';
-  }
-
-  // Montar HTML estruturado
-  let html = '';
-  html += `<div class="analysis-section"><strong>DIAGNÓSTICO DO DIA</strong><div>${diag}</div></div>`;
-  html += `<div class="analysis-section"><strong>MÉTRICAS EM FOCO</strong><div>${metricas}</div></div>`;
-  html += `<div class="analysis-section"><strong>ALERTA OU REFORÇO</strong><div>${alerta.trim()}</div></div>`;
-  html += `<div class="analysis-section"><strong>AJUSTE PRIORITÁRIO</strong><div>${ajuste}</div></div>`;
-  html += `<div class="analysis-section"><strong>PRÓXIMO DIA</strong><div>${prox}</div></div>`;
-
-  // Exibir resultado
-  output.classList.add('visible');
-  output.innerHTML = html;
+  btn.disabled = false;
 }
+
+function parseSections(text) {
+  var secs = ['DIAGNÓSTICO DO DIA','MÉTRICAS EM FOCO','ALERTA OU REFORÇO','AJUSTE PRIORITÁRIO','PRÓXIMO DIA'];
+  var result = [];
+  for (var i = 0; i < secs.length; i++) {
+    var s = secs[i], next = secs[i+1];
+    var start = text.indexOf(s);
+    if (start === -1) continue;
+    var end = next ? text.indexOf(next) : text.length;
+    var content = text.slice(start + s.length, end !== -1 ? end : text.length).replace(/^[\s:\n]+/, '').trim();
+    result.push({label:s, text:content});
+  }
+  renderAnalysis(result.length ? result : [{label:'RESPOSTA', text:text}]);
+}
+
+function renderAnalysis(sections) {
+  var out = document.getElementById('analysis-out');
+  out.classList.add('vis');
+  out.innerHTML = sections.map(function(s) {
+    return '<div class="ao-sec"><div class="ao-lbl">' + s.label + '</div><div>' + s.text + '</div></div>';
+  }).join('');
+}
+
+// ─── SALVAR / EXPORTAR / LIMPAR ────────────────────────────
+function salvarCheckin() {
+  var data = collectForm();
+  data.timestamp = new Date().toISOString();
+  var arr = [];
+  try { arr = JSON.parse(localStorage.getItem('checkins')||'[]'); if (!Array.isArray(arr)) arr = []; } catch(e){}
+  arr.push(data);
+  localStorage.setItem('checkins', JSON.stringify(arr));
+  toast('Salvo. Total: ' + arr.length + ' registro(s).');
+}
+
+function exportarCheckins() {
+  var arr = [];
+  try { arr = JSON.parse(localStorage.getItem('checkins')||'[]'); if (!Array.isArray(arr)) arr = []; } catch(e){}
+  if (!arr.length) { toast('Nenhum check-in salvo ainda.', 'err'); return; }
+  var blob = new Blob([JSON.stringify(arr,null,2)], {type:'application/json'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'checkins_espanhol.json';
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+  toast('Exportado: ' + arr.length + ' registro(s).');
 }
 
 function limparCheckin() {
+  ['ci-fluency','ci-drops','ci-escuta-ativa','ci-escuta-morto','ci-criacao','ci-fala','ci-dificuldade','ci-avanco'].forEach(function(id) {
+    var el = document.getElementById(id); if (el) el.value = '';
+  });
   document.getElementById('ci-dia').value = 1;
   document.getElementById('ci-sessao').value = '';
   document.getElementById('ci-tipo-dia').value = '';
-  document.getElementById('ci-fluency').value = '';
-  document.getElementById('ci-drops').value = '';
-  document.getElementById('ci-escuta-ativa').value = '';
-  document.getElementById('ci-escuta-morto').value = '';
-  document.getElementById('ci-compreensao').value = 40;
-  document.getElementById('compr-val').textContent = 40;
-  document.getElementById('ci-fala').value = '';
   document.getElementById('ci-portuhol').value = '';
-  document.getElementById('ci-dificuldade').value = '';
-  document.getElementById('ci-avanco').value = '';
-  // Limpar campo de criação de conteúdo
-  const criacaoEl = document.getElementById('ci-criacao');
-  if (criacaoEl) criacaoEl.value = '';
+  document.getElementById('ci-compreensao').value = 40;
   document.getElementById('ci-energia').value = 7;
-  document.getElementById('energ-val').textContent = 7;
-  document.getElementById('analysis-output').classList.remove('visible');
-  updateDay(1);
+  updateRange(document.getElementById('ci-compreensao'), 'compr-val', '%');
+  updateRange(document.getElementById('ci-energia'), 'energ-val', '');
+  var out = document.getElementById('analysis-out');
+  out.classList.remove('vis'); out.innerHTML = '';
+  onDayChange(1);
 }
 
-// Salvar check-in no armazenamento local
-function salvarCheckin() {
-  const data = {
-    dia: document.getElementById('ci-dia').value || '',
-    sessao: document.getElementById('ci-sessao').value || '',
-    tipoDia: document.getElementById('ci-tipo-dia').value || '',
-    fluency: document.getElementById('ci-fluency').value || '',
-    drops: document.getElementById('ci-drops').value || '',
-    escutaAtiva: document.getElementById('ci-escuta-ativa').value || '',
-    escutaMorto: document.getElementById('ci-escuta-morto').value || '',
-    compreensao: document.getElementById('ci-compreensao').value || '',
-    fala: document.getElementById('ci-fala').value || '',
-    portuhol: document.getElementById('ci-portuhol').value || '',
-    criacao: (document.getElementById('ci-criacao') && document.getElementById('ci-criacao').value) || '',
-    dificuldade: document.getElementById('ci-dificuldade').value || '',
-    avanco: document.getElementById('ci-avanco').value || '',
-    energia: document.getElementById('ci-energia').value || '',
-    timestamp: new Date().toISOString()
-  };
-  let checkins = [];
-  try {
-    checkins = JSON.parse(localStorage.getItem('checkins') || '[]');
-    if (!Array.isArray(checkins)) checkins = [];
-  } catch (e) {
-    checkins = [];
-  }
-  checkins.push(data);
-  localStorage.setItem('checkins', JSON.stringify(checkins));
-  const output = document.getElementById('analysis-output');
-  if (output) {
-    output.classList.add('visible');
-    output.innerHTML = '<div class="analysis-section"><strong>CHECK-IN SALVO</strong><div>Seu registro foi salvo localmente. Use "Exportar JSON" para baixar todos os registros.</div></div>';
-  }
-}
-
-// Exportar todos os check-ins salvos como arquivo JSON
-function exportarCheckins() {
-  let checkins = [];
-  try {
-    checkins = JSON.parse(localStorage.getItem('checkins') || '[]');
-    if (!Array.isArray(checkins)) checkins = [];
-  } catch (e) {
-    checkins = [];
-  }
-  const json = JSON.stringify(checkins, null, 2);
-  const blob = new Blob([json], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'checkins_espanhol.json';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-// ===================== FASE ACCORDION AND SCROLL TOP =====================
-// Setup accordion behavior for phases and show scroll-to-top button
-function setupPhaseAccordions() {
-  const blocks = document.querySelectorAll('.phase-block');
-  blocks.forEach(block => {
-    const header = block.querySelector('.phase-header');
-    if (header) {
-      header.addEventListener('click', function(e) {
-        block.classList.toggle('collapsed');
-        // Atualiza o ícone de expansão/colapso e título explicativo
-        const icon = block.querySelector('.toggle-icon');
-        const title = block.classList.contains('collapsed') ? 'Clique para expandir' : 'Clique para recolher';
-        if (icon) {
-          icon.textContent = block.classList.contains('collapsed') ? '►' : '▼';
-        }
-        // Aplica o título ao cabeçalho para acessibilidade
-        header.setAttribute('title', title);
-      });
-    }
-  });
-}
-
-// Conecta marcadores de fases da linha de progresso a seus respectivos blocos.
-function setupPhaseMarkers() {
-  const markers = document.querySelectorAll('.phase-marker');
-  markers.forEach(marker => {
-    marker.addEventListener('click', () => {
-      const targetId = marker.dataset.target;
-      if (targetId) {
-        // Aguarda a troca de aba para garantir que os elementos estejam visíveis
-        setTimeout(() => {
-          const targetEl = document.getElementById(targetId);
-          if (targetEl) {
-            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }
-        }, 150);
-      }
-    });
-  });
-}
-
-function setupScrollTopButton() {
-  const btn = document.getElementById('scrollTopBtn');
-  if (!btn) return;
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 400) {
-      btn.classList.add('show');
-    } else {
-      btn.classList.remove('show');
-    }
-  });
-  btn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  });
-}
-
-// Atualizar cor do valor de energia dependendo da faixa (baixa, média ou alta)
-function updateEnergyColor(val) {
-  const energValEl = document.getElementById('energ-val');
-  if (!energValEl) return;
-  let color;
-  if (val <= 3) {
-    color = 'var(--phase4)'; // vermelho-alaranjado para baixa energia
-  } else if (val <= 7) {
-    color = 'var(--accent)'; // amarelo para energia média
-  } else {
-    color = 'var(--accent3)'; // verde para alta energia
-  }
-  energValEl.style.color = color;
-}
-
-// Initialize features after DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-  setupPhaseAccordions();
-  setupScrollTopButton();
-  setupPhaseMarkers();
-  // Ajustar ícones de fases com base no estado inicial
-  document.querySelectorAll('.phase-block').forEach(block => {
-    const icon = block.querySelector('.toggle-icon');
-    if (icon) {
-      icon.textContent = block.classList.contains('collapsed') ? '►' : '▼';
-    }
-    // Definir título inicial para cabeçalhos de fases (expandir/recolher)
-    const headerEl = block.querySelector('.phase-header');
-    if (headerEl) {
-      headerEl.setAttribute('title', block.classList.contains('collapsed') ? 'Clique para expandir' : 'Clique para recolher');
-    }
-  });
-  // Atualizar a cor inicial do indicador de energia
-  const energiaEl = document.getElementById('ci-energia');
-  if (energiaEl) {
-    updateEnergyColor(parseInt(energiaEl.value) || 0);
-  }
+// ─── INIT ──────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', function() {
+  initRanges();
+  document.getElementById('compr-val').textContent = '40';
+  document.getElementById('energ-val').textContent = '7';
 });
-
 </script>
 </body>
 </html>
