@@ -476,6 +476,10 @@ html,body{max-width:100%;overflow-x:hidden}
   <button class="s-item" onclick="go('historico',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M8 3v5l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/></svg>Histórico
   </button>
+  <div class="s-sec">Inteligência</div>
+  <button class="s-item" onclick="go('painel',this)">
+    <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M2 10h3v4H2zM6.5 6h3v8h-3zM11 2h3v12h-3z" fill="currentColor" opacity=".8"/><path d="M2 2l3 4 3-2 3-3 3 1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Inteligência
+  </button>
 </nav>
 
 <!-- ═══ CONTENT ══════════════════════════════════════ -->
@@ -823,6 +827,7 @@ const CONTENT = {
         </ul>
       </div>`,
 
+    painel:    () => buildPainel('es'),
     historico: () => buildHistorico('es'),
   },
 
@@ -1049,6 +1054,7 @@ const CONTENT = {
           <li><span class="dot d3"></span><div><strong>Pleco-equivalente para francês:</strong> Le Robert Illustré (app) — dicionário monolíngue para T2</div></li>
         </ul>
       </div>`,
+    painel:    () => buildPainel('fr'),
     historico: () => buildHistorico('fr'),
   },
 
@@ -1271,6 +1277,7 @@ const CONTENT = {
           <li><span class="dot d3"></span><div><strong>YouGlish (mandarim)</strong> — ouvir palavras em contexto de fala nativa real</div></li>
         </ul>
       </div>`,
+    painel:    () => buildPainel('zh'),
     historico: () => buildHistorico('zh'),
   },
 };
@@ -1668,9 +1675,15 @@ function buildHistorico(lang) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   STORAGE — NAMESPACE POR IDIOMA
+   VERSÃO E STORAGE — polyglot.{lang}.{key}
 ═══════════════════════════════════════════════════════ */
-function storageKey(lang, key) { return lang + '.' + key; }
+const APP_VERSION = '2.1.0';
+
+/* Chave com prefixo polyglot + lang + key
+   Exemplo: polyglot.es.checkins */
+function storageKey(lang, key) {
+  return 'polyglot.' + lang + '.' + key;
+}
 
 function getStore(lang, key) {
   try {
@@ -1680,23 +1693,223 @@ function getStore(lang, key) {
 }
 
 function setStore(lang, key, value) {
-  try { localStorage.setItem(storageKey(lang, key), JSON.stringify(value)); return true; }
-  catch(e) { return false; }
+  try {
+    localStorage.setItem(storageKey(lang, key), JSON.stringify(value));
+    return true;
+  } catch(e) { return false; }
 }
 
-/* Migração silenciosa do espanhol antigo (chave 'checkins' sem namespace) */
-function migrateOldSpanishData() {
+/* ── Migração completa e silenciosa ─────────────────────
+   Roda uma única vez no init. Detecta todos os formatos
+   anteriores e migra para polyglot.{lang}.{key}.
+   Registra a versão após migração para não rodar novamente.
+─────────────────────────────────────────────────────── */
+function runMigrations() {
+  const migratedKey = 'polyglot.meta.migratedVersion';
+  const already = localStorage.getItem(migratedKey);
+  if (already === APP_VERSION) return;
+
+  /* v1 → v2: chave 'checkins' sem namespace (espanhol original) */
   try {
-    const old = localStorage.getItem('checkins');
-    if (!old) return;
-    const existing = localStorage.getItem('es.checkins');
-    if (existing) { localStorage.removeItem('checkins'); return; }
-    const data = JSON.parse(old);
-    if (Array.isArray(data) && data.length > 0) {
-      localStorage.setItem('es.checkins', old);
+    const v1 = localStorage.getItem('checkins');
+    if (v1) {
+      const data = JSON.parse(v1);
+      if (Array.isArray(data) && data.length > 0) {
+        const dest = storageKey('es', 'checkins');
+        if (!localStorage.getItem(dest)) {
+          localStorage.setItem(dest, v1);
+        }
+      }
       localStorage.removeItem('checkins');
     }
   } catch(e) {}
+
+  /* v2 → v2.1: chave '{lang}.{key}' sem prefixo polyglot */
+  ['es', 'fr', 'zh'].forEach(lang => {
+    ['checkins', 'currentDay', 'evaluations', 'metrics', 'settings'].forEach(key => {
+      const oldKey = lang + '.' + key;
+      const newKey = storageKey(lang, key);
+      try {
+        const old = localStorage.getItem(oldKey);
+        if (old && !localStorage.getItem(newKey)) {
+          localStorage.setItem(newKey, old);
+        }
+        if (old) localStorage.removeItem(oldKey);
+      } catch(e) {}
+    });
+  });
+
+  localStorage.setItem(migratedKey, APP_VERSION);
+  localStorage.setItem('polyglot.meta.firstSeen', new Date().toISOString());
+}
+
+/* ═══════════════════════════════════════════════════════
+   PAINEL DE INTELIGÊNCIA — builder de UI
+═══════════════════════════════════════════════════════ */
+function buildPainel(lang) {
+  const p = PROGRAMS[lang];
+  const d = calcAccumulated(lang);
+
+  if (!d.totalCheckins) {
+    return `
+      <div class="pg-h">
+        <div class="pg-title">Painel de Inteligência</div>
+        <div class="pg-sub">Coach linguístico automático — baseado nos seus check-ins salvos.</div>
+      </div>
+      <div class="planned-banner">
+        <div class="planned-icon">🧠</div>
+        <h2>Nenhum dado ainda</h2>
+        <p>Salve pelo menos um check-in para ativar o painel.<br>Os dados são calculados automaticamente a partir do seu histórico.</p>
+      </div>`;
+  }
+
+  /* ── Cores de risco ─────────────────────────────── */
+  const riscoColor = { baixo:'var(--p3)', médio:'var(--p2)', alto:'var(--p4)' };
+  const riscoC = riscoColor[d.riscoAbandono] || 'var(--p3)';
+
+  /* ── Mini sparkline de compreensão (SVG inline) ─── */
+  function sparkline(points) {
+    if (!points.length) return '<span style="color:var(--tx3);font-size:12px">sem dados</span>';
+    const vals = points.map(p => p.val);
+    const min = Math.min(...vals), max = Math.max(...vals);
+    const range = max - min || 1;
+    const w = 120, h = 32, pad = 2;
+    const pts = vals.map((v, i) => {
+      const x = pad + (i / Math.max(vals.length-1,1)) * (w - pad*2);
+      const y = pad + (1 - (v - min) / range) * (h - pad*2);
+      return x.toFixed(1) + ',' + y.toFixed(1);
+    }).join(' ');
+    const last = vals[vals.length-1];
+    const trend = vals.length > 1 ? (last > vals[0] ? '↗' : last < vals[0] ? '↘' : '→') : '·';
+    const trendColor = trend === '↗' ? 'var(--p3)' : trend === '↘' ? 'var(--p4)' : 'var(--tx3)';
+    return `<svg width="${w}" height="${h}" style="vertical-align:middle">
+      <polyline points="${pts}" fill="none" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round"/>
+      <circle cx="${+pts.split(' ').pop().split(',')[0]}" cy="${+pts.split(' ').pop().split(',')[1]}" r="3" fill="var(--accent)"/>
+    </svg> <span style="color:${trendColor};font-family:'Space Mono',monospace;font-size:12px">${trend} ${last}%</span>`;
+  }
+
+  /* ── Barra de progresso inline ─────────────────── */
+  const pct = d.diasEstudados > 0 ? Math.min(100, Math.round((Math.max(...(getStore(lang,'checkins')||[]).map(c=>c.dia||0)) / p.totalDays)*100)) : 0;
+
+  /* ── Pontos fortes / fracos como tags ────────────── */
+  const tagStrong = d.pontosFortres.map(t =>
+    `<span style="display:inline-block;background:var(--p3a);color:var(--p3);border:1px solid var(--p3b);border-radius:3px;padding:3px 9px;font-size:12px;margin:3px 3px 3px 0">${t}</span>`
+  ).join('') || '<span style="color:var(--tx3);font-size:13px">Dados insuficientes — continue registrando check-ins.</span>';
+
+  const tagWeak = d.pontosFrageis.map(t =>
+    `<span style="display:inline-block;background:var(--p4a);color:var(--p4);border:1px solid var(--p4b);border-radius:3px;padding:3px 9px;font-size:12px;margin:3px 3px 3px 0">${t}</span>`
+  ).join('') || '<span style="color:var(--tx3);font-size:13px">Nenhum ponto fraco identificado ainda.</span>';
+
+  return `
+    <div class="pg-h">
+      <div class="pg-title">Painel de Inteligência</div>
+      <div class="pg-sub">Coach automático — ${p.name} · ${d.totalCheckins} check-in(s) analisados · v${APP_VERSION}</div>
+    </div>
+
+    <!-- Recomendação principal -->
+    <div class="alert" style="border-left:3px solid var(--accent);padding-left:16px">
+      <strong>Recomendação:</strong> ${d.recomendacao}
+    </div>
+
+    <!-- KPIs principais -->
+    <div class="g3" style="margin-bottom:14px">
+      <div class="stat">
+        <div class="stat-v">${d.diasEstudados}</div>
+        <div class="stat-l">dias estudados</div>
+      </div>
+      <div class="stat">
+        <div class="stat-v">${d.streak}</div>
+        <div class="stat-l">sequência atual (dias)</div>
+      </div>
+      <div class="stat">
+        <div class="stat-v" style="font-size:18px">${d.projecaoCEFR}</div>
+        <div class="stat-l">nível estimado atual</div>
+      </div>
+    </div>
+
+    <!-- Progresso do programa -->
+    <div class="card">
+      <div class="card-row"><span class="tag ta">Progresso</span><div class="card-title">Avanço no programa</div></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+        <div style="flex:1;height:8px;background:var(--bd);border-radius:4px;overflow:hidden">
+          <div style="width:${pct}%;height:100%;background:linear-gradient(90deg,var(--p1),var(--accent));border-radius:4px;transition:width .4s"></div>
+        </div>
+        <span style="font-family:'Space Mono',monospace;font-size:12px;color:var(--accent);flex-shrink:0">${pct}%</span>
+      </div>
+      <div style="display:flex;gap:24px;font-size:13px;flex-wrap:wrap">
+        <span><strong style="color:var(--tx)">${d.hrsAcumuladas}h</strong> <span style="color:var(--tx2)">estimadas de estudo</span></span>
+        <span><strong style="color:var(--tx)">${Math.round(d.totalMinFala / 60 * 10)/10}h</strong> <span style="color:var(--tx2)">de fala registrada</span></span>
+        <span><strong style="color:var(--tx)">${d.hrsEscutaUber}h</strong> <span style="color:var(--tx2)">escuta Uber estimada</span></span>
+        <span><strong style="color:var(--tx)">${d.maiorStreak}</strong> <span style="color:var(--tx2)">maior sequência</span></span>
+      </div>
+    </div>
+
+    <!-- Consistência -->
+    <div class="card">
+      <div class="card-row"><span class="tag t3">Consistência</span><div class="card-title">Regularidade de estudo</div></div>
+      <div class="mrow">
+        <div class="mrow-lbl"><strong>Últimos 7 dias</strong><small>Meta: ≥ 71% (5/7)</small></div>
+        <div class="mrow-track"><div class="mrow-fill" style="width:${d.consistencia7d}%;background:${d.consistencia7d>=71?'var(--p3)':d.consistencia7d>=43?'var(--p2)':'var(--p4)'}"></div></div>
+        <div class="mrow-target">${d.consistencia7d}%</div>
+      </div>
+      <div class="mrow">
+        <div class="mrow-lbl"><strong>Últimos 30 dias</strong><small>Meta: ≥ 57% (17/30)</small></div>
+        <div class="mrow-track"><div class="mrow-fill" style="width:${d.consistencia30d}%;background:${d.consistencia30d>=57?'var(--p3)':d.consistencia30d>=33?'var(--p2)':'var(--p4)'}"></div></div>
+        <div class="mrow-target">${d.consistencia30d}%</div>
+      </div>
+      <div class="mrow">
+        <div class="mrow-lbl"><strong>Dias perdidos</strong><small>Desde o primeiro check-in</small></div>
+        <div class="mrow-track"><div class="mrow-fill" style="width:${Math.min(100,Math.round(d.diasPerdidos/(d.diasEstudados+d.diasPerdidos||1)*100))}%;background:var(--p4)"></div></div>
+        <div class="mrow-target">${d.diasPerdidos} dias</div>
+      </div>
+    </div>
+
+    <!-- Compreensão -->
+    <div class="card">
+      <div class="card-row"><span class="tag t1">Compreensão</span><div class="card-title">Evolução auditiva</div></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:28px;font-weight:700;color:var(--accent)">${d.mediaCompreensao}%</div>
+          <div style="font-size:12px;color:var(--tx2)">média geral · últimos 10 registros:</div>
+        </div>
+        <div>${sparkline(d.evolucaoCompreensao)}</div>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:16px;flex-wrap:wrap;font-size:13px">
+        <span>Energia média: <strong style="color:var(--accent)">${d.mediaEnergia}/10</strong></span>
+        <span>Fala acumulada: <strong style="color:var(--accent)">${d.totalMinFala} min</strong></span>
+        <span>Nível estimado: <strong style="color:var(--accent)">${d.projecaoCEFR}</strong></span>
+      </div>
+    </div>
+
+    <!-- Projeções -->
+    <div class="g2">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:10px">📅 Projeção de conclusão</div>
+        <div style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:var(--accent);margin-bottom:6px">${d.projecaoConclusao}</div>
+        <div style="font-size:12px;color:var(--tx2)">Estimativa baseada no ritmo atual de dias estudados vs dias decorridos.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:10px">⚠ Risco de abandono</div>
+        <div style="font-family:'Space Mono',monospace;font-size:22px;font-weight:700;color:${riscoC};margin-bottom:6px;text-transform:uppercase">${d.riscoAbandono}</div>
+        <div style="font-size:12px;color:var(--tx2)">Calculado com base na consistência dos últimos 7 dias e na energia média registrada.</div>
+      </div>
+    </div>
+
+    <!-- Pontos fortes e fracos -->
+    <div class="card">
+      <div class="card-row"><span class="tag t3">Diagnóstico</span><div class="card-title">Pontos fortes</div></div>
+      <div>${tagStrong}</div>
+    </div>
+    <div class="card">
+      <div class="card-row"><span class="tag t4">Diagnóstico</span><div class="card-title">Pontos a melhorar</div></div>
+      <div>${tagWeak}</div>
+    </div>
+
+    <!-- Atualizar painel -->
+    <div class="btns">
+      <button class="btn btn-g" onclick="renderPage('painel')">↻ Atualizar</button>
+      <button class="btn btn-g" onclick="go('historico', document.querySelector('[onclick*=historico]'))">Ver histórico completo</button>
+    </div>`;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -1956,6 +2169,124 @@ function limparCheckin() {
 }
 
 /* ═══════════════════════════════════════════════════════
+   PAINEL DE INTELIGÊNCIA — motor de cálculo
+═══════════════════════════════════════════════════════ */
+function calcAccumulated(lang) {
+  const checkins = getStore(lang, 'checkins') || [];
+  const p = PROGRAMS[lang];
+  const total = checkins.length;
+  if (!total) return {
+    totalCheckins:0, diasEstudados:0, diasPerdidos:0, streak:0,
+    maiorStreak:0, consistencia7d:0, consistencia30d:0,
+    mediaCompreensao:0, mediaEnergia:0, totalMinFala:0,
+    evolucaoCompreensao:[], projecaoConclusao:'—',
+    projecaoCEFR:'—', riscoAbandono:'baixo',
+    pontosFortres:[], pontosFrageis:[],
+    hrsAcumuladas:0, hrsEscutaUber:0,
+  };
+
+  /* ── Dias estudados e streak ─────────────────────── */
+  const diasSet = new Set(checkins.map(c => c.dia));
+  const diasEstudados = diasSet.size;
+  const diasPerdidos  = Math.max(0, (Math.max(...diasSet) - 1) - (diasEstudados - 1));
+
+  // streak atual (dias consecutivos ao final da sequência registrada)
+  const diasOrdenados = [...diasSet].sort((a,b) => a-b);
+  let streak = 1, maiorStreak = 1, tmpStreak = 1;
+  for (let i = 1; i < diasOrdenados.length; i++) {
+    if (diasOrdenados[i] === diasOrdenados[i-1] + 1) {
+      tmpStreak++;
+      maiorStreak = Math.max(maiorStreak, tmpStreak);
+    } else { tmpStreak = 1; }
+  }
+  // streak atual: contar do final
+  streak = 1;
+  for (let i = diasOrdenados.length - 1; i > 0; i--) {
+    if (diasOrdenados[i] === diasOrdenados[i-1] + 1) streak++;
+    else break;
+  }
+
+  /* ── Consistência (%) ────────────────────────────── */
+  const now = Math.max(...diasOrdenados);
+  const last7  = checkins.filter(c => c.dia >= now - 6);
+  const last30 = checkins.filter(c => c.dia >= now - 29);
+  const consistencia7d  = Math.round((new Set(last7.map(c=>c.dia)).size  / 7)  * 100);
+  const consistencia30d = Math.round((new Set(last30.map(c=>c.dia)).size / 30) * 100);
+
+  /* ── Médias ──────────────────────────────────────── */
+  const comps   = checkins.map(c => c.compreensao).filter(v => v != null && v > 0);
+  const energias= checkins.map(c => c.energia).filter(v => v != null);
+  const falas   = checkins.map(c => c.fala || 0);
+  const mediaCompreensao = comps.length    ? Math.round(comps.reduce((a,b)=>a+b,0)/comps.length) : 0;
+  const mediaEnergia     = energias.length ? +(energias.reduce((a,b)=>a+b,0)/energias.length).toFixed(1) : 0;
+  const totalMinFala     = falas.reduce((a,b)=>a+b,0);
+
+  /* ── Horas estimadas ─────────────────────────────── */
+  const minPorSessao = { completa:105, padrao:67, minima:28, zero:0 };
+  const hrsAcumuladas = +(checkins.reduce((acc, c) => acc + (minPorSessao[c.sessao] || 50), 0) / 60).toFixed(1);
+  const hrsEscutaUber = +(checkins.filter(c => c.escutaMorto && c.escutaMorto.length > 2).length * 0.6).toFixed(1);
+
+  /* ── Evolução da compreensão (últimos 10 pontos) ──── */
+  const evolucaoCompreensao = checkins
+    .filter(c => c.compreensao > 0)
+    .slice(-10)
+    .map(c => ({ dia: c.dia, val: c.compreensao }));
+
+  /* ── Projeção de conclusão ───────────────────────── */
+  let projecaoConclusao = '—';
+  if (diasEstudados >= 5 && mediaCompreensao > 0) {
+    const ritmo = diasEstudados / Math.max(...diasOrdenados); // dias estudados / dias decorridos
+    const diasRestantes = p.totalDays - Math.max(...diasOrdenados);
+    const diasEstimados = Math.round(diasRestantes / Math.max(ritmo, 0.3));
+    const dataFim = new Date();
+    dataFim.setDate(dataFim.getDate() + diasEstimados);
+    projecaoConclusao = dataFim.toLocaleDateString('pt-BR', { month:'short', year:'numeric' });
+  }
+
+  /* ── Projeção CEFR ───────────────────────────────── */
+  const cefr = {
+    es: [[40,'A1'],[55,'A2'],[65,'B1 inicial'],[75,'B1'],[82,'B2 inicial'],[100,'B2']],
+    fr: [[40,'A1'],[50,'A2 inicial'],[60,'A2'],[68,'B1 inicial'],[75,'B1'],[100,'B1+']],
+    zh: [[35,'HSK1'],[45,'HSK2'],[55,'HSK3'],[65,'HSK4'],[72,'HSK5'],[100,'HSK5+']],
+  };
+  const cefrMap = cefr[lang] || cefr.es;
+  const projecaoCEFR = (cefrMap.find(([thr]) => mediaCompreensao <= thr) || cefrMap.slice(-1)[0])[1];
+
+  /* ── Risco de abandono ───────────────────────────── */
+  let riscoAbandono = 'baixo';
+  if (consistencia7d < 30 || mediaEnergia < 4) riscoAbandono = 'alto';
+  else if (consistencia7d < 57 || mediaEnergia < 5.5) riscoAbandono = 'médio';
+
+  /* ── Pontos fortes e fracos ──────────────────────── */
+  const pontosFortres = [], pontosFrageis = [];
+  if (consistencia7d >= 70) pontosFortres.push('Consistência semanal alta (' + consistencia7d + '%)');
+  if (totalMinFala >= diasEstudados * 3) pontosFortres.push('Prática oral acima da meta');
+  if (mediaCompreensao >= 60) pontosFortres.push('Compreensão auditiva em boa progressão');
+  if (streak >= 7) pontosFortres.push('Sequência de ' + streak + ' dias consecutivos');
+  if (mediaEnergia >= 7) pontosFortres.push('Energia e motivação elevadas');
+
+  if (consistencia7d < 57) pontosFrageis.push('Consistência semanal abaixo de 5/7 dias');
+  if (totalMinFala < diasEstudados * 2) pontosFrageis.push('Prática oral abaixo da meta');
+  if (mediaCompreensao > 0 && mediaCompreensao < 40) pontosFrageis.push('Compreensão auditiva ainda baixa — aumentar input compreensível');
+  if (mediaEnergia > 0 && mediaEnergia < 5) pontosFrageis.push('Energia/motivação baixa — considerar sessões mínimas até recuperar ritmo');
+
+  /* ── Recomendação automática ─────────────────────── */
+  let recomendacao = 'Mantenha o ritmo atual. Consistência acima de tudo.';
+  if (riscoAbandono === 'alto') recomendacao = 'Risco de abandono detectado. Use apenas sessão mínima esta semana. O hábito vale mais que a intensidade.';
+  else if (pontosFrageis.includes('Prática oral abaixo da meta')) recomendacao = 'Prioridade: adicionar 5 min extras de fala por dia. Shadowing no Uber conta.';
+  else if (mediaCompreensao > 0 && mediaCompreensao < 40) recomendacao = 'Foque em input compreensível fácil. Reduzir dificuldade melhora a compreensão mais rápido que aumentar volume.';
+  else if (streak >= 14) recomendacao = streak + ' dias seguidos — você está no ritmo. Considere avançar a dificuldade do input.';
+
+  return {
+    totalCheckins, diasEstudados, diasPerdidos, streak, maiorStreak,
+    consistencia7d, consistencia30d, mediaCompreensao, mediaEnergia,
+    totalMinFala, evolucaoCompreensao, projecaoConclusao, projecaoCEFR,
+    riscoAbandono, pontosFortres, pontosFrageis, recomendacao,
+    hrsAcumuladas, hrsEscutaUber,
+  };
+}
+
+/* ═══════════════════════════════════════════════════════
    ANÁLISE LOCAL
 ═══════════════════════════════════════════════════════ */
 function analisarLocal() {
@@ -2044,11 +2375,55 @@ async function analisarIA() {
   const btn = document.getElementById('btn-ia');
   if (btn) btn.disabled = true;
 
+  /* Enriquecer payload com histórico recente e métricas acumuladas */
+  const recentHistory = (getStore(lang, 'checkins') || []).slice(-5).map(h => ({
+    dia:         h.dia,
+    compreensao: h.compreensao,
+    fala:        h.fala,
+    energia:     h.energia,
+    sessao:      h.sessao,
+    tipoDia:     h.tipoDia,
+    portuhol:    h.portuhol,
+    traducao:    h.traducao,
+    tons:        h.tons,
+    avanco:      h.avanco,
+    dificuldade: h.dificuldade,
+  }));
+
+  const accumulated = calcAccumulated(lang);
+
   try {
     const res = await fetch(WORKER_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ lang, fase: ph ? ph.name : '', faseNum: fase, checkin: f })
+      body: JSON.stringify({
+        appVersion:  APP_VERSION,
+        language:    lang,
+        program:     { totalDays: p.totalDays, name: p.name },
+        phase:       ph ? ph.name : '',
+        phaseNum:    fase,
+        day:         f.dia,
+        metrics:     {
+          compreensao: f.compreensao,
+          fala:        f.fala,
+          energia:     f.energia,
+          portuhol:    f.portuhol,
+          traducao:    f.traducao,
+          tons:        f.tons,
+          pronuncia:   f.pronuncia,
+          chars:       f.chars,
+          pinyin:      f.pinyin,
+        },
+        history:      recentHistory,
+        accumulated: {
+          totalCheckins:     accumulated.totalCheckins,
+          consistencia7d:    accumulated.consistencia7d,
+          mediaCompreensao:  accumulated.mediaCompreensao,
+          totalMinFala:      accumulated.totalMinFala,
+          streak:            accumulated.streak,
+        },
+        currentCheckin: f,
+      })
     });
     const data = await res.json();
     let text = '';
@@ -2092,7 +2467,7 @@ function renderAnalysis(sections) {
    INIT
 ═══════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
-  migrateOldSpanishData();
+  runMigrations();           // detecta e migra todos os formatos anteriores
   switchLang('es');
   renderPage('visao');
   document.querySelector('.s-item').classList.add('on');
