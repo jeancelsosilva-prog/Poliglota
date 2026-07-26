@@ -1,141 +1,59 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
-    <!-- Fundo: gradiente neutro claro -->
-    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%"   stop-color="#f0f0f5"/>
-      <stop offset="100%" stop-color="#e2e2f0"/>
+    <linearGradient id="bgL" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0"    stop-color="#fcfcfe"/>
+      <stop offset="0.5"  stop-color="#f3f3f9"/>
+      <stop offset="1"    stop-color="#e9e9f3"/>
     </linearGradient>
 
-    <!-- Gradiente neon principal (dourado → roxo → azul) -->
-    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%"   stop-color="#e8c547"/>
-      <stop offset="50%"  stop-color="#7c6dfa"/>
-      <stop offset="100%" stop-color="#4f8ef7"/>
+    <linearGradient id="bub" x1="0.1" y1="0" x2="0.9" y2="1">
+      <stop offset="0"    stop-color="#8f7dff"/>
+      <stop offset="0.45" stop-color="#6d5ef5"/>
+      <stop offset="1"    stop-color="#4f8ef7"/>
     </linearGradient>
 
-    <!-- Gradiente neon secundário (vermelho mandarim → dourado) -->
-    <linearGradient id="grad2" x1="100%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%"   stop-color="#e84c3d"/>
-      <stop offset="100%" stop-color="#e8c547"/>
+    <linearGradient id="sheen" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0"    stop-color="#ffffff" stop-opacity="0.60"/>
+      <stop offset="0.45" stop-color="#ffffff" stop-opacity="0.12"/>
+      <stop offset="1"    stop-color="#ffffff" stop-opacity="0"/>
     </linearGradient>
 
-    <!-- Gradiente para o card central (glass) -->
-    <linearGradient id="glass" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%"   stop-color="#ffffff" stop-opacity="0.85"/>
-      <stop offset="100%" stop-color="#f8f8ff" stop-opacity="0.60"/>
-    </linearGradient>
-
-    <!-- Brilho neon blur -->
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="8" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+    <filter id="soft" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="26"/>
+    </filter>
+    <filter id="drop" x="-30%" y="-30%" width="160%" height="170%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#3a2f8f" flood-opacity="0.28"/>
     </filter>
 
-    <filter id="glowSoft" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="14" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-
-    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
-      <feDropShadow dx="0" dy="8" stdDeviation="16" flood-color="#7c6dfa" flood-opacity="0.18"/>
-    </filter>
-
-    <clipPath id="roundClip">
-      <rect width="512" height="512" rx="112" ry="112"/>
-    </clipPath>
+    <clipPath id="sq"><rect width="512" height="512" rx="114" ry="114"/></clipPath>
   </defs>
 
-  <!-- ── Fundo com clip arredondado (iOS style) ── -->
-  <g clip-path="url(#roundClip)">
+  <g clip-path="url(#sq)">
+    <rect width="512" height="512" fill="url(#bgL)"/>
 
-    <!-- Base neutra -->
-    <rect width="512" height="512" fill="url(#bg)"/>
+    <!-- Auras neon nas 3 cores dos idiomas -->
+    <circle cx="132" cy="150" r="104" fill="#e8c547" opacity="0.34" filter="url(#soft)"/>
+    <circle cx="392" cy="176" r="100" fill="#4f8ef7" opacity="0.30" filter="url(#soft)"/>
+    <circle cx="268" cy="404" r="112" fill="#e84c3d" opacity="0.26" filter="url(#soft)"/>
 
-    <!-- Aura neon traseira — camada difusa dourada/roxa -->
-    <ellipse cx="170" cy="180" rx="160" ry="140" fill="#e8c547" opacity="0.12" filter="url(#glowSoft)"/>
-    <ellipse cx="340" cy="340" rx="150" ry="130" fill="#7c6dfa" opacity="0.13" filter="url(#glowSoft)"/>
-    <ellipse cx="360" cy="160" rx="100" ry="90"  fill="#4f8ef7" opacity="0.10" filter="url(#glowSoft)"/>
-    <ellipse cx="160" cy="360" rx="110" ry="90"  fill="#e84c3d" opacity="0.09" filter="url(#glowSoft)"/>
+    <!-- ══ Balão único ══ -->
+    <g filter="url(#drop)">
+      <path d="M154 104 H358 a74 74 0 0 1 74 74 v116 a74 74 0 0 1 -74 74 h-92 l-78 66 8-66 h-42 a74 74 0 0 1 -74 -74 v-116 a74 74 0 0 1 74 -74 z"
+            fill="url(#bub)"/>
+      <path d="M154 104 H358 a74 74 0 0 1 74 74 v116 a74 74 0 0 1 -74 74 h-92 l-78 66 8-66 h-42 a74 74 0 0 1 -74 -74 v-116 a74 74 0 0 1 74 -74 z"
+            fill="url(#sheen)"/>
+    </g>
 
-    <!-- ── Três bolhas de idioma ── -->
+    <!-- Três pontos = três idiomas -->
+    <circle cx="176" cy="236" r="27" fill="#f2cf52"/>
+    <circle cx="176" cy="236" r="27" fill="url(#sheen)"/>
 
-    <!-- Bolha 1 — ES (dourado) — canto superior esquerdo -->
-    <circle cx="168" cy="168" r="88" fill="url(#grad1)" opacity="0.18" filter="url(#glow)"/>
-    <circle cx="168" cy="168" r="72" fill="#ffffff" opacity="0.55"/>
-    <circle cx="168" cy="168" r="72" fill="none" stroke="url(#grad1)" stroke-width="2.5" opacity="0.7"/>
+    <circle cx="256" cy="236" r="27" fill="#ffffff" opacity="0.97"/>
 
-    <!-- Bolha 2 — ZH (vermelho) — canto inferior direito -->
-    <circle cx="344" cy="344" r="88" fill="url(#grad2)" opacity="0.18" filter="url(#glow)"/>
-    <circle cx="344" cy="344" r="72" fill="#ffffff" opacity="0.55"/>
-    <circle cx="344" cy="344" r="72" fill="none" stroke="url(#grad2)" stroke-width="2.5" opacity="0.7"/>
+    <circle cx="336" cy="236" r="27" fill="#f0564a"/>
+    <circle cx="336" cy="236" r="27" fill="url(#sheen)"/>
 
-    <!-- Bolha 3 — FR (azul) — canto superior direito -->
-    <circle cx="356" cy="172" r="64" fill="#4f8ef7" opacity="0.13" filter="url(#glow)"/>
-    <circle cx="356" cy="172" r="52" fill="#ffffff" opacity="0.50"/>
-    <circle cx="356" cy="172" r="52" fill="none" stroke="#4f8ef7" stroke-width="2" opacity="0.65"/>
-
-    <!-- ── Card glass central ── -->
-    <rect x="108" y="200" width="296" height="140" rx="28" ry="28"
-          fill="url(#glass)" filter="url(#shadow)"/>
-    <!-- Borda glass -->
-    <rect x="108" y="200" width="296" height="140" rx="28" ry="28"
-          fill="none" stroke="#ffffff" stroke-width="2" opacity="0.9"/>
-    <!-- Borda neon fina externa -->
-    <rect x="106" y="198" width="300" height="144" rx="30" ry="30"
-          fill="none" stroke="url(#grad1)" stroke-width="1.5" opacity="0.5"/>
-
-    <!-- ── Letras dos três alfabetos no card ── -->
-
-    <!-- "Á" — espanhol / latin (dourado) -->
-    <text x="172" y="292"
-          font-family="Georgia, 'Times New Roman', serif"
-          font-size="78" font-weight="700"
-          fill="url(#grad1)"
-          text-anchor="middle"
-          dominant-baseline="auto"
-          filter="url(#glow)"
-          opacity="0.95">Á</text>
-
-    <!-- "的" — mandarim (vermelho) -->
-    <text x="340" y="292"
-          font-family="'PingFang SC', 'Noto Sans SC', 'Microsoft YaHei', sans-serif"
-          font-size="72" font-weight="700"
-          fill="url(#grad2)"
-          text-anchor="middle"
-          dominant-baseline="auto"
-          filter="url(#glow)"
-          opacity="0.92">的</text>
-
-    <!-- Separador central -->
-    <line x1="256" y1="216" x2="256" y2="332"
-          stroke="url(#grad1)" stroke-width="1.5" opacity="0.35"/>
-
-    <!-- ── Pontinhos de idioma no fundo das bolhas ── -->
-
-    <!-- ES label -->
-    <text x="168" y="175"
-          font-family="'Space Mono', 'Courier New', monospace"
-          font-size="19" font-weight="700" letter-spacing="2"
-          fill="url(#grad1)" text-anchor="middle"
-          dominant-baseline="auto" opacity="0.85">ES</text>
-
-    <!-- ZH label -->
-    <text x="344" y="350"
-          font-family="'Space Mono', 'Courier New', monospace"
-          font-size="19" font-weight="700" letter-spacing="2"
-          fill="url(#grad2)" text-anchor="middle"
-          dominant-baseline="auto" opacity="0.85">中文</text>
-
-    <!-- FR label -->
-    <text x="356" y="178"
-          font-family="'Space Mono', 'Courier New', monospace"
-          font-size="16" font-weight="700" letter-spacing="2"
-          fill="#4f8ef7" text-anchor="middle"
-          dominant-baseline="auto" opacity="0.80">FR</text>
-
-    <!-- ── Reflexo glass no topo do card ── -->
-    <rect x="120" y="204" width="272" height="32" rx="20" ry="20"
-          fill="#ffffff" opacity="0.35"/>
-
+    <!-- Brilho glass superior -->
+    <rect x="0" y="0" width="512" height="200" fill="url(#sheen)" opacity="0.45"/>
   </g>
 </svg>

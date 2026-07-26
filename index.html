@@ -4,6 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Políglota — Painel de Idiomas</title>
+<!-- ── Tema aplicado antes do primeiro paint (evita flash) ── -->
+<script>
+(function(){
+  try {
+    var t = localStorage.getItem('polyglot.meta.theme');
+    if (!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+    if (t === 'light') document.documentElement.setAttribute('data-theme','light');
+  } catch(e) {}
+})();
+</script>
+
 <!-- ── PWA & ícones ─────────────────────────────────── -->
 <link rel="manifest" href="/espanhol-200-dias/manifest.json">
 <meta name="theme-color" content="#0c0c10">
@@ -59,7 +70,65 @@
   --accent:    var(--es);
   --accent-a:  var(--es-a);
   --accent-b:  var(--es-b);
+
+  /* Elevação / sombra (só visível no claro) */
+  --shadow-sm: none;
+  --shadow-md: none;
+
+  color-scheme: dark;
 }
+
+/* ═══════════════════════════════════════════════════════
+   TEMA CLARO
+   Paleta recalibrada — não é inversão, é contraste real.
+   Cores neon escurecidas para legibilidade sobre branco.
+═══════════════════════════════════════════════════════ */
+[data-theme="light"] {
+  --bg:#f4f4f9;  --s0:#ededf3; --s1:#ffffff; --s2:#f8f8fc; --s3:#ffffff;
+  --bd:#dedee8;  --bd2:#ececf2;
+  --tx:#16161f;  --tx2:#55556a; --tx3:#8b8ba2;
+
+  /* Idiomas — tons mais fechados p/ contraste em fundo claro */
+  --es:   #b8901c;
+  --es-a: rgba(184,144,28,.10);
+  --es-b: rgba(184,144,28,.30);
+
+  --fr:   #2f6ede;
+  --fr-a: rgba(47,110,222,.10);
+  --fr-b: rgba(47,110,222,.30);
+
+  --zh:   #cf3123;
+  --zh-a: rgba(207,49,35,.10);
+  --zh-b: rgba(207,49,35,.30);
+  --zh2:  #a8801f;
+
+  /* Fases */
+  --p1:#5c4be0; --p1a:rgba(92,75,224,.09);  --p1b:rgba(92,75,224,.30);
+  --p2:#b8901c; --p2a:rgba(184,144,28,.09); --p2b:rgba(184,144,28,.30);
+  --p3:#12965c; --p3a:rgba(18,150,92,.09);  --p3b:rgba(18,150,92,.30);
+  --p4:#d24343; --p4a:rgba(210,67,67,.09);  --p4b:rgba(210,67,67,.30);
+  --p5:#d9700f; --p5a:rgba(217,112,15,.09); --p5b:rgba(217,112,15,.30);
+  --p6:#7a55ee; --p6a:rgba(122,85,238,.09); --p6b:rgba(122,85,238,.30);
+
+  --shadow-sm: 0 1px 2px rgba(22,22,42,.05);
+  --shadow-md: 0 2px 10px rgba(22,22,42,.07);
+
+  color-scheme: light;
+}
+
+/* Elevação real dos cartões no tema claro */
+[data-theme="light"] .card,
+[data-theme="light"] .fcard,
+[data-theme="light"] .acc,
+[data-theme="light"] .rot,
+[data-theme="light"] .stat,
+[data-theme="light"] #analysis-out { box-shadow: var(--shadow-sm); }
+[data-theme="light"] #topbar { box-shadow: var(--shadow-md); }
+[data-theme="light"] #toast  { box-shadow: 0 6px 24px rgba(22,22,42,.14); }
+[data-theme="light"] .btn-p  { box-shadow: 0 1px 3px rgba(22,22,42,.14); }
+
+/* Botão primário no claro precisa de texto branco */
+[data-theme="light"] .btn-p { color:#ffffff; }
 
 /* ═══ BASE ════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -118,6 +187,21 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-si
 /* Hamburger */
 .t-ham{display:none;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:6px;margin-left:auto;width:30px;height:30px}
 .t-ham i{position:relative;display:block;width:18px;height:2px;background:var(--tx2);border-radius:1px;box-shadow:0 -6px 0 var(--tx2),0 6px 0 var(--tx2)}
+
+/* Botão de tema claro/escuro */
+.t-theme{
+  display:flex;align-items:center;justify-content:center;
+  width:32px;height:32px;flex-shrink:0;
+  background:none;border:1px solid var(--bd);border-radius:var(--r2);
+  color:var(--tx2);cursor:pointer;padding:0;
+  transition:color .18s,border-color .18s,background .18s;
+}
+.t-theme:hover{color:var(--tx);border-color:var(--tx3);background:var(--s2)}
+.t-theme svg{width:16px;height:16px}
+.t-theme .ic-sun{display:none}
+.t-theme .ic-moon{display:block}
+[data-theme="light"] .t-theme .ic-sun{display:block}
+[data-theme="light"] .t-theme .ic-moon{display:none}
 
 /* ── SIDEBAR ─────────────────────────────────────────── */
 #sidebar{
@@ -408,6 +492,91 @@ input[type="range"]::-moz-range-thumb{
   .step-desc{font-size:11px}
 }
 
+
+/* ═══════════════════════════════════════════════════════
+   POLIMENTO UX/UI
+═══════════════════════════════════════════════════════ */
+
+/* ── Transição suave ao trocar de tema ─────────────── */
+body, #topbar, #sidebar, #content,
+.card, .fcard, .acc, .acc-head, .acc-body,
+.rot, .rot-body, .stat, .alert, #analysis-out,
+input, select, textarea, .btn, .tag, .ev-table td, .ev-table th {
+  transition: background-color .22s ease, border-color .22s ease, color .22s ease;
+}
+
+/* ── Seleção de texto ──────────────────────────────── */
+::selection { background: var(--accent-b); color: var(--tx); }
+
+/* ── Foco visível (teclado) sem poluir o clique ────── */
+:focus { outline: none; }
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--r2);
+}
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-a);
+}
+
+/* ── Remove flash azul no toque (mobile) ───────────── */
+a, button, .acc-head, .rot-head, .s-item, .lang-btn {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Backdrop do menu lateral (mobile) ─────────────── */
+#backdrop {
+  position: fixed; inset: 56px 0 0 0;
+  background: rgba(0,0,0,.5);
+  opacity: 0; pointer-events: none;
+  transition: opacity .24s ease;
+  z-index: 35;
+}
+#backdrop.show { opacity: 1; pointer-events: auto; }
+@media(min-width:769px){ #backdrop{ display:none; } }
+
+/* ── Feedback de toque nos itens interativos ───────── */
+.s-item:active, .acc-head:active, .rot-head:active { opacity: .75; }
+
+/* ── Estado desabilitado mais claro ────────────────── */
+.btn:disabled { filter: grayscale(.4); }
+
+/* ── Scroll suave dentro do conteúdo ───────────────── */
+#content { scroll-behavior: smooth; }
+
+/* ── Cartões: leve realce ao passar o mouse ────────── */
+@media(hover:hover){
+  .card:hover, .fcard:hover { border-color: var(--bd); }
+  .acc-head:hover .acc-chev, .rot-head:hover .rot-chev { color: var(--accent); }
+}
+
+/* ── Área de toque mínima 44px no mobile ───────────── */
+@media(max-width:768px){
+  .s-item      { padding: 12px 16px; min-height: 44px; }
+  .lang-btn    { min-height: 34px; }
+  .t-theme     { width: 34px; height: 34px; }
+  .t-ham       { width: 40px; height: 40px; }
+  .btn         { min-height: 44px; padding: 11px 18px; }
+  .acc-head    { min-height: 52px; }
+  .rot-head    { min-height: 48px; }
+  input, select, textarea { font-size: 16px; } /* evita zoom automático no iOS */
+}
+
+/* ── Tabelas roláveis em telas estreitas ───────────── */
+@media(max-width:600px){
+  .card > .ev-table,
+  .card table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+}
+
+/* ── Impressão ─────────────────────────────────────── */
+@media print{
+  #topbar, #sidebar, #backdrop, .btns, .t-theme, .t-ham { display: none !important; }
+  #content { overflow: visible; padding: 0; }
+  body { overflow: visible; height: auto; background: #fff; color: #000; }
+}
+
 /* ═══ TABLET (769–1024px) ════════════════════════════ */
 @media(min-width:769px) and (max-width:1024px){
   #sidebar{flex:0 0 190px}
@@ -455,6 +624,15 @@ html,body{max-width:100%;overflow-x:hidden}
     <div class="t-labels" id="phase-labels"></div>
   </div>
   <div class="t-badge" id="day-badge">DIA 1</div>
+  <button class="t-theme" onclick="toggleTheme()" aria-label="Alternar tema claro/escuro" title="Alternar tema">
+    <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+    </svg>
+    <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4.2"/>
+      <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>
+    </svg>
+  </button>
   <button class="t-ham" onclick="toggleSidebar()" aria-label="Menu"><i></i></button>
 </header>
 
@@ -508,6 +686,7 @@ html,body{max-width:100%;overflow-x:hidden}
 </main>
 </div><!-- /shell-body -->
 </div><!-- /app -->
+<div id="backdrop" onclick="toggleSidebar()"></div>
 <div id="toast"></div>
 <script>
 'use strict';
@@ -1929,6 +2108,62 @@ function buildPainel(lang) {
 }
 
 /* ═══════════════════════════════════════════════════════
+   TEMA CLARO / ESCURO
+═══════════════════════════════════════════════════════ */
+const THEME_KEY = 'polyglot.meta.theme';
+
+function applyTheme(theme) {
+  const root = document.documentElement;
+  if (theme === 'light') root.setAttribute('data-theme', 'light');
+  else                   root.removeAttribute('data-theme');
+
+  /* theme-color da barra do navegador acompanha */
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', theme === 'light' ? '#f4f4f9' : '#0c0c10');
+
+  try { localStorage.setItem(THEME_KEY, theme); } catch(e) {}
+}
+
+function currentTheme() {
+  return document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+}
+
+function toggleTheme() {
+  applyTheme(currentTheme() === 'light' ? 'dark' : 'light');
+}
+
+/* Resolve o tema inicial: preferência salva > preferência do sistema > escuro */
+function initTheme() {
+  let saved = null;
+  try { saved = localStorage.getItem(THEME_KEY); } catch(e) {}
+  if (saved === 'light' || saved === 'dark') { applyTheme(saved); return; }
+  var prefersLight = false;
+  try { prefersLight = !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches); } catch(e) {}
+  applyTheme(prefersLight ? 'light' : 'dark');
+}
+
+/* Acompanha mudança do sistema enquanto o usuário não escolher manualmente.
+   Safari < 14 e WebKit antigo não têm addEventListener em MediaQueryList —
+   por isso o fallback para addListener e o try/catch. */
+(function watchSystemTheme(){
+  if (!window.matchMedia) return;
+  var mq;
+  try { mq = window.matchMedia('(prefers-color-scheme: light)'); } catch(e) { return; }
+  if (!mq) return;
+
+  function onChange(e){
+    var saved = null;
+    try { saved = localStorage.getItem(THEME_KEY); } catch(err) {}
+    if (!saved) applyTheme(e.matches ? 'light' : 'dark');
+  }
+
+  try {
+    if (typeof mq.addEventListener === 'function')      mq.addEventListener('change', onChange);
+    else if (typeof mq.addListener === 'function')      mq.addListener(onChange);
+  } catch(e) { /* navegador sem suporte — ignora */ }
+})();
+
+/* ═══════════════════════════════════════════════════════
    ESTADO GLOBAL
 ═══════════════════════════════════════════════════════ */
 let currentLang = 'es';
@@ -2012,6 +2247,7 @@ function go(pageId, btn) {
   document.querySelectorAll('.s-item').forEach(s => s.classList.remove('on'));
   if (btn) btn.classList.add('on');
   document.getElementById('sidebar').classList.remove('open');
+  const _bd = document.getElementById('backdrop'); if (_bd) _bd.classList.remove('show');
   document.getElementById('content').scrollTo(0, 0);
   renderPage(pageId);
 }
@@ -2043,8 +2279,17 @@ function renderPage(pageId) {
 }
 
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+  const sb = document.getElementById('sidebar');
+  const bd = document.getElementById('backdrop');
+  const open = sb.classList.toggle('open');
+  if (bd) bd.classList.toggle('show', open);
 }
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    const sb = document.getElementById('sidebar');
+    if (sb && sb.classList.contains('open')) toggleSidebar();
+  }
+});
 document.getElementById('content').addEventListener('click', () => {
   if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
 });
@@ -2483,6 +2728,7 @@ function renderAnalysis(sections) {
    INIT
 ═══════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', () => {
+  initTheme();               // resolve tema antes de pintar
   runMigrations();           // detecta e migra todos os formatos anteriores
   switchLang('es');
   renderPage('visao');
