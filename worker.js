@@ -5,7 +5,7 @@
  *
  *  Rota:  POST /analisar
  *
- *  Ordem de tentativa: Claude → Gemini → GPT
+ *  Ordem de tentativa: Gemini → Claude → GPT
  *  Se um provedor falhar (erro, sem crédito, timeout),
  *  o próximo assume automaticamente.
  *
@@ -24,8 +24,8 @@
 
 /* ─── Configuração dos provedores ─────────────────── */
 const PROVIDERS = [
-  { id: 'claude', key: 'ANTHROPIC_API_KEY', model: 'claude-sonnet-4-6'  },
   { id: 'gemini', key: 'GEMINI_API_KEY',    model: 'gemini-2.0-flash'   },
+  { id: 'claude', key: 'ANTHROPIC_API_KEY', model: 'claude-sonnet-4-6'  },
   { id: 'gpt',    key: 'OPENAI_API_KEY',    model: 'gpt-4o-mini'        },
 ];
 
