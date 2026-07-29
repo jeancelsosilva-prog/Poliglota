@@ -1,22 +1,37 @@
 /**
- * Cloudflare Worker — Políglota Language Coach
- * Rota: POST /analisar
+ * ═══════════════════════════════════════════════════════
+ *  Políglota — Cloudflare Worker (multi-provedor)
+ * ═══════════════════════════════════════════════════════
  *
- * Body esperado:
- * {
- *   lang:     'es' | 'fr' | 'zh',
- *   fase:     string (nome da fase atual),
- *   faseNum:  number,
- *   checkin:  { dia, sessao, tipoDia, compreensao, fala, energia, ... }
- * }
+ *  Rota:  POST /analisar
  *
- * Variável de ambiente necessária: ANTHROPIC_API_KEY
+ *  Ordem de tentativa: Claude → Gemini → GPT
+ *  Se um provedor falhar (erro, sem crédito, timeout),
+ *  o próximo assume automaticamente.
+ *
+ *  ── Variáveis de ambiente (Settings → Variables) ──
+ *  Configure ao menos UMA. As demais são opcionais.
+ *
+ *    ANTHROPIC_API_KEY   →  console.anthropic.com
+ *    GEMINI_API_KEY      →  aistudio.google.com/apikey
+ *    OPENAI_API_KEY      →  platform.openai.com
+ *
+ *  Opcional — restringe quem pode chamar o Worker:
+ *    ALLOWED_ORIGIN      →  https://seu-usuario.github.io
+ *
+ * ═══════════════════════════════════════════════════════
  */
 
-const MODEL = 'claude-sonnet-4-6';
-const MAX_TOKENS = 1024;
+/* ─── Configuração dos provedores ─────────────────── */
+const PROVIDERS = [
+  { id: 'claude', key: 'ANTHROPIC_API_KEY', model: 'claude-sonnet-4-6'  },
+  { id: 'gemini', key: 'GEMINI_API_KEY',    model: 'gemini-2.0-flash'   },
+  { id: 'gpt',    key: 'OPENAI_API_KEY',    model: 'gpt-4o-mini'        },
+];
 
-/* ─── System prompts por idioma ───────────────────── */
+const MAX_TOKENS = 1024;
+const TIMEOUT_MS = 25000;
+
 const SYSTEM_PROMPTS = {
 
   es: `Você é o agente de acompanhamento do programa de espanhol de 200 dias.
@@ -60,7 +75,7 @@ Skritter nunca deve bloquear progresso em fala, escuta ou leitura.
 Princípio: preservar continuidade. Tons são a fundação — um tom errado muda o significado.`,
 };
 
-/* ─── Prompt do usuário com checkin ──────────────── */
+/* ─── Prompt do usuário com check-in ──────────────── */
 function buildUserPrompt(lang, fase, faseNum, ci, history = [], accumulated = {}, day = ci.dia || 1) {
   const langNames = { es:'espanhol', fr:'francês', zh:'mandarim' };
   const sessaoMap = { completa:'completa', padrao:'padrão', minima:'mínima', zero:'sem estudo' };
@@ -153,31 +168,176 @@ AJUSTE PRIORITÁRIO
 PRÓXIMO DIA`;
 }
 
-/* ─── Handler principal ───────────────────────────── */
+/* ═══════════════════════════════════════════════════════
+   CHAMADAS POR PROVEDOR
+   Cada função recebe (system, user, apiKey, model)
+   e devolve string com o texto da resposta.
+   Lança erro se falhar — o orquestrador captura.
+═══════════════════════════════════════════════════════ */
+
+/* fetch com timeout — evita o Worker travar em provedor lento */
+async function fetchTimeout(url, options, ms = TIMEOUT_MS) {
+  const ctrl = new AbortController();
+  const timer = setTimeout(() => ctrl.abort(), ms);
+  try {
+    return await fetch(url, { ...options, signal: ctrl.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/* ── Anthropic (Claude) ──────────────────────────── */
+async function callClaude(system, user, apiKey, model) {
+  const res = await fetchTimeout('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type':      'application/json',
+      'x-api-key':         apiKey,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: MAX_TOKENS,
+      system,
+      messages: [{ role: 'user', content: user }],
+    }),
+  });
+
+  if (!res.ok) throw new Error(`Claude ${res.status}: ${(await res.text()).slice(0, 200)}`);
+
+  const data = await res.json();
+  const text = (data.content || []).map(b => b.text || '').join('').trim();
+  if (!text) throw new Error('Claude devolveu resposta vazia');
+  return text;
+}
+
+/* ── Google (Gemini) ─────────────────────────────── */
+async function callGemini(system, user, apiKey, model) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+
+  const res = await fetchTimeout(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system_instruction: { parts: [{ text: system }] },
+      contents: [{ role: 'user', parts: [{ text: user }] }],
+      generationConfig: { maxOutputTokens: MAX_TOKENS, temperature: 0.7 },
+    }),
+  });
+
+  if (!res.ok) throw new Error(`Gemini ${res.status}: ${(await res.text()).slice(0, 200)}`);
+
+  const data = await res.json();
+  const parts = data?.candidates?.[0]?.content?.parts || [];
+  const text = parts.map(p => p.text || '').join('').trim();
+  if (!text) throw new Error('Gemini devolveu resposta vazia');
+  return text;
+}
+
+/* ── OpenAI (GPT) ────────────────────────────────── */
+async function callGPT(system, user, apiKey, model) {
+  const res = await fetchTimeout('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type':  'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model,
+      max_tokens: MAX_TOKENS,
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user',   content: user   },
+      ],
+    }),
+  });
+
+  if (!res.ok) throw new Error(`GPT ${res.status}: ${(await res.text()).slice(0, 200)}`);
+
+  const data = await res.json();
+  const text = (data?.choices?.[0]?.message?.content || '').trim();
+  if (!text) throw new Error('GPT devolveu resposta vazia');
+  return text;
+}
+
+const CALLERS = { claude: callClaude, gemini: callGemini, gpt: callGPT };
+
+/* ═══════════════════════════════════════════════════════
+   ORQUESTRADOR — tenta cada provedor em ordem
+═══════════════════════════════════════════════════════ */
+async function analisar(system, user, env) {
+  const disponiveis = PROVIDERS.filter(p => env[p.key]);
+
+  if (!disponiveis.length) {
+    throw new Error(
+      'Nenhuma API key configurada. Adicione ANTHROPIC_API_KEY, ' +
+      'GEMINI_API_KEY ou OPENAI_API_KEY nas variáveis do Worker.'
+    );
+  }
+
+  const tentativas = [];
+
+  for (const p of disponiveis) {
+    try {
+      const texto = await CALLERS[p.id](system, user, env[p.key], p.model);
+      return { texto, provider: p.id, model: p.model, tentativas };
+    } catch (err) {
+      tentativas.push({ provider: p.id, erro: String(err.message || err).slice(0, 300) });
+      // segue para o próximo provedor
+    }
+  }
+
+  const e = new Error('Todos os provedores falharam');
+  e.tentativas = tentativas;
+  throw e;
+}
+
+/* ═══════════════════════════════════════════════════════
+   HANDLER HTTP
+═══════════════════════════════════════════════════════ */
+function corsHeaders(env) {
+  return {
+    'Access-Control-Allow-Origin':  env.ALLOWED_ORIGIN || '*',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Max-Age':       '86400',
+  };
+}
+
+function json(body, status, env) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...corsHeaders(env) },
+  });
+}
+
 async function handleRequest(request, env) {
-  // CORS preflight
   if (request.method === 'OPTIONS') {
-    return new Response(null, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type',
-      }
-    });
+    return new Response(null, { headers: corsHeaders(env) });
+  }
+
+  /* Health check — abrir a URL no navegador mostra o status */
+  if (request.method === 'GET') {
+    return json({
+      status: 'ok',
+      service: 'Políglota Worker',
+      providers: PROVIDERS.map(p => ({
+        id: p.id,
+        model: p.model,
+        configurado: !!env[p.key],
+      })),
+    }, 200, env);
   }
 
   if (request.method !== 'POST') {
-    return new Response('Method Not Allowed', { status: 405 });
+    return json({ error: 'Método não permitido' }, 405, env);
   }
 
   let body;
   try {
     body = await request.json();
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON' }), {
-      status: 400,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return json({ error: 'JSON inválido' }, 400, env);
   }
 
   const {
@@ -202,59 +362,24 @@ async function handleRequest(request, env) {
   const systemPrompt = SYSTEM_PROMPTS[lang] || SYSTEM_PROMPTS.es;
   const userPrompt   = buildUserPrompt(lang, phaseName, phaseN, ci, history, accumulated, day);
 
-  const apiKey = env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return new Response(JSON.stringify({ error: 'ANTHROPIC_API_KEY not set' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
-  }
-
-  let anthropicRes;
   try {
-    anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type':      'application/json',
-        'x-api-key':         apiKey,
-        'anthropic-version': '2023-06-01',
-      },
-      body: JSON.stringify({
-        model:      MODEL,
-        max_tokens: MAX_TOKENS,
-        system:     systemPrompt,
-        messages:   [{ role: 'user', content: userPrompt }],
-      }),
-    });
+    const r = await analisar(systemPrompt, userPrompt, env);
+    return json({
+      analysis:   r.texto,
+      provider:   r.provider,
+      model:      r.model,
+      fallbacks:  r.tentativas,   // vazio se o primeiro funcionou
+    }, 200, env);
   } catch (err) {
-    return new Response(JSON.stringify({ error: 'Anthropic API unreachable: ' + err.message }), {
-      status: 502,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
+    return json({
+      error:      String(err.message || err),
+      tentativas: err.tentativas || [],
+    }, 502, env);
   }
-
-  if (!anthropicRes.ok) {
-    const errText = await anthropicRes.text();
-    return new Response(JSON.stringify({ error: 'Anthropic error ' + anthropicRes.status, detail: errText }), {
-      status: anthropicRes.status,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' }
-    });
-  }
-
-  const data = await anthropicRes.json();
-  const text = (data.content || []).map(b => b.text || '').join('');
-
-  return new Response(JSON.stringify({ analysis: text }), {
-    headers: {
-      'Content-Type':                'application/json',
-      'Access-Control-Allow-Origin': '*',
-    }
-  });
 }
 
-/* ─── Export ──────────────────────────────────────── */
 export default {
   async fetch(request, env) {
     return handleRequest(request, env);
-  }
+  },
 };

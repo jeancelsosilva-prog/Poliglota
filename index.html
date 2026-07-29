@@ -2687,13 +2687,44 @@ async function analisarIA() {
       })
     });
     const data = await res.json();
+
+    /* Erro devolvido pelo Worker (todos os provedores falharam) */
+    if (data && data.error) {
+      const det = (data.tentativas || [])
+        .map(t => `<div style="margin-top:4px;font-size:12px;color:var(--tx2)">${t.provider}: ${t.erro}</div>`)
+        .join('');
+      out.innerHTML = `<div class="ao-sec"><div class="ao-lbl" style="color:var(--p4)">Falha na análise</div>` +
+                      `<div>${data.error}</div>${det}</div>`;
+      if (btn) btn.disabled = false;
+      return;
+    }
+
     let text = '';
     if (typeof data === 'string') text = data;
     else if (Array.isArray(data?.content)) text = data.content.map(b => b.text || '').join('');
     else if (typeof data?.analysis === 'string') text = data.analysis;
     else if (typeof data?.result === 'string') text = data.result;
     else text = JSON.stringify(data);
+
     parseSections(text);
+
+    /* Rodapé discreto: qual IA respondeu e se houve fallback */
+    if (data && data.provider) {
+      const nomes = { claude: 'Claude', gemini: 'Gemini', gpt: 'GPT' };
+      const usouFallback = (data.fallbacks || []).length > 0;
+      const rodape = document.createElement('div');
+      rodape.className = 'ao-sec';
+      rodape.style.cssText = 'padding:9px 17px;font-size:11px;color:var(--tx3);' +
+                             "font-family:'Space Mono',monospace;display:flex;" +
+                             'align-items:center;gap:8px;flex-wrap:wrap';
+      rodape.innerHTML =
+        `<span>análise por ${nomes[data.provider] || data.provider}` +
+        (data.model ? ` · ${data.model}` : '') + `</span>` +
+        (usouFallback
+          ? `<span style="color:var(--p2)">↻ fallback após ${data.fallbacks.length} tentativa(s)</span>`
+          : '');
+      out.appendChild(rodape);
+    }
   } catch (err) {
     if (out) out.innerHTML = `<div class="ao-sec"><div class="ao-lbl" style="color:var(--p4)">Erro</div><div>${err.message}</div></div>`;
   }
