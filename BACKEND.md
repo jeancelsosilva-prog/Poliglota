@@ -98,6 +98,8 @@ Suba o arquivo. Pronto — o botão **Análise IA** já funciona.
 
 ## Segurança
 
+**A chave nunca deve sair do painel do Cloudflare.** Não cole em chat, print, e-mail ou commit. Se isso acontecer, revogue e gere outra imediatamente no console do provedor — chave exposta é chave comprometida, mesmo que pareça que ninguém viu.
+
 As chaves ficam **no Worker**, nunca no navegador. O `index.html` é público no GitHub Pages; se as chaves estivessem nele, qualquer um poderia copiá-las e gastar seu crédito.
 
 ### Restringir quem pode chamar
@@ -116,15 +118,29 @@ Recomendado se você não quer que terceiros usem seu Worker.
 
 No topo do `worker.js`:
 
-```javascript
-const PROVIDERS = [
-  { id: 'claude', key: 'ANTHROPIC_API_KEY', model: 'claude-sonnet-4-6' },
-  { id: 'gemini', key: 'GEMINI_API_KEY',    model: 'gemini-2.0-flash'  },
-  { id: 'gpt',    key: 'OPENAI_API_KEY',    model: 'gpt-4o-mini'       },
-];
-```
+Modelos padrão:
 
-Reordenar a lista muda a prioridade. Para deixar o Gemini na frente — por ser gratuito — basta mover a linha dele para cima.
+| Provedor | Modelo padrão |
+|---|---|
+| Claude | `claude-sonnet-5` |
+| Gemini | `gemini-3.6-flash` |
+| GPT | `gpt-5-mini` |
+
+**Você não precisa editar o código para trocar.** Adicione a variável correspondente no Worker:
+
+| Variável | Exemplo |
+|---|---|
+| `CLAUDE_MODEL` | `claude-opus-5` |
+| `GEMINI_MODEL` | `gemini-2.5-flash` |
+| `OPENAI_MODEL` | `gpt-5.4-mini` |
+
+Reordenar o array `PROVIDERS` no código muda a prioridade da cadeia.
+
+### Modelo descontinuado
+
+Provedores aposentam modelos periodicamente. O Gemini 2.0 Flash, por exemplo, foi desligado em 1º de junho de 2026.
+
+Se isso acontecer, a análise retorna uma mensagem explícita dizendo qual modelo falhou. A correção é adicionar a variável de ambiente com um modelo atual — sem tocar no código.
 
 ---
 
