@@ -5,7 +5,7 @@
  *
  *  Rota:  POST /analisar
  *
- *  Ordem de tentativa: Gemini → Claude → GPT
+ *  Ordem de tentativa: Claude → Gemini → GPT
  *  Se um provedor falhar (erro, sem crédito, timeout),
  *  o próximo assume automaticamente.
  *
@@ -22,12 +22,21 @@
  * ═══════════════════════════════════════════════════════
  */
 
-/* ─── Configuração dos provedores ─────────────────── */
+/* ─── Configuração dos provedores ─────────────────────
+   O modelo pode ser trocado sem editar código: basta criar
+   a variável de ambiente correspondente no Cloudflare.
+   Ex.: GEMINI_MODEL = gemini-2.5-flash
+──────────────────────────────────────────────────────── */
 const PROVIDERS = [
-  { id: 'gemini', key: 'GEMINI_API_KEY',    model: 'gemini-2.0-flash'   },
-  { id: 'claude', key: 'ANTHROPIC_API_KEY', model: 'claude-sonnet-4-6'  },
-  { id: 'gpt',    key: 'OPENAI_API_KEY',    model: 'gpt-4o-mini'        },
+  { id: 'claude', key: 'ANTHROPIC_API_KEY', modelVar: 'CLAUDE_MODEL', modelDefault: 'claude-sonnet-5'   },
+  { id: 'gemini', key: 'GEMINI_API_KEY',    modelVar: 'GEMINI_MODEL', modelDefault: 'gemini-3.6-flash'  },
+  { id: 'gpt',    key: 'OPENAI_API_KEY',    modelVar: 'OPENAI_MODEL', modelDefault: 'gpt-5-mini'        },
 ];
+
+/* Modelo efetivo: variável de ambiente, senão o padrão */
+function modelOf(p, env) {
+  return (env[p.modelVar] || '').trim() || p.modelDefault;
+}
 
 const MAX_TOKENS = 1024;
 const TIMEOUT_MS = 25000;
@@ -203,7 +212,16 @@ async function callClaude(system, user, apiKey, model) {
     }),
   });
 
-  if (!res.ok) throw new Error(`Claude ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  if (!res.ok) {
+    const body = (await res.text()).slice(0, 200);
+    if (res.status === 404) {
+      throw new Error(
+        `Claude 404: modelo "${model}" indisponível. ` +
+        `Defina CLAUDE_MODEL no Worker com um modelo atual.`
+      );
+    }
+    throw new Error(`Claude ${res.status}: ${body}`);
+  }
 
   const data = await res.json();
   const text = (data.content || []).map(b => b.text || '').join('').trim();
@@ -225,7 +243,16 @@ async function callGemini(system, user, apiKey, model) {
     }),
   });
 
-  if (!res.ok) throw new Error(`Gemini ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  if (!res.ok) {
+    const body = (await res.text()).slice(0, 200);
+    if (res.status === 404) {
+      throw new Error(
+        `Gemini 404: modelo "${model}" não existe ou foi descontinuado. ` +
+        `Defina a variável GEMINI_MODEL no Worker com um modelo atual.`
+      );
+    }
+    throw new Error(`Gemini ${res.status}: ${body}`);
+  }
 
   const data = await res.json();
   const parts = data?.candidates?.[0]?.content?.parts || [];
@@ -252,7 +279,16 @@ async function callGPT(system, user, apiKey, model) {
     }),
   });
 
-  if (!res.ok) throw new Error(`GPT ${res.status}: ${(await res.text()).slice(0, 200)}`);
+  if (!res.ok) {
+    const body = (await res.text()).slice(0, 200);
+    if (res.status === 404) {
+      throw new Error(
+        `GPT 404: modelo "${model}" indisponível. ` +
+        `Defina OPENAI_MODEL no Worker com um modelo atual.`
+      );
+    }
+    throw new Error(`GPT ${res.status}: ${body}`);
+  }
 
   const data = await res.json();
   const text = (data?.choices?.[0]?.message?.content || '').trim();
@@ -278,9 +314,10 @@ async function analisar(system, user, env) {
   const tentativas = [];
 
   for (const p of disponiveis) {
+    const model = modelOf(p, env);
     try {
-      const texto = await CALLERS[p.id](system, user, env[p.key], p.model);
-      return { texto, provider: p.id, model: p.model, tentativas };
+      const texto = await CALLERS[p.id](system, user, env[p.key], model);
+      return { texto, provider: p.id, model, tentativas };
     } catch (err) {
       tentativas.push({ provider: p.id, erro: String(err.message || err).slice(0, 300) });
       // segue para o próximo provedor
@@ -323,7 +360,7 @@ async function handleRequest(request, env) {
       service: 'Políglota Worker',
       providers: PROVIDERS.map(p => ({
         id: p.id,
-        model: p.model,
+        model: modelOf(p, env),
         configurado: !!env[p.key],
       })),
     }, 200, env);
