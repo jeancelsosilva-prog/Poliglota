@@ -2814,7 +2814,7 @@ function analisarLocal() {
 /* ═══════════════════════════════════════════════════════
    ANÁLISE IA (Cloudflare Worker)
 ═══════════════════════════════════════════════════════ */
-const WORKER_URL = 'https://app-poliglota.jeancelsosilva.workers.dev/analisar';
+const WORKER_URL = 'https://seu-worker.workers.dev/analisar';
 
 async function analisarIA() {
   const f = collectForm();
@@ -2833,6 +2833,21 @@ async function analisarIA() {
   if (btn) btn.disabled = true;
 
   /* Enriquecer payload com histórico recente e métricas acumuladas */
+  /* Guarda: URL do Worker ainda não configurada */
+  if (!WORKER_URL || /seu-worker|SEU-SUBDOMINIO|example\.com/i.test(WORKER_URL)) {
+    out.classList.add('vis');
+    out.innerHTML =
+      '<div class="ao-sec"><div class="ao-lbl" style="color:var(--p2)">Worker não configurado</div>' +
+      '<div>A Análise IA precisa da URL do seu Cloudflare Worker.<br><br>' +
+      'Abra o <code>index.html</code>, localize a linha:<br>' +
+      '<code style="color:var(--tx2)">const WORKER_URL = ...</code><br><br>' +
+      'e substitua pela URL do seu Worker, terminando em <code>/analisar</code>.<br><br>' +
+      '<span style="color:var(--tx2)">Enquanto isso, use a <strong>Análise local</strong> — ' +
+      'ela funciona sem nenhuma configuração.</span></div></div>';
+    if (btn) btn.disabled = false;
+    return;
+  }
+
   const recentHistory = (getStore(lang, 'checkins') || []).slice(-5).map(h => ({
     dia:         h.dia,
     compreensao: h.compreensao,
@@ -2922,7 +2937,22 @@ async function analisarIA() {
       out.appendChild(rodape);
     }
   } catch (err) {
-    if (out) out.innerHTML = `<div class="ao-sec"><div class="ao-lbl" style="color:var(--p4)">Erro</div><div>${err.message}</div></div>`;
+    const msg = String(err && err.message ? err.message : err);
+    const rede = /failed to fetch|networkerror|load failed|typeerror/i.test(msg);
+    if (out) {
+      out.classList.add('vis');
+      out.innerHTML = rede
+        ? '<div class="ao-sec"><div class="ao-lbl" style="color:var(--p4)">Não foi possível alcançar o Worker</div>' +
+          '<div>O navegador não conseguiu conectar em:<br>' +
+          '<code style="color:var(--tx2);word-break:break-all">' + WORKER_URL + '</code><br><br>' +
+          'Verifique, nesta ordem:<br>' +
+          '1. A URL está correta e termina em <code>/analisar</code><br>' +
+          '2. Abrindo a URL sem <code>/analisar</code> no navegador retorna um JSON<br>' +
+          '3. O código do Worker foi salvo com <strong>Deploy</strong><br>' +
+          '4. Se definiu <code>ALLOWED_ORIGIN</code>, ele bate com o domínio deste site<br><br>' +
+          '<span style="color:var(--tx2)">A <strong>Análise local</strong> continua funcionando normalmente.</span></div></div>'
+        : '<div class="ao-sec"><div class="ao-lbl" style="color:var(--p4)">Erro</div><div>' + msg + '</div></div>';
+    }
   }
 
   if (btn) btn.disabled = false;
