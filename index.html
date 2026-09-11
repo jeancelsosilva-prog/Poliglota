@@ -80,6 +80,10 @@
   --shadow-sm: none;
   --shadow-md: none;
 
+  /* Escala tipográfica */
+  --fs-2xs: 9px;   --fs-xs: 10.5px; --fs-sm: 12px;  --fs-md: 13px;
+  --fs-lg: 15px;   --fs-xl: 17.5px; --fs-2xl: 21px; --fs-display: 32px;
+
   color-scheme: dark;
 }
 
@@ -140,7 +144,7 @@
 /* ═══ BASE ════════════════════════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:14px;line-height:1.6;overflow:hidden;height:100vh;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-size:var(--fs-md);line-height:1.6;overflow:hidden;height:100vh;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:var(--bg)}
 ::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
@@ -159,7 +163,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-si
 /* Seletor de idioma */
 .lang-switcher{display:flex;gap:3px;flex-shrink:0}
 .lang-btn{
-  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.06em;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-xs);letter-spacing:.06em;
   padding:5px 10px;border-radius:var(--r2);border:1px solid var(--bd);
   background:none;color:var(--tx3);cursor:pointer;transition:all .18s;
   white-space:nowrap;
@@ -182,10 +186,10 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-si
 .t-pip{height:5px;border-radius:2px;transition:opacity .3s;flex:1}
 .t-pip.dim{opacity:.18}
 .t-labels{display:flex;justify-content:space-between}
-.t-lbl{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:8px;color:var(--tx3);letter-spacing:.04em;white-space:nowrap}
+.t-lbl{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);color:var(--tx3);letter-spacing:.04em;white-space:nowrap}
 
 .t-badge{
-  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-xs);
   padding:4px 12px;border-radius:2px;white-space:nowrap;flex-shrink:0;
   border:1px solid var(--accent-b);background:var(--accent-a);color:var(--accent);
   transition:all .3s;
@@ -216,11 +220,11 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-si
   overflow-y:auto;display:flex;flex-direction:column;padding:10px 0 20px;
   -webkit-overflow-scrolling:touch;
 }
-.s-sec{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9px;letter-spacing:.14em;color:var(--tx3);text-transform:uppercase;padding:14px 16px 5px}
+.s-sec{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);letter-spacing:.14em;color:var(--tx3);text-transform:uppercase;padding:14px 16px 5px}
 .s-item{
   display:flex;align-items:center;gap:10px;padding:9px 16px;
   background:none;border:none;width:100%;text-align:left;color:var(--tx2);
-  font-family:'Inter',sans-serif;font-size:13px;cursor:pointer;position:relative;
+  font-family:'Inter',sans-serif;font-size:var(--fs-md);cursor:pointer;position:relative;
   transition:background .14s,color .14s;
 }
 .s-item:hover{background:var(--s2);color:var(--tx)}
@@ -231,7 +235,7 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-si
 
 /* Idioma inativo na sidebar */
 .sidebar-lang-label{
-  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9px;letter-spacing:.1em;
+  font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);letter-spacing:.1em;
   text-transform:uppercase;padding:3px 8px;border-radius:2px;border:1px solid;
   flex-shrink:0;margin-left:auto;
 }
@@ -243,17 +247,17 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-si
 .pg.on{display:block;animation:fi .16s ease}
 @keyframes fi{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 .pg-h{margin-bottom:22px}
-.pg-title{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:var(--tx);margin-bottom:3px}
-.pg-sub{font-size:13px;color:var(--tx2)}
+.pg-title{font-family:'Space Grotesk',sans-serif;font-size:var(--fs-2xl);font-weight:700;color:var(--tx);margin-bottom:3px}
+.pg-sub{font-size:var(--fs-md);color:var(--tx2)}
 
 /* ═══ CARDS ═══════════════════════════════════════════ */
 .card{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);padding:20px;margin-bottom:14px}
 .card-row{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.card-title{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;color:var(--tx)}
-.card-sub{font-size:13px;color:var(--tx2);margin-bottom:14px;line-height:1.55}
+.card-title{font-family:'Space Grotesk',sans-serif;font-size:var(--fs-lg);font-weight:600;color:var(--tx)}
+.card-sub{font-size:var(--fs-md);color:var(--tx2);margin-bottom:14px;line-height:1.55}
 
 /* ═══ TAGS ════════════════════════════════════════════ */
-.tag{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:2px;border:1px solid;flex-shrink:0}
+.tag{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);letter-spacing:.12em;text-transform:uppercase;padding:3px 8px;border-radius:2px;border:1px solid;flex-shrink:0}
 .ta{color:var(--accent);border-color:var(--accent-b);background:var(--accent-a)}
 .t1{color:var(--p1);border-color:var(--p1b);background:var(--p1a)}
 .t2{color:var(--p2);border-color:var(--p2b);background:var(--p2a)}
@@ -272,12 +276,12 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-si
 
 /* ═══ STAT TILES ══════════════════════════════════════ */
 .stat{background:var(--s2);border:1px solid var(--bd2);border-radius:var(--r);padding:16px;text-align:center}
-.stat-v{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:22px;font-weight:700;color:var(--accent);margin-bottom:4px;line-height:1;transition:color .3s}
-.stat-l{font-size:11px;color:var(--tx3);letter-spacing:.03em}
+.stat-v{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xl);font-weight:700;color:var(--accent);margin-bottom:4px;line-height:1;transition:color .3s}
+.stat-l{font-size:var(--fs-xs);color:var(--tx3);letter-spacing:.03em}
 
 /* ═══ ITEM LISTS ══════════════════════════════════════ */
 .ilist{list-style:none}
-.ilist li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd2);font-size:13px;line-height:1.55}
+.ilist li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd2);font-size:var(--fs-md);line-height:1.55}
 .ilist li:last-child{border-bottom:none}
 .dot{width:6px;height:6px;border-radius:50%;margin-top:6px;flex-shrink:0}
 .da{background:var(--accent)}
@@ -286,22 +290,22 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-si
 .dg{background:var(--tx3)}
 
 /* ═══ ALERT ═══════════════════════════════════════════ */
-.alert{background:var(--accent-a);border:1px solid var(--accent-b);border-radius:var(--r2);padding:11px 15px;font-size:13px;margin-bottom:14px;line-height:1.55;transition:background .3s,border-color .3s}
+.alert{background:var(--accent-a);border:1px solid var(--accent-b);border-radius:var(--r2);padding:11px 15px;font-size:var(--fs-md);margin-bottom:14px;line-height:1.55;transition:background .3s,border-color .3s}
 .alert strong{color:var(--accent);transition:color .3s}
 
 /* ═══ ACCORDIONS ═══════════════════════════════════════ */
 .acc{border:1px solid var(--bd);border-radius:var(--r);margin-bottom:8px;overflow:hidden}
 .acc-head{display:flex;align-items:center;gap:12px;padding:13px 17px;cursor:pointer;user-select:none;background:var(--s1);transition:background .14s}
 .acc-head:hover{background:var(--s2)}
-.acc-num{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:11px;font-weight:700;padding:3px 9px;border-radius:2px;flex-shrink:0}
-.acc-name{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;flex:1}
-.acc-meta{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;color:var(--tx3);white-space:nowrap}
-.acc-chev{color:var(--tx3);font-size:11px;transition:transform .2s;flex-shrink:0}
+.acc-num{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-xs);font-weight:700;padding:3px 9px;border-radius:2px;flex-shrink:0}
+.acc-name{font-family:'Space Grotesk',sans-serif;font-size:var(--fs-md);font-weight:600;flex:1}
+.acc-meta{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-xs);color:var(--tx3);white-space:nowrap}
+.acc-chev{color:var(--tx3);font-size:var(--fs-xs);transition:transform .2s;flex-shrink:0}
 .acc.open .acc-chev{transform:rotate(90deg)}
 .acc-body{display:none;padding:0 17px 15px;background:var(--s0);border-top:1px solid var(--bd)}
 .acc.open .acc-body{display:block}
-.acc-desc{font-size:13px;color:var(--tx2);margin:12px 0 10px;line-height:1.55}
-.acc-marco{margin-top:12px;padding:10px 13px;border-radius:var(--r2);border:1px solid;font-size:12px;line-height:1.55}
+.acc-desc{font-size:var(--fs-md);color:var(--tx2);margin:12px 0 10px;line-height:1.55}
+.acc-marco{margin-top:12px;padding:10px 13px;border-radius:var(--r2);border:1px solid;font-size:var(--fs-sm);line-height:1.55}
 
 /* Accordion phase colors aplicados via classe de fase */
 .ph1 .acc-num{background:var(--p1a);color:var(--p1);border:1px solid var(--p1b)}
@@ -323,18 +327,18 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-si
 .rot-head.rc{background:rgba(62,207,142,.08);border-bottom:1px solid rgba(62,207,142,.18)}
 .rot-head.rp{background:rgba(232,197,71,.08);border-bottom:1px solid rgba(232,197,71,.18)}
 .rot-head.rm{background:rgba(248,113,113,.08);border-bottom:1px solid rgba(248,113,113,.18)}
-.rot-label{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600}
+.rot-label{font-family:'Space Grotesk',sans-serif;font-size:var(--fs-md);font-weight:600}
 .rot-head.rc .rot-label{color:var(--p3)}.rot-head.rp .rot-label{color:var(--p2)}.rot-head.rm .rot-label{color:var(--p4)}
-.rot-meta{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;color:var(--tx3)}
-.rot-chev{font-size:10px;transition:transform .2s}
+.rot-meta{display:flex;align-items:center;gap:10px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-xs);color:var(--tx3)}
+.rot-chev{font-size:var(--fs-xs);transition:transform .2s}
 .rot.open .rot-chev{transform:rotate(90deg)}
 .rot-body{display:none;padding:13px 15px;background:var(--s2)}
 .rot.open .rot-body{display:block}
 
-.trow{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd2);font-size:13px;line-height:1.5;align-items:flex-start}
+.trow{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--bd2);font-size:var(--fs-md);line-height:1.5;align-items:flex-start}
 .trow:last-child{border-bottom:none}
-.tslot{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9px;color:var(--tx3);width:70px;flex-shrink:0;padding-top:3px;letter-spacing:.06em;text-transform:uppercase}
-.tpill{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9px;padding:2px 7px;border-radius:2px;flex-shrink:0;height:fit-content;margin-top:2px}
+.tslot{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);color:var(--tx3);width:70px;flex-shrink:0;padding-top:3px;letter-spacing:.06em;text-transform:uppercase}
+.tpill{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);padding:2px 7px;border-radius:2px;flex-shrink:0;height:fit-content;margin-top:2px}
 .tp-at{background:var(--p1a);color:var(--p1)}.tp-dr{background:var(--p2a);color:var(--p2)}
 .tp-or{background:var(--p3a);color:var(--p3)}.tp-au{background:var(--p5a);color:var(--p5)}
 .tp-lv{background:rgba(72,72,96,.25);color:var(--tx3)}.tp-rv{background:var(--p4a);color:var(--p4)}
@@ -344,21 +348,21 @@ body{background:var(--bg);color:var(--tx);font-family:'Inter',sans-serif;font-si
 .steps{counter-reset:s}
 .step{display:flex;gap:14px;padding:12px 0;border-bottom:1px solid var(--bd2);counter-increment:s}
 .step:last-child{border-bottom:none}
-.step-n{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:13px;font-weight:700;color:var(--accent);width:20px;flex-shrink:0;transition:color .3s}
+.step-n{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-md);font-weight:700;color:var(--accent);width:20px;flex-shrink:0;transition:color .3s}
 .step-n::before{content:counter(s)}
-.step-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;margin-bottom:2px}
-.step-desc{font-size:12px;color:var(--tx2);line-height:1.5}
+.step-title{font-family:'Space Grotesk',sans-serif;font-size:var(--fs-md);font-weight:600;margin-bottom:2px}
+.step-desc{font-size:var(--fs-sm);color:var(--tx2);line-height:1.5}
 
 /* ═══ CHECKIN FORM ═══════════════════════════════════ */
 .fg{display:flex;flex-direction:column;gap:6px}
-.fg label{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9px;letter-spacing:.1em;color:var(--tx3);text-transform:uppercase}
+.fg label{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);letter-spacing:.1em;color:var(--tx3);text-transform:uppercase}
 .frow{display:flex;flex-wrap:wrap;gap:14px}
 .frow>*{flex:1 1 calc(50% - 7px);min-width:0}
 @media(max-width:580px){.frow>*{flex:1 1 100%}}
 
 input[type="number"],input[type="text"],input[type="password"],select,textarea{
   width:100%;background:var(--s2);border:1px solid var(--bd);color:var(--tx);
-  font-family:'Inter',sans-serif;font-size:13px;padding:9px 12px;
+  font-family:'Inter',sans-serif;font-size:var(--fs-md);padding:9px 12px;
   border-radius:var(--r2);outline:none;transition:border-color .18s;
   -webkit-appearance:none;appearance:none;
 }
@@ -383,12 +387,12 @@ input[type="range"]::-moz-range-thumb{
 
 .fcard{background:var(--s1);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
 .fcard-head{display:flex;align-items:center;gap:10px;padding:11px 17px;border-bottom:1px solid var(--bd);background:var(--s0)}
-.fcard-title{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600}
+.fcard-title{font-family:'Space Grotesk',sans-serif;font-size:var(--fs-md);font-weight:600}
 .fcard-body{padding:15px 17px;display:flex;flex-direction:column;gap:13px}
 
 /* ═══ BUTTONS ════════════════════════════════════════ */
 .btns{display:flex;gap:8px;flex-wrap:wrap;padding-top:4px}
-.btn{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;padding:10px 20px;border:none;border-radius:var(--r2);cursor:pointer;transition:all .15s;letter-spacing:.03em}
+.btn{font-family:'Space Grotesk',sans-serif;font-size:var(--fs-md);font-weight:600;padding:10px 20px;border:none;border-radius:var(--r2);cursor:pointer;transition:all .15s;letter-spacing:.03em}
 .btn:active{transform:translateY(1px)}
 .btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none}
 .btn-p{background:var(--accent);color:#0c0c10;transition:background .3s}
@@ -399,20 +403,20 @@ input[type="range"]::-moz-range-thumb{
 /* ═══ ANÁLISE OUTPUT ════════════════════════════════ */
 #analysis-out{display:none;margin-top:14px;background:var(--s0);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
 #analysis-out.vis{display:block}
-.ao-sec{padding:14px 17px;border-bottom:1px solid var(--bd2);font-size:13px;line-height:1.72}
+.ao-sec{padding:14px 17px;border-bottom:1px solid var(--bd2);font-size:var(--fs-md);line-height:1.72}
 .ao-sec:last-child{border-bottom:none}
-.ao-lbl{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9px;letter-spacing:.12em;color:var(--accent);text-transform:uppercase;margin-bottom:6px;transition:color .3s}
-.ao-loading{padding:20px 17px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:12px;color:var(--tx3)}
+.ao-lbl{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);letter-spacing:.12em;color:var(--accent);text-transform:uppercase;margin-bottom:6px;transition:color .3s}
+.ao-loading{padding:20px 17px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-sm);color:var(--tx3)}
 .ao-loading::after{content:'';animation:ell 1.4s infinite}
 @keyframes ell{0%{content:'.'}34%{content:'..'}67%{content:'...'}}
 
 /* ═══ TABLE ══════════════════════════════════════════ */
-.ev-table{width:100%;border-collapse:collapse;font-size:13px}
-.ev-table th{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);padding:9px 13px;border-bottom:1px solid var(--bd);text-align:left}
+.ev-table{width:100%;border-collapse:collapse;font-size:var(--fs-md)}
+.ev-table th{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);letter-spacing:.1em;text-transform:uppercase;color:var(--tx3);padding:9px 13px;border-bottom:1px solid var(--bd);text-align:left}
 .ev-table td{padding:10px 13px;border-bottom:1px solid var(--bd2)}
 .ev-table tr:last-child td{border-bottom:none}
 .ev-table tr:hover td{background:var(--s2)}
-.ev-pill{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:9px;padding:3px 8px;border-radius:2px}
+.ev-pill{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);padding:3px 8px;border-radius:2px}
 .ev-pend{color:var(--tx3);background:rgba(72,72,96,.2)}
 .ev-done{color:var(--p3);background:var(--p3a)}
 
@@ -422,21 +426,21 @@ input[type="range"]::-moz-range-thumb{
 .tl-item{position:relative;display:flex;gap:16px;align-items:flex-start;margin-bottom:20px}
 .tl-item:last-child{margin-bottom:0}
 .tl-dot{position:absolute;left:-22px;top:5px;width:9px;height:9px;border-radius:50%;border:2px solid var(--bg);flex-shrink:0}
-.tl-day{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:20px;font-weight:700;line-height:1;min-width:58px;padding-top:2px;flex-shrink:0}
-.tl-h{font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:600;margin-bottom:2px}
-.tl-p{font-size:12px;color:var(--tx2);line-height:1.5}
+.tl-day{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xl);font-weight:700;line-height:1;min-width:58px;padding-top:2px;flex-shrink:0}
+.tl-h{font-family:'Space Grotesk',sans-serif;font-size:var(--fs-md);font-weight:600;margin-bottom:2px}
+.tl-p{font-size:var(--fs-sm);color:var(--tx2);line-height:1.5}
 
 /* ═══ METRICS BAR ════════════════════════════════════ */
 .mrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--bd2)}
 .mrow:last-child{border-bottom:none}
-.mrow-lbl{font-size:13px;min-width:200px}
-.mrow-lbl small{display:block;font-size:11px;color:var(--tx3);margin-top:1px}
+.mrow-lbl{font-size:var(--fs-md);min-width:200px}
+.mrow-lbl small{display:block;font-size:var(--fs-xs);color:var(--tx3);margin-top:1px}
 .mrow-track{flex:1;height:4px;background:var(--bd);border-radius:2px;overflow:hidden}
 .mrow-fill{height:100%;border-radius:2px}
-.mrow-target{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;color:var(--tx3);white-space:nowrap}
+.mrow-target{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-xs);color:var(--tx3);white-space:nowrap}
 
 /* ═══ TOAST ══════════════════════════════════════════ */
-#toast{position:fixed;bottom:24px;right:24px;background:var(--s3);border:1px solid var(--bd);color:var(--tx);font-size:13px;padding:10px 16px;border-radius:var(--r2);opacity:0;transform:translateY(10px);transition:all .24s;z-index:999;pointer-events:none;max-width:280px}
+#toast{position:fixed;bottom:24px;right:24px;background:var(--s3);border:1px solid var(--bd);color:var(--tx);font-size:var(--fs-md);padding:10px 16px;border-radius:var(--r2);opacity:0;transform:translateY(10px);transition:all .24s;z-index:999;pointer-events:none;max-width:280px}
 #toast.show{opacity:1;transform:none}
 #toast.ok{border-left:3px solid var(--p3)}
 #toast.err{border-left:3px solid var(--p4)}
@@ -444,9 +448,9 @@ input[type="range"]::-moz-range-thumb{
 /* ═══ MISC ═══════════════════════════════════════════ */
 .divider{height:1px;background:var(--bd);margin:18px 0}
 .planned-banner{background:var(--s2);border:1px solid var(--bd);border-radius:var(--r);padding:40px 24px;text-align:center}
-.planned-banner h2{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;margin-bottom:8px}
-.planned-banner p{font-size:13px;color:var(--tx2);line-height:1.6}
-.planned-icon{font-size:32px;margin-bottom:16px}
+.planned-banner h2{font-family:'Space Grotesk',sans-serif;font-size:var(--fs-xl);font-weight:600;margin-bottom:8px}
+.planned-banner p{font-size:var(--fs-md);color:var(--tx2);line-height:1.6}
+.planned-icon{font-size:var(--fs-display);margin-bottom:16px}
 
 /* ═══ MOBILE ═════════════════════════════════════════ */
 @media(max-width:768px){
@@ -466,23 +470,23 @@ input[type="range"]::-moz-range-thumb{
   /* Botões de idioma viram só sigla */
   .lb-long{display:none}
   .lb-short{display:inline}
-  .lang-btn{padding:5px 8px;font-size:10px;letter-spacing:.04em}
+  .lang-btn{padding:5px 8px;font-size:var(--fs-xs);letter-spacing:.04em}
 
   /* Badge compacto */
-  .t-badge{font-size:10px;padding:4px 8px}
+  .t-badge{font-size:var(--fs-xs);padding:4px 8px}
 
   /* Conteúdo */
   #content{padding:16px 14px 56px}
 
   /* Tipografia responsiva */
-  .pg-title{font-size:17px}
-  .acc-name{font-size:13px}
+  .pg-title{font-size:var(--fs-xl)}
+  .acc-name{font-size:var(--fs-md)}
   .acc-meta{display:none} /* esconde "D1-120 · 4 ciclos" em telas < 768 */
   .tl{padding-left:20px}
-  .tl-day{font-size:17px;min-width:44px}
+  .tl-day{font-size:var(--fs-xl);min-width:44px}
   .mrow-lbl{min-width:120px}
-  .mrow-lbl strong{font-size:12px}
-  .mrow-lbl small{font-size:10px}
+  .mrow-lbl strong{font-size:var(--fs-sm)}
+  .mrow-lbl small{font-size:var(--fs-xs)}
   .card{padding:14px}
   .fcard-body{padding:13px 14px}
 }
@@ -490,13 +494,13 @@ input[type="range"]::-moz-range-thumb{
 /* Telas muito pequenas (iPhone SE, 375px) */
 @media(max-width:400px){
   #topbar{padding:0 10px;gap:6px}
-  .lang-btn{padding:4px 6px;font-size:9px}
-  .t-badge{font-size:9px;padding:3px 7px}
+  .lang-btn{padding:4px 6px;font-size:var(--fs-2xs)}
+  .t-badge{font-size:var(--fs-2xs);padding:3px 7px}
   .card{padding:12px}
-  .ilist li{font-size:12px}
-  .trow{font-size:12px}
-  .step-title{font-size:12px}
-  .step-desc{font-size:11px}
+  .ilist li{font-size:var(--fs-sm)}
+  .trow{font-size:var(--fs-sm)}
+  .step-title{font-size:var(--fs-sm)}
+  .step-desc{font-size:var(--fs-xs)}
 }
 
 
@@ -568,7 +572,7 @@ a, button, .acc-head, .rot-head, .s-item, .lang-btn {
   .btn         { min-height: 44px; padding: 11px 18px; }
   .acc-head    { min-height: 52px; }
   .rot-head    { min-height: 48px; }
-  input, select, textarea { font-size: 16px; } /* evita zoom automático no iOS */
+  input, select, textarea { font-size:16px; } /* iOS exige ≥16px para não dar zoom ao focar — manter literal */
 }
 
 /* ── Tabelas roláveis em telas estreitas ───────────── */
@@ -632,7 +636,7 @@ a, button, .acc-head, .rot-head, .s-item, .lang-btn {
 .s-sec{
   display:flex; align-items:center; gap:8px;
   font-family:'JetBrains Mono',ui-monospace,monospace;
-  font-size:9px; font-weight:600; letter-spacing:.18em;
+  font-size:var(--fs-2xs); font-weight:600; letter-spacing:.18em;
 }
 .s-sec::after{
   content:''; flex:1; height:1px;
@@ -640,11 +644,11 @@ a, button, .acc-head, .rot-head, .s-item, .lang-btn {
 }
 
 /* ── Item de navegação: marcador de instrumento ───── */
-.s-item{ font-family:'JetBrains Mono',ui-monospace,monospace; font-size:12px; letter-spacing:.02em; }
+.s-item{ font-family:'JetBrains Mono',ui-monospace,monospace; font-size:var(--fs-sm); letter-spacing:.02em; }
 .s-item.on::before{ width:3px; background:var(--accent); }
 .s-item.on::after{
   content:'▸'; margin-left:auto; color:var(--accent);
-  font-size:10px; opacity:.8;
+  font-size:var(--fs-xs); opacity:.8;
 }
 
 /* ── Contador de dia: mostrador do painel ─────────── */
@@ -671,18 +675,18 @@ a, button, .acc-head, .rot-head, .s-item, .lang-btn {
 .stat{ position:relative; border-left:2px solid var(--accent); }
 .stat-l{
   font-family:'JetBrains Mono',ui-monospace,monospace;
-  font-size:9.5px; letter-spacing:.11em; text-transform:uppercase;
+  font-size:var(--fs-2xs); letter-spacing:.11em; text-transform:uppercase;
 }
 
 /* ── Títulos de página: prefixo de sistema ────────── */
 .pg-title{ position:relative; padding-left:18px; letter-spacing:-.01em; }
 .pg-title::before{
   content:'▚'; position:absolute; left:0; top:1px;
-  color:var(--accent); font-size:14px; opacity:.85;
+  color:var(--accent); font-size:var(--fs-md); opacity:.85;
 }
 .pg-sub{
   font-family:'JetBrains Mono',ui-monospace,monospace;
-  font-size:11.5px; letter-spacing:.02em;
+  font-size:var(--fs-xs); letter-spacing:.02em;
 }
 
 /* ── Título de painel ──────────────────────────────── */
@@ -741,7 +745,7 @@ a, button, .acc-head, .rot-head, .s-item, .lang-btn {
 /* ── Botões: comandos ─────────────────────────────── */
 .btn{
   font-family:'JetBrains Mono',ui-monospace,monospace;
-  font-size:12px; font-weight:600; letter-spacing:.07em;
+  font-size:var(--fs-sm); font-weight:600; letter-spacing:.07em;
   text-transform:uppercase; border-radius:1px;
 }
 
@@ -769,8 +773,91 @@ textarea{ border-radius:1px; }
 /* ── Toast: mensagem de sistema ───────────────────── */
 #toast{
   font-family:'JetBrains Mono',ui-monospace,monospace;
-  font-size:12px; letter-spacing:.03em; border-radius:1px;
+  font-size:var(--fs-sm); letter-spacing:.03em; border-radius:1px;
 }
+
+
+/* ═══════════════════════════════════════════════════════
+   BOTTOM NAV — mobile
+═══════════════════════════════════════════════════════ */
+#bottom-nav{
+  display:none; position:fixed; left:0; right:0; bottom:0; z-index:45;
+  height:calc(58px + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
+  background:var(--s1); border-top:1px solid var(--bd);
+  box-shadow:0 -4px 20px rgba(0,0,0,.25);
+}
+[data-theme="light"] #bottom-nav{ box-shadow:0 -2px 12px rgba(22,22,42,.08); }
+.bn-item{
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px;
+  background:none; border:none; color:var(--tx3); cursor:pointer; padding:6px 4px 4px;
+  font-family:'JetBrains Mono',ui-monospace,monospace; font-size:var(--fs-2xs); letter-spacing:.06em;
+  text-transform:uppercase; transition:color .15s; position:relative;
+  -webkit-tap-highlight-color:transparent; min-height:52px;
+}
+.bn-item svg{ width:20px; height:20px; }
+.bn-item.on{ color:var(--accent); }
+.bn-item.on::before{
+  content:''; position:absolute; top:0; left:20%; right:20%; height:2px;
+  background:var(--accent); box-shadow:0 0 6px var(--accent);
+}
+.bn-item:active{ opacity:.7; }
+
+@media(max-width:768px){
+  #bottom-nav{ display:flex; }
+  #content{ padding-bottom:calc(58px + 24px + env(safe-area-inset-bottom)) !important; }
+  #sidebar{ bottom:calc(58px + env(safe-area-inset-bottom)); }
+  #backdrop{ bottom:calc(58px + env(safe-area-inset-bottom)); }
+  /* hambúrguer do topo vira redundante: esconde */
+  .t-ham{ display:none !important; }
+  /* toast sobe acima da barra */
+  #toast{ bottom:calc(70px + env(safe-area-inset-bottom)); }
+}
+
+/* ── Indicador de rascunho ──────────────────────────── */
+#draft-indicator{
+  display:none; align-items:center; gap:6px;
+  font-family:'JetBrains Mono',ui-monospace,monospace; font-size:var(--fs-xs);
+  letter-spacing:.08em; color:var(--tx3); text-transform:uppercase;
+}
+#draft-indicator::before{
+  content:''; width:6px; height:6px; border-radius:50%;
+  background:var(--p2); animation:pulse 2s ease-in-out infinite;
+}
+
+/* ── Botão perigoso (confirmação) ──────────────────── */
+.btn-danger{ background:var(--p4) !important; color:#fff !important; border-color:var(--p4) !important; }
+
+/* ── Modo rápido do check-in ───────────────────────── */
+.ci-detalhes{ transition:opacity .2s; }
+body.ci-rapido .ci-detalhes{ display:none; }
+.ci-rapido-toggle{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:10px 14px; margin-bottom:10px;
+  background:var(--s2); border:1px solid var(--bd); border-radius:var(--r2);
+  font-family:'JetBrains Mono',ui-monospace,monospace; font-size:var(--fs-xs); letter-spacing:.04em;
+  cursor:pointer; user-select:none;
+}
+.ci-rapido-toggle strong{ color:var(--accent); }
+.ci-rapido-toggle .sw{
+  width:36px; height:20px; border-radius:10px; background:var(--bd); position:relative; flex-shrink:0;
+  transition:background .2s;
+}
+.ci-rapido-toggle .sw::after{
+  content:''; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%;
+  background:var(--tx2); transition:transform .2s, background .2s;
+}
+body.ci-rapido .ci-rapido-toggle .sw{ background:var(--accent); }
+body.ci-rapido .ci-rapido-toggle .sw::after{ transform:translateX(16px); background:#0c0c10; }
+
+/* ── Atalhos: dica discreta no desktop ─────────────── */
+kbd{
+  font-family:'JetBrains Mono',ui-monospace,monospace; font-size:var(--fs-xs);
+  padding:1px 5px; border:1px solid var(--bd); border-bottom-width:2px;
+  border-radius:2px; background:var(--s2); color:var(--tx2);
+}
+.kbd-hint{ margin-left:auto; opacity:.5; }
+@media(max-width:768px){ .kbd-hint{ display:none; } }
 
 /* ═══ TABLET (769–1024px) ════════════════════════════ */
 @media(min-width:769px) and (max-width:1024px){
@@ -778,7 +865,7 @@ textarea{ border-radius:1px; }
   #content{padding:20px 20px 40px}
   .inner{max-width:100%}
   .mrow-lbl{min-width:160px}
-  .acc-meta{font-size:9px}
+  .acc-meta{font-size:var(--fs-2xs)}
 }
 
 /* ═══ SAFE AREA (notch / home bar) ══════════════════ */
@@ -837,37 +924,37 @@ html,body{max-width:100%;overflow-x:hidden}
 <!-- ═══ SIDEBAR ══════════════════════════════════════ -->
 <nav id="sidebar">
   <div class="s-sec">Programa</div>
-  <button class="s-item on" onclick="go('visao',this)">
+  <button class="s-item" data-page="visao" onclick="go('visao',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 5.5V8l1.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Visão Geral
   </button>
-  <button class="s-item" onclick="go('fases',this)">
+  <button class="s-item" data-page="fases" onclick="go('fases',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><rect x="1.5" y="10" width="2.5" height="4" rx="1" fill="currentColor"/><rect x="5.5" y="7" width="2.5" height="7" rx="1" fill="currentColor"/><rect x="9.5" y="4" width="2.5" height="10" rx="1" fill="currentColor"/></svg>Fases
   </button>
-  <button class="s-item" onclick="go('rotinas',this)">
+  <button class="s-item" data-page="rotinas" onclick="go('rotinas',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 1v3M11 1v3M2 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Rotinas
   </button>
-  <button class="s-item" onclick="go('metodo',this)">
+  <button class="s-item" data-page="metodo" onclick="go('metodo',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M8 2a6 6 0 100 12A6 6 0 008 2z" stroke="currentColor" stroke-width="1.5"/><path d="M8 6.5V9M7 11h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Método
   </button>
   <div class="s-sec">Acompanhamento</div>
-  <button class="s-item" onclick="go('checkin',this)">
+  <button class="s-item" data-page="checkin" onclick="go('checkin',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M3 8l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>Check-in
   </button>
-  <button class="s-item" onclick="go('avaliacoes',this)">
+  <button class="s-item" data-page="avaliacoes" onclick="go('avaliacoes',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M8 2l1.8 3.5L14 6.4l-3 2.9.7 4.1L8 11.4l-3.7 2 .7-4.1-3-2.9 4.2-.8z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Avaliações
   </button>
-  <button class="s-item" onclick="go('metricas',this)">
+  <button class="s-item" data-page="metricas" onclick="go('metricas',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M2 13l3-4 3 2 3-5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Métricas
   </button>
   <div class="s-sec">Extra</div>
-  <button class="s-item" onclick="go('extras',this)">
+  <button class="s-item" data-page="extras" onclick="go('extras',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M2 4h12v8a1 1 0 01-1 1H3a1 1 0 01-1-1V4z" stroke="currentColor" stroke-width="1.5"/><path d="M5 7h6M5 10h3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Recursos
   </button>
-  <button class="s-item" onclick="go('historico',this)">
+  <button class="s-item" data-page="historico" onclick="go('historico',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M8 3v5l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/></svg>Histórico
   </button>
   <div class="s-sec">Inteligência</div>
-  <button class="s-item" onclick="go('painel',this)">
+  <button class="s-item" data-page="painel" onclick="go('painel',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M2 10h3v4H2zM6.5 6h3v8h-3zM11 2h3v12h-3z" fill="currentColor" opacity=".8"/><path d="M2 2l3 4 3-2 3-3 3 1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>Inteligência
   </button>
 </nav>
@@ -881,6 +968,29 @@ html,body{max-width:100%;overflow-x:hidden}
 </main>
 </div><!-- /shell-body -->
 </div><!-- /app -->
+<!-- ═══ BOTTOM NAV (mobile) ═══════════════════════════ -->
+<nav id="bottom-nav" aria-label="Navegação principal">
+  <button class="bn-item" data-page="checkin" onclick="go('checkin',null)" aria-label="Check-in">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg>
+    <span>Check-in</span>
+  </button>
+  <button class="bn-item" data-page="painel" onclick="go('painel',null)" aria-label="Inteligência">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 3 4-6 5 4"/><path d="M3 21h18"/></svg>
+    <span>Painel</span>
+  </button>
+  <button class="bn-item" data-page="fases" onclick="go('fases',null)" aria-label="Fases">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+    <span>Fases</span>
+  </button>
+  <button class="bn-item" data-page="historico" onclick="go('historico',null)" aria-label="Histórico">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+    <span>Histórico</span>
+  </button>
+  <button class="bn-item" onclick="toggleSidebar()" aria-label="Mais opções">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    <span>Mais</span>
+  </button>
+</nav>
 <div id="backdrop" onclick="toggleSidebar()"></div>
 <div id="toast"></div>
 <script>
@@ -1767,8 +1877,17 @@ function buildCheckinForm(lang) {
   };
 
   return `
-    <div class="pg-h"><div class="pg-title">Check-in Diário</div>
-      <div class="pg-sub">Registre o dia e receba análise com orientação para o próximo ciclo.</div></div>
+    <div class="pg-h" style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div>
+        <div class="pg-title">Check-in Diário</div>
+        <div class="pg-sub">${new Date().toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'long'})}</div>
+      </div>
+      <span id="draft-indicator">rascunho salvo</span>
+    </div>
+    <div class="ci-rapido-toggle" onclick="toggleModoRapido()" role="switch" aria-checked="false" tabindex="0" id="ci-rapido-sw">
+      <span><strong>Modo rápido</strong> · só o essencial, para dias de plantão ou cansaço</span>
+      <span class="sw"></span>
+    </div>
     <div class="fcard">
       <div class="fcard-head"><span class="tag ta">Contexto</span><span class="fcard-title">Informações do dia</span></div>
       <div class="fcard-body">
@@ -1794,7 +1913,7 @@ function buildCheckinForm(lang) {
           </select></div>
       </div>
     </div>
-    <div class="fcard">
+    <div class="fcard ci-detalhes">
       <div class="fcard-head"><span class="tag t1">Atividades</span><span class="fcard-title">O que foi feito</span></div>
       <div class="fcard-body">${activitiesFields[lang]}</div>
     </div>
@@ -1802,7 +1921,7 @@ function buildCheckinForm(lang) {
       <div class="fcard-head"><span class="tag t3">Métricas</span><span class="fcard-title">Avaliação do dia</span></div>
       <div class="fcard-body">
         ${metricsFields[lang]}
-        <div class="frow">
+        <div class="frow ci-detalhes">
           <div class="fg"><label>Principal dificuldade</label>
             <textarea id="ci-dificuldade" placeholder="O que travou ou exigiu mais esforço hoje..."></textarea></div>
           <div class="fg"><label>Principal avanço</label>
@@ -1811,11 +1930,11 @@ function buildCheckinForm(lang) {
       </div>
     </div>
     <div class="btns">
-      <button class="btn btn-p" onclick="analisarLocal()">Análise local</button>
-      <button class="btn btn-p" id="btn-ia" onclick="analisarIA()">Análise IA</button>
-      <button class="btn btn-g" onclick="salvarCheckin()">Salvar</button>
-      <button class="btn btn-g" onclick="exportarCheckins()">Exportar JSON</button>
-      <button class="btn btn-g" onclick="limparCheckin()">Limpar</button>
+      <button class="btn btn-p" onclick="salvarCheckin()">Salvar <span class="kbd-hint"><kbd>Ctrl</kbd>+<kbd>↵</kbd></span></button>
+      <button class="btn btn-g" onclick="analisarLocal()">Análise local</button>
+      <button class="btn btn-g" id="btn-ia" onclick="analisarIA()">Análise IA</button>
+      <span style="flex:1"></span>
+      <button class="btn btn-g" onclick="limparCheckin(this)" style="opacity:.6">Limpar</button>
     </div>
     <div id="analysis-out"></div>`;
 }
@@ -2234,6 +2353,32 @@ function buildPainel(lang) {
       </div>
     </div>
 
+    <!-- Comparação semanal -->
+    ${(() => {
+      const w = compararSemanas(lang);
+      if (!w) return '';
+      const linhas = w.metricas.map(m => {
+        const up = m.delta > 0, down = m.delta < 0;
+        const cor = up ? 'var(--p3)' : down ? 'var(--p4)' : 'var(--tx3)';
+        const seta = up ? '▲' : down ? '▼' : '—';
+        const sinal = m.delta > 0 ? '+' : '';
+        return `<div class="mrow">
+          <div class="mrow-lbl"><strong>${m.label}</strong>
+            <small>semana anterior: ${m.anterior}${m.unit}</small></div>
+          <div style="flex:1"></div>
+          <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;
+                      font-size:15px;font-weight:700;color:var(--tx);min-width:70px;text-align:right">${m.atual}${m.unit}</div>
+          <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;
+                      font-size:12px;font-weight:600;color:${cor};min-width:72px;text-align:right">${seta} ${sinal}${m.delta}${m.unit}</div>
+        </div>`;
+      }).join('');
+      return `<div class="card">
+        <div class="card-row"><span class="tag t3">Tendência</span><div class="card-title">Esta semana vs anterior</div>
+          <span style="margin-left:auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:10px;color:var(--tx3)">${w.nAtual} vs ${w.nAnterior} registros</span></div>
+        ${linhas}
+      </div>`;
+    })()}
+
     <!-- Consistência -->
     <div class="card">
       <div class="card-row"><span class="tag t3">Consistência</span><div class="card-title">Regularidade de estudo</div></div>
@@ -2373,6 +2518,7 @@ function switchLang(lang) {
   }
   currentLang = lang;
   const p = PROGRAMS[lang];
+  try { localStorage.setItem('polyglot.meta.lang', lang); } catch(e) {}
 
   // Atualizar CSS vars de accent
   document.documentElement.style.setProperty('--accent',   p.accent);
@@ -2440,8 +2586,11 @@ function onDayChange(val) {
 ═══════════════════════════════════════════════════════ */
 function go(pageId, btn) {
   currentPage = pageId;
-  document.querySelectorAll('.s-item').forEach(s => s.classList.remove('on'));
-  if (btn) btn.classList.add('on');
+  try { localStorage.setItem('polyglot.meta.page', pageId); } catch(e) {}
+  document.querySelectorAll('.s-item').forEach(s => {
+    s.classList.toggle('on', s.getAttribute('data-page') === pageId);
+  });
+  syncBottomNav(pageId);
   document.getElementById('sidebar').classList.remove('open');
   const _bd = document.getElementById('backdrop'); if (_bd) _bd.classList.remove('show');
   document.getElementById('content').scrollTo(0, 0);
@@ -2458,6 +2607,7 @@ function renderPage(pageId) {
   }
 
   root.innerHTML = langContent[pageId]();
+  acessibilizarAccordions(root);
 
   // Reinit ranges após renderização
   root.querySelectorAll('input[type="range"]').forEach(r => {
@@ -2465,13 +2615,49 @@ function renderPage(pageId) {
     r.style.backgroundSize = pct + '% 100%';
   });
 
-  // Restaurar dia salvo no checkin
+  // Check-in: dia sugerido, rascunho e auto-save
   const diaInput = document.getElementById('ci-dia');
   if (diaInput) {
-    const saved = getStore(currentLang, 'currentDay') || 1;
-    diaInput.value = saved;
-    onDayChange(saved);
+    diaInput.value = diaSugerido(currentLang);
+    onDayChange(diaInput.value);
+    restaurarRascunho();
+    ligarAutoSave(root);
+    let pref = '0'; try { pref = localStorage.getItem('polyglot.meta.ciRapido') || '0'; } catch(e) {}
+    setModoRapido(pref === '1');
+    ['ci-tipo-dia','ci-sessao'].forEach(id => {
+      const el = document.getElementById(id); if (el) el.addEventListener('change', autoModoRapido);
+    });
   }
+}
+
+/* ═══════════════════════════════════════════════════════
+   MODO RÁPIDO DO CHECK-IN
+═══════════════════════════════════════════════════════ */
+function setModoRapido(on) {
+  document.body.classList.toggle('ci-rapido', !!on);
+  const sw = document.getElementById('ci-rapido-sw');
+  if (sw) sw.setAttribute('aria-checked', on ? 'true' : 'false');
+  try { localStorage.setItem('polyglot.meta.ciRapido', on ? '1' : '0'); } catch(e) {}
+}
+function toggleModoRapido() {
+  setModoRapido(!document.body.classList.contains('ci-rapido'));
+}
+/* Auto-sugere modo rápido quando o dia é pesado */
+function autoModoRapido() {
+  const tipo = document.getElementById('ci-tipo-dia');
+  const sess = document.getElementById('ci-sessao');
+  if (!tipo || !sess) return;
+  const pesado = ['plantao','pos-plantao'].includes(tipo.value) || ['minima','zero'].includes(sess.value);
+  if (pesado && !document.body.classList.contains('ci-rapido')) {
+    setModoRapido(true);
+    toast('Modo rápido ativado — dia pesado detectado.');
+  }
+}
+
+function syncBottomNav(pageId) {
+  document.querySelectorAll('.bn-item[data-page]').forEach(b => {
+    b.classList.toggle('on', b.getAttribute('data-page') === pageId);
+  });
 }
 
 function toggleSidebar() {
@@ -2480,12 +2666,67 @@ function toggleSidebar() {
   const open = sb.classList.toggle('open');
   if (bd) bd.classList.toggle('show', open);
 }
+/* ═══════════════════════════════════════════════════════
+   ATALHOS DE TECLADO
+   Esc           fecha menu
+   Ctrl/Cmd+Enter salva check-in (na página de check-in)
+   1–9           navega (fora de campos de texto)
+   T             alterna tema
+   ?             mostra atalhos
+═══════════════════════════════════════════════════════ */
+const PAGE_KEYS = { '1':'checkin','2':'painel','3':'fases','4':'rotinas','5':'metodo',
+                    '6':'avaliacoes','7':'metricas','8':'historico','9':'extras' };
+
+function emCampoTexto() {
+  const a = document.activeElement;
+  if (!a) return false;
+  const tag = a.tagName;
+  return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || a.isContentEditable;
+}
+
 document.addEventListener('keydown', e => {
+  /* Esc: fecha menu */
   if (e.key === 'Escape') {
     const sb = document.getElementById('sidebar');
     if (sb && sb.classList.contains('open')) toggleSidebar();
+    return;
   }
+  /* Ctrl/Cmd+Enter: salva check-in mesmo dentro de um campo */
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+    if (currentPage === 'checkin') { e.preventDefault(); salvarCheckin(); }
+    return;
+  }
+  /* Demais atalhos só fora de campos de texto */
+  if (emCampoTexto() || e.ctrlKey || e.metaKey || e.altKey) return;
+
+  if (PAGE_KEYS[e.key]) { e.preventDefault(); go(PAGE_KEYS[e.key], null); return; }
+  if (e.key === 't' || e.key === 'T') { e.preventDefault(); toggleTheme(); return; }
+  if (e.key === '?') { e.preventDefault(); mostrarAtalhos(); return; }
 });
+
+function mostrarAtalhos() {
+  const linhas = [
+    ['1','Check-in'],['2','Inteligência'],['3','Fases'],['4','Rotinas'],['5','Método'],
+    ['6','Avaliações'],['7','Métricas'],['8','Histórico'],['9','Recursos'],
+    ['T','Alternar tema'],['Ctrl+↵','Salvar check-in'],['Esc','Fechar menu'],
+  ];
+  const html = linhas.map(([k,v]) =>
+    `<div style="display:flex;justify-content:space-between;gap:16px;padding:5px 0;border-bottom:1px solid var(--bd2)">
+      <span>${v}</span><kbd>${k}</kbd></div>`).join('');
+  const out = document.getElementById('page-root');
+  if (!out) return;
+  const box = document.createElement('div');
+  box.className = 'card';
+  box.style.cssText = 'position:fixed;top:72px;right:24px;z-index:60;width:260px;box-shadow:0 8px 32px rgba(0,0,0,.4)';
+  box.innerHTML = `<div class="card-row"><span class="tag ta">Atalhos</span><div class="card-title">Teclado</div></div>${html}
+    <div style="margin-top:10px;font-size:11px;color:var(--tx3)">Pressione <kbd>?</kbd> ou <kbd>Esc</kbd> para fechar</div>`;
+  box.id = 'atalhos-box';
+  const old = document.getElementById('atalhos-box');
+  if (old) { old.remove(); return; }
+  document.body.appendChild(box);
+  const fechar = ev => { if (ev.key === '?' || ev.key === 'Escape') { box.remove(); document.removeEventListener('keydown', fechar); } };
+  document.addEventListener('keydown', fechar);
+}
 document.getElementById('content').addEventListener('click', () => {
   if (window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
 });
@@ -2493,8 +2734,29 @@ document.getElementById('content').addEventListener('click', () => {
 /* ═══════════════════════════════════════════════════════
    ACCORDIONS
 ═══════════════════════════════════════════════════════ */
-function toggleAcc(el) { el.classList.toggle('open'); }
-function toggleRot(el) { el.classList.toggle('open'); }
+function toggleAcc(el) {
+  const open = el.classList.toggle('open');
+  const head = el.querySelector('.acc-head');
+  if (head) head.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+function toggleRot(el) {
+  const open = el.classList.toggle('open');
+  const head = el.querySelector('.rot-head');
+  if (head) head.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+/* Torna cabeçalhos de accordion acessíveis por teclado e leitor de tela */
+function acessibilizarAccordions(root) {
+  root.querySelectorAll('.acc, .rot').forEach(box => {
+    const head = box.querySelector('.acc-head, .rot-head');
+    if (!head) return;
+    head.setAttribute('role', 'button');
+    head.setAttribute('tabindex', '0');
+    head.setAttribute('aria-expanded', box.classList.contains('open') ? 'true' : 'false');
+    head.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); head.click(); }
+    });
+  });
+}
 
 /* ═══════════════════════════════════════════════════════
    RANGES
@@ -2520,6 +2782,64 @@ function toast(msg, type) {
 /* ═══════════════════════════════════════════════════════
    COLETA DO FORMULÁRIO
 ═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════
+   RASCUNHO DO CHECK-IN — auto-save silencioso
+═══════════════════════════════════════════════════════ */
+let _draftTimer = null;
+
+function salvarRascunho() {
+  clearTimeout(_draftTimer);
+  _draftTimer = setTimeout(() => {
+    const f = collectForm();
+    setStore(currentLang, 'draft', { data: f, ts: Date.now() });
+    marcarRascunho(true);
+  }, 400);
+}
+
+function restaurarRascunho() {
+  const d = getStore(currentLang, 'draft');
+  if (!d || !d.data) return false;
+  const f = d.data;
+  const set = (id, v) => { const el = document.getElementById(id); if (el && v !== undefined && v !== '') el.value = v; };
+  Object.entries({
+    'ci-dia': f.dia, 'ci-sessao': f.sessao, 'ci-tipo-dia': f.tipoDia,
+    'ci-fluency': f.fluency, 'ci-drops': f.drops, 'ci-vocab': f.vocab,
+    'ci-escuta-ativa': f.escutaAtiva, 'ci-escuta-morto': f.escutaMorto,
+    'ci-criacao': f.criacao, 'ci-fonetica': f.fonetica, 'ci-skritter': f.skritter,
+    'ci-compreensao': f.compreensao, 'ci-fala': f.fala, 'ci-energia': f.energia,
+    'ci-pronuncia': f.pronuncia, 'ci-tons': f.tons, 'ci-chars': f.chars,
+    'ci-portuhol': f.portuhol, 'ci-traducao': f.traducao, 'ci-liaison': f.liaison,
+    'ci-som-dificil': f.somDificil, 'ci-pinyin': f.pinyin, 'ci-tom-dificil': f.tomDificil,
+    'ci-dificuldade': f.dificuldade, 'ci-avanco': f.avanco,
+  }).forEach(([id, v]) => set(id, v));
+  /* re-sincroniza ranges e labels */
+  [['ci-compreensao','compr-val','%'],['ci-energia','energ-val',''],
+   ['ci-pronuncia','pron-val',''],['ci-tons','ton-val','']].forEach(([r,l,s]) => {
+    const el = document.getElementById(r); if (el) updateRange(el, l, s);
+  });
+  marcarRascunho(true);
+  return true;
+}
+
+function limparRascunho() {
+  try { localStorage.removeItem(storageKey(currentLang, 'draft')); } catch(e) {}
+  marcarRascunho(false);
+}
+
+function marcarRascunho(on) {
+  const el = document.getElementById('draft-indicator');
+  if (!el) return;
+  el.style.display = on ? 'inline-flex' : 'none';
+}
+
+/* Liga o auto-save em todos os campos do check-in */
+function ligarAutoSave(root) {
+  root.querySelectorAll('input, select, textarea').forEach(el => {
+    el.addEventListener('input',  salvarRascunho);
+    el.addEventListener('change', salvarRascunho);
+  });
+}
+
 function collectForm() {
   const get = id => { const el = document.getElementById(id); return el ? el.value : undefined; };
   const getN = id => { const el = document.getElementById(id); return el ? (parseInt(el.value) || 0) : undefined; };
@@ -2562,7 +2882,9 @@ function salvarCheckin() {
   if (!Array.isArray(arr)) arr = [];
   arr.push(data);
   setStore(lang, 'checkins', arr);
-  toast('Check-in salvo em ' + PROGRAMS[lang].name + '. Total: ' + arr.length + ' registro(s).');
+  setStore(lang, 'currentDay', data.dia);
+  limparRascunho();
+  toast('Check-in do dia ' + data.dia + ' salvo. Total: ' + arr.length + '.');
 }
 
 function exportarCheckins() {
@@ -2601,7 +2923,23 @@ function importarCheckins() {
   input.click();
 }
 
-function limparCheckin() {
+let _limparArmado = false;
+function limparCheckin(btn) {
+  if (!_limparArmado) {
+    _limparArmado = true;
+    if (btn) { btn.textContent = 'Confirmar?'; btn.classList.add('btn-danger'); }
+    setTimeout(() => {
+      _limparArmado = false;
+      if (btn) { btn.textContent = 'Limpar'; btn.classList.remove('btn-danger'); }
+    }, 3000);
+    return;
+  }
+  _limparArmado = false;
+  if (btn) { btn.textContent = 'Limpar'; btn.classList.remove('btn-danger'); }
+  limparRascunho();
+  _limparCamposReais();
+}
+function _limparCamposReais() {
   const fields = ['ci-fluency','ci-drops','ci-vocab','ci-escuta-ativa','ci-escuta-morto',
     'ci-criacao','ci-fonetica','ci-skritter','ci-fala','ci-chars',
     'ci-dificuldade','ci-avanco','ci-som-dificil','ci-tom-dificil'];
@@ -2628,6 +2966,75 @@ function limparCheckin() {
 /* ═══════════════════════════════════════════════════════
    PAINEL DE INTELIGÊNCIA — motor de cálculo
 ═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════
+   DIA SUGERIDO
+   Regra: dia esperado = último dia salvo + dias de calendário
+   decorridos desde então. Nunca ultrapassa totalDays.
+   Sem histórico → dia 1.
+═══════════════════════════════════════════════════════ */
+function diaSugerido(lang) {
+  const p = PROGRAMS[lang];
+  const list = getStore(lang, 'checkins') || [];
+  if (!list.length) return 1;
+
+  const ultimo = list.reduce((a, b) => (b.dia > a.dia ? b : a));
+  const tsUltimo = Date.parse(ultimo.timestamp);
+  if (!tsUltimo) return Math.min(p.totalDays, (ultimo.dia || 0) + 1);
+
+  const hoje = new Date(); hoje.setHours(0,0,0,0);
+  const dUlt = new Date(tsUltimo); dUlt.setHours(0,0,0,0);
+  const diasPassados = Math.max(0, Math.round((hoje - dUlt) / 86400000));
+
+  /* Se já registrou hoje, mantém o mesmo dia (edição). Senão, avança. */
+  const sugerido = diasPassados === 0 ? ultimo.dia : ultimo.dia + diasPassados;
+  return Math.max(1, Math.min(p.totalDays, sugerido));
+}
+
+/* ═══════════════════════════════════════════════════════
+   COMPARAÇÃO SEMANAL — esta semana vs anterior
+═══════════════════════════════════════════════════════ */
+function compararSemanas(lang) {
+  const list = getStore(lang, 'checkins') || [];
+  if (list.length < 2) return null;
+  const agora = Date.now();
+  const d7  = agora - 7  * 86400000;
+  const d14 = agora - 14 * 86400000;
+  const ts = c => Date.parse(c.timestamp) || 0;
+  const atual    = list.filter(c => ts(c) >= d7);
+  const anterior = list.filter(c => ts(c) >= d14 && ts(c) < d7);
+  if (!atual.length && !anterior.length) return null;
+
+  const media = (arr, k) => {
+    const v = arr.map(c => Number(c[k])).filter(n => !isNaN(n) && n > 0);
+    return v.length ? v.reduce((a,b)=>a+b,0) / v.length : 0;
+  };
+  const dias = arr => new Set(arr.map(c => (c.timestamp||'').slice(0,10))).size;
+  const soma = (arr, k) => arr.reduce((a,c) => a + (Number(c[k]) || 0), 0);
+
+  const m = (label, a, b, unit, dec=0) => ({
+    label, atual: +a.toFixed(dec), anterior: +b.toFixed(dec),
+    delta: +(a - b).toFixed(dec), unit,
+  });
+
+  return {
+    nAtual: atual.length, nAnterior: anterior.length,
+    metricas: [
+      m('Dias estudados',     dias(atual),              dias(anterior),              'd'),
+      m('Compreensão média',  media(atual,'compreensao'), media(anterior,'compreensao'), '%'),
+      m('Minutos de fala',    soma(atual,'fala'),        soma(anterior,'fala'),        'min'),
+      m('Energia média',      media(atual,'energia'),   media(anterior,'energia'),   '/10', 1),
+    ],
+  };
+}
+
+/* Verifica se já existe check-in salvo na data de hoje */
+function fezCheckinHoje(lang) {
+  const list = getStore(lang, 'checkins') || [];
+  if (!list.length) return false;
+  const hoje = new Date().toISOString().slice(0, 10);
+  return list.some(c => (c.timestamp || '').slice(0, 10) === hoje);
+}
+
 function calcAccumulated(lang) {
   const checkins = getStore(lang, 'checkins') || [];
   const p = PROGRAMS[lang];
@@ -2990,10 +3397,20 @@ function boot() {
   try {
     initTheme();             // resolve tema antes de pintar
     runMigrations();         // migra formatos anteriores
-    switchLang('es');
-    renderPage('visao');
-    const first = document.querySelector('.s-item');
-    if (first) first.classList.add('on');
+    /* Restaura idioma */
+    let lang = 'es';
+    try { lang = localStorage.getItem('polyglot.meta.lang') || 'es'; } catch(e) {}
+    if (!PROGRAMS[lang]) lang = 'es';
+    switchLang(lang);
+
+    /* Decide página inicial:
+       - sem check-in hoje → check-in (ação do dia)
+       - senão → última página visitada */
+    let page = 'visao';
+    try { page = localStorage.getItem('polyglot.meta.page') || 'visao'; } catch(e) {}
+    if (!CONTENT[lang] || !CONTENT[lang][page]) page = 'visao';
+    if (!fezCheckinHoje(lang)) page = 'checkin';
+    go(page, null);
   } catch (err) {
     // Falha no boot não pode deixar a tela vazia
     const root = document.getElementById('page-root');
