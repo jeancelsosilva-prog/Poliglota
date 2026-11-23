@@ -16,7 +16,7 @@
 </script>
 
 <!-- ── PWA & ícones ─────────────────────────────────── -->
-<link rel="manifest" href="/espanhol-200-dias/manifest.json">
+<link rel="manifest" href="./manifest.json">
 <meta name="theme-color" content="#0c0c10">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -882,6 +882,131 @@ kbd{
 /* ═══ PREVENT HORIZONTAL SCROLL ═════════════════════ */
 html,body{max-width:100%;overflow-x:hidden}
 #app,#shell-body,#content,#topbar{max-width:100%}
+/* Roteiro semanal */
+.im-route #app { height: 100vh; height: 100dvh; }
+.im-route .lang-btn.planned { opacity: 1; cursor: pointer; color: var(--tx2); }
+.im-layout { display: grid; gap: 12px; max-width: 820px; font-size: 14px; line-height: 1.55; }
+.im-layout [hidden] { display: none !important; }
+.im-layout :is(h1, h2, h3, p, ul, ol, dl, dd) { margin: 0; }
+.im-layout p { overflow-wrap: anywhere; }
+.im-layout :is(a, button, input, select, textarea, summary):focus-visible { outline: 2px solid var(--tx); outline-offset: 2px; }
+.im-layout :is([role="tabpanel"], h2, h3, button, input) { scroll-margin-top: 58px; }
+.im-layout a { color: var(--tx); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; font-weight: 600; }
+.im-layout a:hover { text-decoration-thickness: 2px; }
+.im-kicker, .im-progress-label, .im-progress-foot, .im-task-time, .im-rail-info, .im-session-time {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: .025em;
+  color: var(--tx2);
+}
+.im-layout .im-kicker { text-transform: uppercase; margin-bottom: 4px; }
+.im-muted { color: var(--tx2); }
+.im-hero {
+  display: grid; grid-template-columns: 1fr minmax(275px, 1fr); align-items: center; gap: 16px;
+  padding: clamp(12px, 2.5vw, 22px); border: 1px solid var(--bd); border-top: 2px solid var(--accent);
+  background: linear-gradient(120deg, var(--accent-a), var(--s1) 68%); border-radius: var(--r);
+}
+.im-hero h1 { font: 700 clamp(24px, 4vw, 34px)/1.07 'Space Grotesk', system-ui, sans-serif; letter-spacing: -.035em; }
+.im-progress { min-width: 0; padding: 8px 10px; background: var(--s0); border: 1px solid var(--bd); }
+.im-progress-label, .im-progress-foot { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: 2px 8px; }
+.im-progress-label strong { font-size: 17px; color: var(--tx); }
+.im-progress progress { display: block; width: 100%; height: 5px; margin: 5px 0; appearance: none; accent-color: var(--accent); border: 0; background: var(--s3); }
+.im-progress progress::-webkit-progress-bar { background: var(--s3); }
+.im-progress progress::-webkit-progress-value { background: var(--accent); }
+.im-progress progress::-moz-progress-bar { background: var(--accent); }
+.im-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 2px; position: sticky; top: 0; z-index: 3; background: var(--s0); padding: 3px; border: 1px solid var(--bd); }
+.im-tabs button {
+  min-width: 0; min-height: 44px; padding: 4px; border: 1px solid transparent;
+  background: transparent; color: var(--tx); cursor: pointer; font: 600 13px/1.2 system-ui, sans-serif;
+}
+.im-tabs button[aria-selected="true"] { background: var(--accent-a); border-bottom: 2px solid var(--accent); }
+.im-tabs button:focus-visible { outline-offset: -3px; }
+.im-pane { display: grid; gap: 10px; min-width: 0; }
+.im-actions, .im-subnav { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.im-subnav { justify-content: space-between; }
+.im-subnav .im-actions { flex: 1; justify-content: end; }
+.im-panel { min-width: 0; border: 1px solid var(--bd); border-radius: var(--r); background: var(--s1); }
+.im-panel-content, .im-week, .im-session { padding: clamp(10px, 2.25vw, 16px); }
+.im-panel > h2 { padding: 10px clamp(10px, 2.25vw, 16px); border-bottom: 1px solid var(--bd); font-size: 18px; }
+.im-heading-meta { color: var(--tx2); font-size: 12px; font-weight: 400; }
+.im-panel > summary { padding: 10px clamp(10px, 2.25vw, 16px); font-weight: 700; }
+.im-panel[open] > summary { border-bottom: 1px solid var(--bd); }
+.im-panel-content, .im-vocab-groups, .im-barrel-folders { display: grid; gap: 10px; }
+.im-week-nav { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 6px; margin-bottom: 9px; }
+.im-layout select, .im-layout input, .im-layout textarea {
+  width: 100%; min-width: 0; min-height: 42px; padding: 7px 9px; color: var(--tx);
+  background: var(--s0); border: 1px solid var(--bd); border-radius: var(--r); font: inherit;
+}
+.im-button, .im-text-button {
+  cursor: pointer; min-height: 44px; padding: 6px 9px; font: 600 13px/1.25 system-ui, sans-serif;
+  color: var(--tx); background: var(--s2); border: 1px solid var(--bd); border-radius: var(--r);
+}
+.im-button:hover:not(:disabled, [aria-disabled="true"]) { border-color: var(--accent); }
+.im-button:disabled { cursor: default; opacity: .5; }
+.im-button[aria-disabled="true"] { cursor: default; color: var(--tx2); }
+.im-primary, .im-button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-a); }
+.im-text-button { background: transparent; border: 0; padding-inline: 0; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+.im-week-title, .im-session-top { display: flex; align-items: center; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; }
+.im-week-title h2, .im-session-top h3 { font: 700 clamp(18px, 3vw, 23px)/1.18 'Space Grotesk', system-ui, sans-serif; }
+.im-week-title label { display: flex; align-items: center; gap: 5px; color: var(--tx2); font-size: 12px; }
+.im-week-title select { width: auto; min-height: 38px; }
+.im-rail-info { margin: 8px 0 4px; }
+.im-day-rail { display: grid; grid-template-columns: repeat(7, minmax(0,1fr)); gap: 4px; }
+.im-day-chip { display: flex; align-items: center; gap: 3px; justify-content: center; padding: 3px; }
+.im-chip-status { color: var(--tx2); }
+.im-chip-done .im-chip-status { color: var(--tx); }
+.im-brief { margin-top: 8px; }
+.im-brief-content { display: grid; gap: 7px; border-top: 1px solid var(--bd); padding: 10px; }
+.im-session-top { margin-bottom: 6px; }
+.im-session-time { white-space: nowrap; background: var(--s2); padding: 4px 7px; }
+.im-tasks, .im-items, .im-word-list, .im-resources, .im-day-words ul { list-style: none; padding: 0; }
+.im-tasks li { display: grid; grid-template-columns: 47px minmax(0, 1fr); gap: 6px; border-top: 1px solid var(--bd2); padding: 8px 0; }
+.im-tasks p { margin-top: 2px; }
+.im-task-actions { margin-top: 3px; }
+.im-session-footer { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.im-session-footer > .im-button { flex: 1 1 155px; }
+.im-complete-done { border-color: var(--p3); }
+.im-subpanel { min-width: 0; border: 1px solid var(--bd); background: var(--s0); }
+.im-layout summary { cursor: pointer; }
+.im-subpanel > summary { display: list-item; padding: 8px 10px; font-weight: 600; min-height: 40px; }
+.im-subpanel > :is(ul, p, .im-reading) { border-top: 1px solid var(--bd); padding: 8px 10px; }
+.im-reading { display: grid; gap: 6px; }
+.im-items li, .im-word-list li, .im-resources li { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 0; }
+.im-items li + li, .im-word-list li + li, .im-resources li + li { border-top: 1px solid var(--bd2); }
+.im-items li > div:first-child, .im-word-list li > div, .im-resources li > div { min-width: 0; overflow-wrap: anywhere; }
+.im-items li small, .im-word-list li small { display: block; color: var(--tx2); }
+.im-core { display: inline-block; font-size: 10px; margin-left: 3px; padding: 0 4px; background: var(--accent-a); }
+.im-day-words li + li { margin-top: 4px; }
+.im-form { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.im-form label { display: grid; align-content: start; gap: 3px; }
+.im-form :is(h3, fieldset, label:has(textarea), .im-actions) { grid-column: 1 / -1; }
+.im-edit-form { border-top: 1px solid var(--bd); padding-top: 8px; }
+.im-minute-fields { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 6px; padding: 7px; border: 1px solid var(--bd); }
+.im-minute-fields legend { padding: 0 4px; }
+.im-flash { display: grid; gap: 8px; justify-items: start; border: 1px solid var(--bd); padding: 9px; margin-top: 6px; background: var(--s0); overflow-wrap: anywhere; }
+.im-flash p { white-space: pre-wrap; }
+.im-method-list { display: grid; gap: 8px; }
+.im-method-list dt { font-weight: 700; }
+.im-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.im-copy-dialog { width: min(560px, 92vw); margin: auto; padding: 16px; color: var(--tx); background: var(--s1); border: 1px solid var(--bd); }
+.im-copy-dialog::backdrop { background: rgba(0,0,0,.65); }
+.im-copy-dialog textarea { display: block; margin: 8px 0; }
+@media (max-width: 600px) {
+  .im-layout { gap: 8px; }
+  .im-hero, .im-form { grid-template-columns: minmax(0,1fr); }
+  .im-hero { gap: 6px; }
+  .im-hero-title { display: flex; align-items: baseline; flex-wrap: wrap-reverse; flex-direction: row-reverse; justify-content: space-between; gap: 2px 8px; }
+  .im-hero-title .im-kicker { margin: 0; }
+  .im-minute-fields { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .im-subnav .im-actions { min-width: 100%; justify-content: start; }
+}
+@media (max-width: 420px) {
+  .im-tabs button { font-size: 12px; }
+  .im-day-rail { gap: 3px; }
+  .im-day-chip { gap: 1px; font-size: 11px; }
+  .im-items li { flex-wrap: wrap; }
+}
+
 </style>
 </head>
 <body>
@@ -933,6 +1058,9 @@ html,body{max-width:100%;overflow-x:hidden}
   <button class="s-item" data-page="rotinas" onclick="go('rotinas',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 1v3M11 1v3M2 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Rotinas
   </button>
+  <button class="s-item" data-page="imersao" onclick="go('imersao',this)">
+    <svg class="s-ico" fill="none" viewBox="0 0 24 24"><path d="M4 7h16v13H4zM8 4v6m8-6v6M7 14l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>Roteiro semanal
+  </button>
   <button class="s-item" data-page="metodo" onclick="go('metodo',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><path d="M8 2a6 6 0 100 12A6 6 0 008 2z" stroke="currentColor" stroke-width="1.5"/><path d="M8 6.5V9M7 11h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Método
   </button>
@@ -973,6 +1101,10 @@ html,body{max-width:100%;overflow-x:hidden}
   <button class="bn-item" data-page="checkin" onclick="go('checkin',null)" aria-label="Check-in">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l4 4L19 6"/></svg>
     <span>Check-in</span>
+  </button>
+  <button class="bn-item" data-page="imersao" onclick="go('imersao',null)" aria-label="Roteiro semanal">
+    <svg fill="none" viewBox="0 0 24 24"><path d="M4 7h16v13H4zM8 4v6m8-6v6M7 14l2 2 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>Roteiro</span>
   </button>
   <button class="bn-item" data-page="painel" onclick="go('painel',null)" aria-label="Inteligência">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-6 4 3 4-6 5 4"/><path d="M3 21h18"/></svg>
@@ -2513,6 +2645,8 @@ let currentPage = 'visao';
    TROCA DE IDIOMA
 ═══════════════════════════════════════════════════════ */
 function switchLang(lang) {
+  const resetImmersionScroll = currentPage === 'imersao' && lang !== currentLang;
+  if (resetImmersionScroll) window.speechSynthesis?.cancel();
   if (PROGRAMS[lang].status === 'planned' && lang !== 'es') {
     // Permite entrar mesmo em "planejado" para ver o conteúdo
   }
@@ -2528,6 +2662,7 @@ function switchLang(lang) {
   // Botões de idioma
   document.querySelectorAll('.lang-btn').forEach(btn => {
     const l = btn.dataset.lang;
+    btn.setAttribute('aria-pressed', String(l === lang));
     btn.className = 'lang-btn';
     if (l === lang) btn.classList.add('active-' + lang);
     else if (PROGRAMS[l].status === 'planned') btn.classList.add('planned');
@@ -2538,6 +2673,7 @@ function switchLang(lang) {
 
   // Renderizar página atual
   renderPage(currentPage);
+  if (resetImmersionScroll) document.getElementById('content').scrollTop = 0;
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -2585,6 +2721,7 @@ function onDayChange(val) {
    NAVEGAÇÃO
 ═══════════════════════════════════════════════════════ */
 function go(pageId, btn) {
+  if (currentPage === 'imersao' && pageId !== 'imersao') window.speechSynthesis?.cancel();
   currentPage = pageId;
   try { localStorage.setItem('polyglot.meta.page', pageId); } catch(e) {}
   document.querySelectorAll('.s-item').forEach(s => {
@@ -2606,7 +2743,12 @@ function renderPage(pageId) {
     return;
   }
 
+  document.body.classList.toggle('im-route', pageId === 'imersao');
   root.innerHTML = langContent[pageId]();
+  if (pageId === 'imersao') {
+    restoreImmersionDrafts(currentLang);
+    return;
+  }
   acessibilizarAccordions(root);
 
   // Reinit ranges após renderização
@@ -3391,12 +3533,1128 @@ function renderAnalysis(sections) {
 /* ═══════════════════════════════════════════════════════
    INIT
 ═══════════════════════════════════════════════════════ */
+const IMMERSION_THEMES = {
+  "apresentar": {"title": "Apresentações e identidade", "goal": "Conhecer alguém e trocar nome, origem e profissão", "related": ["relacao", "pedir", "estudo"], "roleplay": "Conheça alguém num encontro de idiomas. Faça e devolva duas perguntas; depois apresente essa pessoa a um terceiro.", "questions": ["Quem está aprendendo espanhol, francês ou chinês?", "De onde vem a pessoa que se apresenta?"], "interact": "Um colega comenta que entende melhor quando o assunto é familiar. Você concorda? Dê um exemplo.", "search": "uma apresentação pessoal", "languages": {"es": ["ser, llamarse e ser de", "Hola, me llamo Jean. Soy brasileño y vivo en Campo Grande.", "Estoy aprendiendo español para conversar con gente de otros países. ¿Y tú, de dónde eres?"], "fr": ["être, s’appeler e venir de", "Bonjour, je m’appelle Jean. Je suis brésilien et j’habite à Campo Grande.", "J’apprends le français pour voyager et discuter avec d’autres personnes. Et toi, d’où viens-tu ?"], "zh": ["是, 叫 e 来自", "你好，我叫让。我是巴西人，住在大坎普。", "我在学中文，因为我想和更多人聊天。你来自哪里？"]}, "queries": ["cómo presentarse en español", "se présenter en français", "中文 自我介绍 初级"], "gloss": "Jean se apresenta, diz que é brasileiro, mora em Campo Grande e estuda o idioma para conversar ou viajar. Em seguida pergunta sobre a outra pessoa."},
+  "rotina": {"title": "Rotina de plantão e folga", "goal": "Explicar seus horários e contar como recupera o sono", "related": ["agenda", "casa", "plantao"], "roleplay": "Um amigo quer falar com você às oito. Explique sua rotina na escala 24×72 e combinem outro horário.", "questions": ["O que a pessoa faz ao chegar em casa?", "Em que tipo de dia ela costuma estudar mais?"], "interact": "Alguém diz que sua rotina deveria ser igual todo dia. Explique o que muda depois de um plantão.", "search": "rotina diária e horários", "languages": {"es": ["presente e verbos pronominais", "Me levanto temprano cuando trabajo. Al volver a casa, me ducho y descanso.", "En mis días libres estudio algo más. Si estoy cansado, escucho una historia corta mientras lavo los platos."], "fr": ["presente e verbos pronominais", "Je me lève tôt les jours de travail. Quand je rentre, je me douche et je me repose.", "Les jours de congé, j’étudie un peu plus. Si je suis fatigué, j’écoute une histoire courte en faisant la vaisselle."], "zh": ["ordem sujeito + tempo + ação", "我上班的时候起得很早。我回家后洗澡，然后休息。", "休假的时候，我会多学一会儿。如果我很累，我就一边洗碗一边听故事。"]}, "queries": ["rutina diaria y días libres", "routine et jours de congé", "日常生活 上班 休息 初级"], "gloss": "Em dia de trabalho ele se levanta cedo. Em casa toma banho e descansa. Na folga, estuda mais. Se estiver cansado, ouve uma história enquanto lava a louça."},
+  "comida": {"title": "Restaurante, café e cozinha", "goal": "Pedir, ajustar e confirmar um pedido com naturalidade", "related": ["compras", "saude", "pedir"], "roleplay": "Peça um prato e uma bebida. O atendente avisa que o prato acabou. Escolha uma alternativa e confirme se é para viagem.", "questions": ["Que bebida foi pedida?", "Onde a pessoa quer comer?"], "interact": "O atendente oferece uma opção apimentada. Responda com sua preferência e confirme um ingrediente.", "search": "pedir comida em um restaurante", "languages": {"es": ["quisiera, para e sin + substantivo", "Quisiera un café sin azúcar y un plato de arroz con pollo. Es para comer aquí.", "Si no queda pollo, ¿qué me recomienda? Al final pediré la cuenta por separado."], "fr": ["je voudrais, un/du/de e sans", "Je voudrais un café sans sucre et du riz avec du poulet. C’est pour manger sur place.", "S’il n’y a plus de poulet, qu’est-ce que vous me conseillez ? À la fin, je demanderai une addition séparée."], "zh": ["想要 e classificadores 杯 / 份", "我想要一杯不加糖的咖啡，再要一份鸡肉饭。我在这儿吃。", "要是没有鸡肉了，您推荐什么？吃完以后，我想单独结账。"]}, "queries": ["pedir comida en un restaurante", "commander au restaurant", "点菜 餐厅 初级中文"], "gloss": "A pessoa quer café sem açúcar e arroz com frango para comer no local. Se faltar frango, pede uma recomendação. Quer pagar sua parte separadamente."},
+  "cidade": {"title": "Direções, bairro e pontos de referência", "goal": "Pedir e repetir uma rota de três passos", "related": ["viagem", "tempo", "pedir"], "roleplay": "Você procura a farmácia. Descubra como chegar, repita a rota e pergunte quanto tempo leva a pé.", "questions": ["Onde fica a farmácia?", "Qual é o primeiro passo da rota?"], "interact": "A pessoa diz para virar à direita, mas você viu uma esquina à esquerda. Confirme o ponto de referência.", "search": "pedir direções na cidade", "languages": {"es": ["estar, hay e imperativo de trajeto", "La farmacia está frente a la plaza. Sigue recto y gira a la derecha en la esquina.", "Hay un semáforo antes de la plaza. Si llegas a la parada de autobús, te has pasado."], "fr": ["il y a e imperativo para orientar", "La pharmacie est en face de la place. Allez tout droit et tournez à droite au coin de la rue.", "Il y a un feu avant la place. Si vous arrivez à l’arrêt de bus, vous êtes allé trop loin."], "zh": ["在 / 有 e 往 + direção", "药店在广场对面。一直往前走，到街角往右拐。", "广场前面有个红绿灯。如果你到了公交车站，那就走过头了。"]}, "queries": ["pedir direcciones por la ciudad", "demander son chemin en ville", "问路 药店 初级中文"], "gloss": "A farmácia fica em frente à praça. Siga reto e vire à direita na esquina. Há um semáforo antes da praça. O ponto de ônibus indica que você passou."},
+  "compras": {"title": "Compras, preços e trocas", "goal": "Comparar opções e resolver uma troca simples", "related": ["negocio", "comida", "pedir"], "roleplay": "Escolha entre dois produtos. Pergunte preço, tamanho e troca; termine confirmando o valor líquido pago.", "questions": ["Que problema a pessoa encontrou com o tamanho?", "Qual forma de pagamento ela quer usar?"], "interact": "A loja explica que só troca com recibo. Diga o que você tem e peça a alternativa disponível.", "search": "compras, preços e pagamento", "languages": {"es": ["demonstrativos, cuánto e más que", "¿Cuánto cuesta esta camisa? Me gusta, pero necesito una talla más grande.", "Aquella es más barata que esta. Si no me queda bien, ¿puedo cambiarla con el recibo? Quisiera pagar con tarjeta."], "fr": ["ce/cette e comparativos plus / moins", "Cette chemise coûte combien ? Elle me plaît, mais il me faut une taille au-dessus.", "Celle-là est moins chère que celle-ci. Si elle ne me va pas, je peux l’échanger avec le ticket ? Je voudrais payer par carte."], "zh": ["这 / 那, 多少钱 e 比", "这件衬衫多少钱？我喜欢这件，不过我想试大一号的。", "那件比这件便宜。如果大小不合适，能凭收据换货吗？我想刷卡。"]}, "queries": ["comprar ropa pagar con tarjeta", "acheter des vêtements et payer", "买衣服 多少钱 初级"], "gloss": "A pessoa prova uma camisa e precisa de um tamanho maior. A outra opção é mais barata. Pergunta se pode trocar com recibo e deseja pagar com cartão."},
+  "casa": {"title": "Casa, cômodos e moradia", "goal": "Descrever um espaço e fazer perguntas sobre moradia", "related": ["cidade", "rotina", "compras"], "roleplay": "Visite um apartamento. Pergunte o valor do aluguel, descreva em que cômodo fica uma tomada e explique o que considera essencial.", "questions": ["Quantos quartos foram mencionados?", "O que fica perto da janela?"], "interact": "O anúncio diz que o bairro é tranquilo. Pergunte como é a rua à noite e explique por que isso importa.", "search": "descrição de casa ou apartamento", "languages": {"es": ["hay × está e preposições de lugar", "En el piso hay dos dormitorios. La mesa está al lado de la ventana.", "El lugar es tranquilo, pero hay pocos enchufes. Antes de decidir, voy a preguntar cuánto cuesta el alquiler."], "fr": ["il y a, c’est e preposições de lugar", "Dans l’appartement, il y a deux chambres. La table est à côté de la fenêtre.", "C’est calme, mais il y a peu de prises. Avant de décider, je vais demander combien coûte le loyer."], "zh": ["有 × 在 e 旁边", "公寓里有两间卧室。桌子在窗户旁边。", "这里很安静，但是插座不多。决定之前，我要先问问房租多少。"]}, "queries": ["describir un apartamento y el alquiler", "décrire un appartement et son loyer", "介绍公寓 房间 初级"], "gloss": "O apartamento tem dois quartos. A mesa fica ao lado da janela. O lugar é tranquilo e tem poucas tomadas. A pessoa quer saber o preço do aluguel."},
+  "plantao": {"title": "Equipe, plantão e comunicação no trabalho", "goal": "Confirmar uma mensagem de trabalho com local, ação e próximo passo", "related": ["rotina", "mensagem", "cidade"], "roleplay": "Passe um turno fictício. Combine o que será conferido, onde aguardar e quem precisa receber o aviso.", "questions": ["Qual objeto foi mencionado?", "O que a equipe deve confirmar primeiro?"], "interact": "Seu colega entendeu outro endereço. Refaça a confirmação com frases curtas e peça que ele repita.", "search": "profissões e jornada de trabalho", "languages": {"es": ["estar de guardia, tener que e deber", "Hoy estoy de guardia. Tengo que revisar el casco y la radio antes de salir.", "Si recibimos una llamada, primero tenemos que confirmar la dirección y avisar al equipo."], "fr": ["être de garde, devoir e il faut", "Aujourd’hui, je suis de garde. Je dois vérifier mon casque et ma radio avant de sortir.", "Si on reçoit un appel, il faut d’abord confirmer l’adresse et prévenir l’équipe."], "zh": ["要 / 得 e sequência 先…再…", "我今天值班。出门前，我要检查头盔和对讲机。", "要是接到电话，我们得先确认地址，再通知队友。"]}, "queries": ["trabajo de bomberos turno de guardia", "métier de pompier et garde", "消防员 值班 口语"], "gloss": "A pessoa está de plantão e precisa conferir o capacete e o rádio. Se receber uma chamada, deve confirmar o endereço e avisar a equipe."},
+  "treino": {"title": "Corrida, força e recuperação", "goal": "Combinar e ajustar um treino com base no objetivo do dia", "related": ["saude", "agenda", "tempo"], "roleplay": "Você e um amigo querem correr. Um quer intensidade, o outro está cansado. Combinem ritmo, duração e uma alternativa leve.", "questions": ["Qual é o primeiro passo do treino?", "O que a pessoa fará se ficar ofegante?"], "interact": "Seu parceiro sugere aumentar o ritmo. Explique como você mudaria o treino depois de uma noite ruim.", "search": "corrida e exercícios", "languages": {"es": ["antes de / después de + infinitivo e si + presente", "Antes de correr, caliento unos minutos. Después intento mantener el ritmo.", "Si me quedo sin aliento, bajo el ritmo. Hoy prefiero terminar bien antes que mejorar mi marca."], "fr": ["avant de + infinitivo, après avoir e si + presente", "Avant de courir, je m’échauffe quelques minutes. Ensuite, j’essaie de garder l’allure.", "Si je suis à bout de souffle, je ralentis. Aujourd’hui, je préfère bien finir que battre mon record."], "zh": ["先…然后… e 如果…就…", "跑步前，我先热身几分钟，然后尽量保持配速。", "如果我喘不过气来，就放慢速度。今天我想顺利跑完，不想去破纪录。"]}, "queries": ["salir a correr calentamiento ritmo", "courir avec une bonne allure", "跑步 热身 配速 慢速"], "gloss": "A pessoa aquece antes da corrida e tenta manter o ritmo. Se ficar ofegante, diminui a velocidade. O objetivo é terminar bem."},
+  "saude": {"title": "Sintomas e compromissos de saúde", "goal": "Descrever sintomas fictícios e confirmar uma consulta sem ambiguidade", "related": ["agenda", "mensagem", "pedir"], "roleplay": "Ligue para uma recepção fictícia. Informe há quanto tempo está com um sintoma, confirme o horário e pergunte se há formulário.", "questions": ["O que a pessoa sente?", "Desde quando sente isso?"], "interact": "A recepção oferece uma consulta em outro horário. Confirme dia e hora com suas próprias palavras.", "search": "marcar consulta e descrever sintomas", "languages": {"es": ["doler, tener e desde / desde hace", "Me duele la garganta desde ayer. También estoy cansado.", "Quisiera cambiar la cita a mañana. ¿Tengo que rellenar un formulario antes de llegar?"], "fr": ["avoir mal à, avoir e depuis", "J’ai mal à la gorge depuis hier. Je suis aussi fatigué.", "Je voudrais déplacer mon rendez-vous à demain. Est-ce que je dois remplir un formulaire avant d’arriver ?"], "zh": ["parte do corpo + 疼 e 从…开始", "我从昨天开始嗓子疼。我也觉得很累。", "我想把预约改到明天。到之前需要填表吗？"]}, "queries": ["pedir cita y describir síntomas", "prendre rendez-vous chez le médecin", "看医生 预约 初级"], "gloss": "A pessoa está com dor de garganta desde ontem e sente cansaço. Quer remarcar a consulta para amanhã e saber se precisa preencher um formulário."},
+  "viagem": {"title": "Transporte, hospedagem e imprevistos", "goal": "Comprar passagem e reagir a alteração de horário", "related": ["cidade", "agenda", "tempo"], "roleplay": "Chegue a uma estação fictícia. Compre ida e volta, confirme plataforma e encontre uma alternativa após um atraso.", "questions": ["Qual veículo está atrasado?", "O que a pessoa quer confirmar?"], "interact": "O trem atrasou. Pergunte se pode usar o mesmo bilhete em outra saída e explique a que horas precisa chegar.", "search": "comprar passagem e reservar hospedagem", "languages": {"es": ["ir a + infinitivo, salir de e llegar a", "Voy a tomar el tren de las tres. Mi billete es de ida y vuelta.", "El tren va con retraso. Si no salimos antes de las cuatro, voy a llegar tarde al hotel."], "fr": ["futur proche, partir de e arriver à", "Je vais prendre le train de trois heures. J’ai un billet aller-retour.", "Le train a du retard. Si on ne part pas avant quatre heures, je vais arriver en retard à l’hôtel."], "zh": ["要 + verbo, 从 e 到", "我要坐三点的火车。我买的是往返票。", "火车晚点了。如果四点前还不出发，我到酒店就晚了。"]}, "queries": ["comprar billete de tren y retrasos", "prendre le train et demander son horaire", "坐火车 买票 晚点 初级"], "gloss": "A pessoa vai pegar o trem das três com bilhete de ida e volta. O trem está atrasado. Pode acabar chegando tarde ao hotel."},
+  "negocio": {"title": "Clientes, vendas e negociação", "goal": "Pedir orçamento e negociar quantidade, frete e prazo", "related": ["compras", "mensagem", "projeto"], "roleplay": "Você compra 20 unidades para revender. Peça preço, frete e prazo, depois confirme por escrito o que está incluído.", "questions": ["Qual quantidade o comprador quer?", "O frete está incluído no preço?"], "interact": "O fornecedor oferece desconto com quantidade maior. Explique o risco para o estoque e faça uma contraproposta.", "search": "cotações, venda e negociação", "languages": {"es": ["podría, si + presente e condiciones de venta", "¿Podría enviarme una cotización para veinte unidades? Quisiera saber si el envío está incluido.", "Si el plazo de entrega supera una semana, tendría que pedir menos unidades. ¿Podemos revisar la propuesta?"], "fr": ["pourriez-vous e condicional de cortesia", "Pourriez-vous m’envoyer un devis pour vingt unités ? J’aimerais savoir si la livraison est comprise.", "Si le délai dépasse une semaine, il faudrait que j’en commande moins. On peut revoir la proposition ?"], "zh": ["可以…吗 e 如果…就… na negociação", "可以给二十件商品报个价吗？我想知道运费包不包括在内。", "如果交货时间超过一周，我就得少订几件。这个方案能再谈谈吗？"]}, "queries": ["pedir una cotización y negociar con un proveedor", "demander un devis et négocier", "询价 运费 交货 口语"], "gloss": "A pessoa quer cotar 20 produtos e saber se o frete está incluso. Se a entrega demorar mais de uma semana, terá de pedir menos."},
+  "video": {"title": "YouTube, roteiro e produção", "goal": "Planejar e explicar as escolhas de um vídeo curto", "related": ["tecnologia", "relato", "lazer"], "roleplay": "Apresente a um parceiro o roteiro de um vídeo de 30 segundos. Diga o que vai gravar, editar e publicar, e por quê.", "questions": ["O que a pessoa quer ajustar primeiro?", "O que fará se o som falhar?"], "interact": "Alguém diz que a introdução demorada ajuda a contextualizar. Proponha uma abertura diferente e justifique.", "search": "como gravar e editar um vídeo", "languages": {"es": ["ir a, para + infinitivo e antes de que", "Voy a grabar un video corto. Primero voy a probar el sonido para evitar problemas.", "Si el principio queda lento, lo voy a recortar antes de que salga el video. También quiero poner subtítulos."], "fr": ["futur proche e pour / avant de + infinitivo", "Je vais tourner une vidéo courte. Je vais d’abord faire un essai pour vérifier le son.", "Si le début est trop lent, je vais le couper avant de publier la vidéo. Je veux aussi ajouter des sous-titres."], "zh": ["先…再… e 为了 para exprimir finalidade", "我要拍一个短视频。为了保证声音清楚，我先试音，再开始拍。", "如果开头太慢，我会在发布前剪掉一段。我还想加上字幕。"]}, "queries": ["cómo grabar un vídeo corto y editarlo", "filmer et monter une vidéo courte", "拍短视频 剪辑 慢速"], "gloss": "A pessoa vai gravar um vídeo curto e testa o som primeiro. Se a abertura ficar lenta, vai cortá-la antes de publicar. Também quer adicionar legendas."},
+  "tecnologia": {"title": "Apps, arquivos e suporte digital", "goal": "Relatar um erro reproduzível e confirmar uma correção", "related": ["mensagem", "projeto", "pedir"], "roleplay": "Abra um chamado sobre um app de estudo. Diga o que tentou, o que esperava e como outra pessoa reproduz a falha.", "questions": ["O que a pessoa fazia quando o app fechou?", "Qual foi a primeira tentativa de solução?"], "interact": "A outra pessoa não conseguiu reproduzir o erro. Faça duas perguntas e repita o passo exato.", "search": "problemas em aplicativos e suporte", "languages": {"es": ["imperfecto de cenário + pretérito de ação", "Estaba guardando el archivo cuando se cerró la aplicación. Volví a abrirla, pero el archivo no aparecía.", "Si el fallo vuelve a ocurrir, grabaré la pantalla para que se vea en qué paso falla."], "fr": ["imparfait de contexto + passé composé", "J’enregistrais le fichier quand l’application s’est fermée. Je l’ai relancée, mais le fichier n’apparaissait pas.", "Si le problème se reproduit, je filmerai l’écran pour montrer à quelle étape ça bloque."], "zh": ["正在…时 e 了 para evento concluído", "我正在保存文件，应用突然关了。我重新打开应用，可是找不到那个文件。", "如果问题再发生，我就录下屏幕，让别人看看是哪一步出了问题。"]}, "queries": ["cómo explicar un fallo en una aplicación", "expliquer un problème informatique", "应用程序 故障 报告"], "gloss": "O app fechou enquanto a pessoa salvava o arquivo. Reabrir o app não trouxe o arquivo de volta. Se acontecer de novo, vai gravar a tela."},
+  "lazer": {"title": "Jogos, filmes e recomendações", "goal": "Recomendar algo do seu interesse com um motivo e uma ressalva", "related": ["video", "opiniao", "relacao"], "roleplay": "Recomende um jogo de gestão ou um filme a alguém. Descubra o que a pessoa gosta e proponha uma segunda opção sem spoilers.", "questions": ["De que tipo de jogo a pessoa gosta?", "Por que prefere sessões curtas?"], "interact": "Seu colega prefere jogos de ação. Sugira algo adequado a ele e explique o que você escolheria para si.", "search": "filmes, jogos e tempo livre", "languages": {"es": ["gustar, preferir e a mí / a ti", "Me gustan los juegos de gestión. Prefiero los que tienen partidas cortas.", "A mi amigo le gustan más las películas. Si tenemos poco tiempo, vemos un episodio y hablamos de los personajes."], "fr": ["aimer, préférer e relativos qui / que / dont", "J’aime les jeux de gestion. Je préfère ceux dont les parties sont courtes.", "Mon ami préfère les films. Si on manque de temps, on regarde un épisode et on parle des personnages qu’on a préférés."], "zh": ["喜欢 / 更喜欢 e 的 de descrição", "我喜欢经营模拟游戏。我更喜欢一局时间比较短的游戏。", "我朋友更喜欢电影。如果时间不多，我们就看一集电视剧，聊聊最喜欢的角色。"]}, "queries": ["recomendar juegos de gestión y películas", "recommander un jeu ou un film", "游戏 电影 爱好 慢速"], "gloss": "Uma pessoa gosta de jogos de gestão com partidas curtas, o amigo prefere filmes. Quando o tempo é curto, veem um episódio e conversam sobre os personagens."},
+  "agenda": {"title": "Horários, convites e reagendamento", "goal": "Negociar dia, hora e alternativa na mesma conversa", "related": ["rotina", "relacao", "mensagem"], "roleplay": "Marque uma conversa de 15 minutos com alguém em outra cidade. Um horário falha; proponha outro e confirme a hora local.", "questions": ["Por que a primeira reunião não serve?", "Que horas foram oferecidas como alternativa?"], "interact": "A outra pessoa entendeu 15h em outro fuso. Explique a diferença e confirme sua hora local.", "search": "agenda e marcar compromissos", "languages": {"es": ["poder, quedar e expressões temporais", "¿Podemos quedar a las tres? Antes de esa hora no estoy disponible.", "Si no te viene bien, podemos dejarlo para mañana. Te escribo ahora para confirmar la hora."], "fr": ["pouvoir, on se voit e à / avant / vers", "On peut se voir à trois heures ? Avant, je ne suis pas disponible.", "Si ça ne t’arrange pas, on peut reporter à demain. Je t’écris tout de suite pour confirmer l’heure."], "zh": ["几点 / 什么时候 e tempo antes do verbo", "我们三点见，可以吗？三点前我没空。", "如果你那时候不方便，我们可以改到明天。我现在发消息确认一下时间。"]}, "queries": ["quedar a una hora y cambiar de plan", "fixer et déplacer un rendez-vous", "约时间 改到明天 初级"], "gloss": "A pessoa sugere um encontro às três porque antes está ocupada. Amanhã é a alternativa. Ela vai mandar uma mensagem para confirmar o horário."},
+  "relacao": {"title": "Pessoas, convites e convivência", "goal": "Convidar alguém, ajustar o plano e confirmar a resposta", "related": ["agenda", "lazer", "casa"], "roleplay": "Convide um amigo para jantar. Descubra uma restrição de horário, proponha uma nova opção e confirme o ponto de encontro.", "questions": ["Para que a pessoa está convidando o amigo?", "Onde querem se encontrar?"], "interact": "O convidado diz que só poderá confirmar mais tarde. Responda com uma alternativa que deixe o convite aberto.", "search": "família, amigos e convites", "languages": {"es": ["te apetece + infinitivo e pronome indireto", "¿Te apetece venir a cenar el sábado? Te mando un mensaje con la dirección.", "Si no puedes venir, quedamos otro día. A tu hermana también le voy a mandar un mensaje."], "fr": ["ça te dit de, tu/vous e pronomes me/te/lui", "Ça te dit de venir dîner samedi ? Je t’envoie un message avec l’adresse.", "Si tu ne peux pas venir, on se voit un autre jour. Je vais aussi envoyer un message à ta sœur."], "zh": ["想…吗, 跟 / 和 e 给 + pessoa", "你想星期六来吃晚饭吗？我给你发个消息，告诉你地址。", "如果你来不了，我们就改天见。我也会给你姐姐发个消息。"]}, "queries": ["invitar a un amigo a cenar", "inviter un ami à dîner", "邀请朋友 吃晚饭 初级"], "gloss": "A pessoa convida a outra para jantar e vai enviar o endereço. Pode remarcar e também pretende avisar a irmã do convidado."},
+  "mensagem": {"title": "Recados, telefone e e-mail", "goal": "Deixar um recado curto que o interlocutor consiga confirmar", "related": ["agenda", "tecnologia", "negocio"], "roleplay": "Faça uma ligação fictícia que cai. Retome por escrito o assunto, a ação esperada e o prazo de resposta, usando registro adequado.", "questions": ["Por que a pessoa vai enviar um e-mail?", "O que ela quer que confirmem?"], "interact": "Seu cliente recebeu a mensagem sem o anexo. Reenvie, peça confirmação e anote o que ficou pendente.", "search": "telefonar e escrever e-mails", "languages": {"es": ["lo/le, usted e imperativo de cortesia", "Se cortó la llamada. Le envío un correo con el archivo adjunto.", "Por favor, confirme que lo ha recibido. Si algo no se entiende, póngase en contacto conmigo."], "fr": ["vous, le/la e confirmação com que", "La communication a coupé. Je vous envoie un mail avec la pièce jointe.", "Merci de me confirmer que vous l’avez bien reçue. En cas de question, vous pouvez me rappeler."], "zh": ["给 + pessoa, 把 e pedido com 请", "电话断了。我把附件发到您的邮箱。", "请确认您收到了。如果有什么不清楚的地方，可以给我回个电话。"]}, "queries": ["dejar un recado y enviar un correo", "laisser un message et envoyer un mail", "打电话 发邮件 附件"], "gloss": "A ligação caiu. A pessoa envia o anexo por e-mail e pede confirmação de recebimento. Se houver dúvida, pode retornar a ligação."},
+  "tempo": {"title": "Previsão do tempo e plano B", "goal": "Interpretar temperatura e chuva e renegociar um passeio", "related": ["treino", "viagem", "agenda"], "roleplay": "Você planeja uma caminhada. A previsão muda. Apresente duas rotas, escolha uma e diga em que condição mudaria de ideia.", "questions": ["Como está o céu agora?", "Em que condição o grupo mudará a rota?"], "interact": "A previsão anuncia chuva só no fim da tarde. Explique por que prefere sair mais cedo ou manter o horário.", "search": "clima, temperatura e previsão", "languages": {"es": ["hacer, estar, va a e si + presente", "Hoy está nublado y hace calor. Parece que va a llover por la tarde.", "Si mejora el tiempo, salimos a caminar. Si empieza la tormenta, cambiamos la ruta."], "fr": ["il fait, il va e si + presente", "Le ciel est couvert et il fait chaud. On dirait qu’il va pleuvoir dans l’après-midi.", "Si le temps s’améliore, on ira marcher. Si l’orage arrive, on changera d’itinéraire."], "zh": ["要…了, 有 e 如果…就…", "今天是阴天，不过很热。下午可能要下雨了。", "如果天气好转，我们就出去走走。如果有雷雨，我们就换条路线。"]}, "queries": ["pronóstico del tiempo y plan de paseo", "prévisions météo et changement de programme", "天气预报 下雨 初级"], "gloss": "O céu está nublado e faz calor. Há chance de chuva de tarde. O grupo caminhará se o tempo melhorar e trocará de rota se houver tempestade."},
+  "relato": {"title": "Histórias, acontecimentos e imprevistos", "goal": "Recontar uma sequência com cenário, problema e desfecho", "related": ["rotina", "viagem", "conectar"], "roleplay": "Conte um imprevisto fictício de viagem em três cenas. Seu interlocutor faz uma pergunta sobre a causa e outra sobre a solução.", "questions": ["O que a pessoa fazia antes do problema?", "Por que o problema foi descoberto?"], "interact": "Uma pessoa conta o fim da história primeiro. Reorganize a sequência e pergunte o que mudou a decisão.", "search": "contar um acontecimento no passado", "languages": {"es": ["pretérito indefinido × imperfecto", "Ayer esperaba el tren cuando me di cuenta de que estaba en el andén equivocado. Corrí al otro andén.", "El tren ya se había ido, así que busqué otra opción. Al final llegué una hora más tarde."], "fr": ["passé composé × imparfait", "Hier, j’attendais le train quand je me suis rendu compte que j’étais sur le mauvais quai. J’ai couru jusqu’à l’autre quai.", "Le train était déjà parti, alors j’ai cherché une autre solution. Finalement, je suis arrivé avec une heure de retard."], "zh": ["在…的时候, 才 e marcadores de sequência", "昨天我在等火车的时候，才发现自己站错了站台。我赶快跑到另一个站台。", "火车已经开走了，所以我只好想别的办法。最后，我晚到了一小时。"]}, "queries": ["contar una anécdota de viaje en pasado", "raconter une anecdote de voyage", "旅行 故事 坐错站台"], "gloss": "Ao esperar o trem, a pessoa percebe que estava na plataforma errada. Corre para a outra, mas o trem já saiu. Ela encontra uma saída e chega uma hora depois."},
+  "opiniao": {"title": "Opiniões, comparações e contrapontos", "goal": "Defender uma preferência e responder a uma objeção", "related": ["conectar", "lazer", "negocio"], "roleplay": "Debata uma escolha realista: app simples que pode lançar agora ou app completo que demora. Defenda uma opção e reconheça um mérito da outra.", "questions": ["Qual opção a pessoa prefere?", "Em que condição ela aceitaria a outra?"], "interact": "O interlocutor diz que mais recursos tornam qualquer app melhor. Dê um contraponto com um caso concreto.", "search": "expressar opinião e discordar com educação", "languages": {"es": ["creo que, no creo que e aunque", "Creo que es mejor empezar con una versión sencilla. Así veremos qué necesita la gente.", "Aunque una versión completa sea más atractiva, no creo que debamos esperar a tener todas las funciones."], "fr": ["je pense que, je ne pense pas que e même si", "Je pense qu’il vaut mieux commencer par une version simple. On verra ainsi ce dont les gens ont besoin.", "Même si une version complète est plus séduisante, je ne pense pas qu’on doive attendre d’avoir toutes les fonctions."], "zh": ["我觉得, 虽然…但是… e 更", "我觉得先做一个简单的版本更好。这样我们就知道大家需要什么。", "虽然功能齐全的版本更吸引人，但是我觉得没必要等所有功能都做完。"]}, "queries": ["expresar desacuerdo y argumentar", "donner son avis et nuancer", "表达意见 虽然 但是"], "gloss": "A pessoa prefere começar com uma versão simples para descobrir o que as pessoas precisam. Reconhece o apelo da versão completa e acha melhor lançar antes."},
+  "estudo": {"title": "Estratégias de estudo e metalinguagem", "goal": "Explicar como aprende e transformar uma lacuna em exercício", "related": ["apresentar", "rotina", "pedir"], "roleplay": "Você não entendeu um trecho. Mostre o que entendeu, peça uma reformulação e reúna duas frases que poderá usar na rotina.", "questions": ["O que a pessoa faz na primeira escuta?", "O que ela procura no dicionário?"], "interact": "Outra pessoa pausa em toda palavra. Explique com um exemplo quando vale ouvir de novo ou buscar o significado.", "search": "como aprender um idioma por imersão", "languages": {"es": ["para + infinitivo, cuando e volver a", "Escucho una vez para entender la idea principal. Luego vuelvo a escuchar el fragmento.", "Cuando una palabra me impide seguir la historia, la busco en el diccionario y guardo una frase como ejemplo."], "fr": ["pour + infinitivo, quand e re- de repetição", "J’écoute une première fois pour comprendre l’idée principale. Ensuite, je réécoute le passage.", "Quand un mot m’empêche de suivre l’histoire, je le cherche dans le dictionnaire et je garde une phrase comme exemple."], "zh": ["先…再…, 一遍 e 为了", "为了听懂大意，我先听一遍，再听一遍这个片段。", "如果有一个词让我听不懂故事，我就查词典，记一个例句。"]}, "queries": ["cómo aprender idiomas con contenido comprensible", "apprendre une langue par immersion", "怎么学语言 听懂 初级"], "gloss": "A pessoa ouve uma vez para entender a ideia e depois repete o trecho. Consulta o dicionário se uma palavra atrapalhar e guarda uma frase."},
+  "pedir": {"title": "Pedidos, esclarecimentos e cortesia", "goal": "Recuperar uma conversa quando faltar uma palavra", "related": ["cidade", "relacao", "mensagem"], "roleplay": "Finja que entendeu só metade de uma indicação. Peça uma repetição mais lenta, reformule o que entendeu e confirme o detalhe que falta.", "questions": ["O que a pessoa pede para repetirem?", "Como ela confirma o que entendeu?"], "interact": "A pessoa repete as mesmas palavras e você ainda trava. Peça uma explicação com palavras mais simples.", "search": "pedir ajuda e esclarecimentos", "languages": {"es": ["poder, demonstrativos e perguntas indiretas", "¿Puede decirlo un poco más despacio? No entendí la última parte.", "Si entendí bien, tengo que esperar aquí. ¿Me puede decir cuándo van a volver?"], "fr": ["pouvoir, est-ce que e pergunta indireta", "Vous pouvez parler un peu plus lentement ? Je n’ai pas compris la dernière partie.", "Si je comprends bien, je dois attendre ici. Vous pouvez me dire quand vous allez revenir ?"], "zh": ["能…吗, 再…一遍 e perguntas com 什么时候", "您能再慢一点儿说吗？最后一段我没听懂。", "如果我没理解错，我得在这儿等。您能告诉我您什么时候回来吗？"]}, "queries": ["cómo pedir que repitan algo en español", "demander de répéter en français", "请说慢一点 没听懂 中文"], "gloss": "A pessoa pede que falem mais devagar porque perdeu o final. Confirma se deve esperar ali e pergunta quando a pessoa vai voltar."},
+  "conectar": {"title": "Explicar causas e resumir decisões", "goal": "Construir uma explicação com motivo, contraste e conclusão", "related": ["opiniao", "relato", "projeto"], "roleplay": "Explique por que trocou um plano de estudo. Inclua um dado, uma objeção razoável e uma decisão para a próxima semana.", "questions": ["Qual foi a causa da mudança?", "O que a pessoa decidiu então?"], "interact": "Alguém diz que a solução não atende à causa. Reformule e ofereça um exemplo verificável.", "search": "conectores para explicar e argumentar", "languages": {"es": ["porque, por eso, aunque e sin embargo", "El plan anterior era difícil de seguir porque tenía demasiadas tareas. Por eso lo cambié.", "Aunque el nuevo plan es más corto, sigo escuchando a diario. Sin embargo, guardo la práctica oral para cuando tengo más energía."], "fr": ["parce que, donc, même si e pourtant", "L’ancien planning était difficile à suivre parce qu’il y avait trop de tâches. Du coup, je l’ai changé.", "Même si le nouveau planning est plus court, j’écoute du français tous les jours. Je garde pourtant la pratique orale pour les moments où j’ai plus d’énergie."], "zh": ["因为…所以…, 虽然…但是… e 总之", "因为原来的计划任务太多，所以我换了个计划。", "虽然新计划的学习时间短了，但是我每天还是会听一点儿中文。总之，我有精神的时候再练口语。"]}, "queries": ["conectores para explicar causas y contrastar", "expliquer la cause et la conséquence", "因为 所以 虽然 但是 例子"], "gloss": "O plano anterior tinha tarefas demais. A pessoa trocou por um mais curto, ouve um pouco diariamente e pratica fala quando tem mais energia."},
+  "projeto": {"title": "Projetos, prioridades e prazos", "goal": "Negociar escopo e comunicar um próximo passo verificável", "related": ["tecnologia", "negocio", "conectar"], "roleplay": "Você quer lançar uma versão de teste. Seu parceiro tem metade do tempo previsto. Negocie duas prioridades, data e critério de sucesso.", "questions": ["Qual é a primeira prioridade?", "Que hipótese faria o time reduzir o escopo?"], "interact": "A outra pessoa quer adicionar uma função urgente. Pergunte que problema resolve e qual tarefa sairia do prazo.", "search": "projetos, prazos e prioridades", "languages": {"es": ["primero, antes de que e condicional de hipótese", "Primero vamos a probar la versión básica. Quiero resolver el error antes de que empiece la prueba.", "Si tuviéramos menos tiempo del previsto, aplazaríamos las funciones menos urgentes. El viernes podemos evaluar el resultado."], "fr": ["d’abord, avant que + subjonctif e si + imparfait + conditionnel", "On va d’abord tester la version de base. Je veux régler le problème avant que le test ne commence.", "Si on avait moins de temps que prévu, on reporterait les fonctions les moins urgentes. Vendredi, on pourra évaluer le résultat."], "zh": ["先 + ação, 在…之前 e 要是…就…", "我们先测试基础版。我想在测试开始之前修好这个问题。", "要是时间比预想的少，我们就推迟做不太急的功能。星期五可以评估一下结果。"]}, "queries": ["negociar prioridades y plazos de un proyecto", "prioriser les tâches et négocier un délai", "项目 优先 计划 口语"], "gloss": "A equipe vai testar a versão básica e resolver um erro primeiro. Se faltar tempo, adia funções menos urgentes. Avalia o resultado na sexta-feira."}
+};
+
+const IMMERSION_LEXICON = {
+  "apresentar": [["hola", "bonjour", "你好~nǐ hǎo", "olá"], ["me llamo", "je m’appelle", "我叫~wǒ jiào", "eu me chamo"], ["soy de", "je viens de", "我来自~wǒ láizì", "sou de"], ["mucho gusto", "enchanté", "很高兴认识你~hěn gāoxìng rènshi nǐ", "prazer em conhecer você"], ["¿cómo te llamas?", "comment tu t’appelles ?", "你叫什么名字？~nǐ jiào shénme míngzi?", "como você se chama?"], ["soy brasileño", "je suis brésilien", "我是巴西人~wǒ shì Bāxī rén", "sou brasileiro"], ["el nombre", "le prénom", "名字~míngzi", "o nome"], ["el apellido", "le nom de famille", "姓~xìng", "o sobrenome"], ["el país", "le pays", "国家~guójiā", "o país"], ["la nacionalidad", "la nationalité", "国籍~guójí", "a nacionalidade"], ["el idioma", "la langue", "语言~yǔyán", "o idioma"], ["hablar portugués", "parler portugais", "说葡萄牙语~shuō Pútáoyáyǔ", "falar português"], ["aprender un idioma", "apprendre une langue", "学一门语言~xué yì mén yǔyán", "aprender um idioma"], ["vivir en Brasil", "habiter au Brésil", "住在巴西~zhù zài Bāxī", "morar no Brasil"], ["el compañero de trabajo", "le collègue", "同事~tóngshì", "o colega de trabalho"], ["presentar a alguien", "présenter quelqu’un", "介绍一个人~jièshào yí ge rén", "apresentar alguém"], ["buenas noches", "bonsoir", "晚上好~wǎnshang hǎo", "boa noite ao cumprimentar"], ["hasta mañana", "à demain", "明天见~míngtiān jiàn", "até amanhã"], ["¿y tú?", "et toi ?", "你呢？~nǐ ne?", "e você?"]],
+  "rotina": [["el despertador", "le réveil", "闹钟~nàozhōng", "o despertador"], ["despertarse temprano", "se réveiller tôt", "早起~zǎoqǐ", "acordar cedo"], ["lavarse la cara", "se laver le visage", "洗脸~xǐ liǎn", "lavar o rosto"], ["ducharse", "prendre une douche", "洗澡~xǐzǎo", "tomar banho"], ["vestirse", "s’habiller", "穿衣服~chuān yīfu", "vestir-se"], ["desayunar", "prendre le petit déjeuner", "吃早饭~chī zǎofàn", "tomar café da manhã"], ["salir de casa", "sortir de chez soi", "出门~chūmén", "sair de casa"], ["volver a casa", "rentrer chez soi", "回家~huí jiā", "voltar para casa"], ["el descanso", "le repos", "休息~xiūxi", "o descanso"], ["la siesta", "la sieste", "午睡~wǔshuì", "o cochilo da tarde"], ["antes de trabajar", "avant de travailler", "工作前~gōngzuò qián", "antes de trabalhar"], ["después del trabajo", "après le travail", "下班后~xiàbān hòu", "depois do trabalho"], ["cada mañana", "chaque matin", "每天早上~měitiān zǎoshang", "toda manhã"], ["a veces", "parfois", "有时候~yǒushíhou", "às vezes"], ["lavar los platos", "faire la vaisselle", "洗碗~xǐ wǎn", "lavar a louça"], ["preparar la mochila", "préparer le sac", "收拾背包~shōushi bēibāo", "preparar a mochila"], ["acostarse tarde", "se coucher tard", "晚睡~wǎn shuì", "dormir tarde"], ["tener un día libre", "avoir un jour de congé", "有一天休假~yǒu yì tiān xiūjià", "ter um dia de folga"], ["hacer una pausa", "faire une pause", "休息一下~xiūxi yíxià", "fazer uma pausa"]],
+  "comida": [["pedir el menú", "demander le menu", "要菜单~yào càidān", "pedir o cardápio"], ["quisiera un café", "je voudrais un café", "我想要一杯咖啡~wǒ xiǎng yào yì bēi kāfēi", "eu gostaria de um café"], ["la cuenta, por favor", "l’addition, s’il vous plaît", "请买单~qǐng mǎidān", "a conta, por favor"], ["para llevar", "à emporter", "打包带走~dǎbāo dàizǒu", "para viagem"], ["comer aquí", "manger sur place", "在这儿吃~zài zhèr chī", "comer aqui"], ["sin azúcar", "sans sucre", "不加糖~bù jiā táng", "sem açúcar"], ["con hielo", "avec des glaçons", "加冰~jiā bīng", "com gelo"], ["el arroz", "le riz", "米饭~mǐfàn", "o arroz cozido"], ["el pollo", "le poulet", "鸡肉~jīròu", "o frango"], ["la carne de res", "le bœuf", "牛肉~niúròu", "a carne bovina"], ["las verduras", "les légumes", "蔬菜~shūcài", "os legumes e verduras"], ["la fruta", "les fruits", "水果~shuǐguǒ", "a fruta"], ["el agua sin gas", "l’eau plate", "不含气的水~bù hán qì de shuǐ", "a água sem gás"], ["el plato del día", "le plat du jour", "今日特餐~jīnrì tècān", "o prato do dia"], ["un poco picante", "un peu épicé", "有点儿辣~yǒudiǎnr là", "um pouco apimentado"], ["me gusta cocinar", "j’aime cuisiner", "我喜欢做饭~wǒ xǐhuan zuòfàn", "gosto de cozinhar"], ["la porción", "la portion", "一份~yí fèn", "uma porção"], ["la receta", "la recette", "菜谱~càipǔ", "a receita culinária"], ["¿qué me recomienda?", "qu’est-ce que vous me conseillez ?", "您推荐什么？~nín tuījiàn shénme?", "o que você recomenda?"]],
+  "cidade": [["la calle", "la rue", "街道~jiēdào", "a rua"], ["la esquina", "le coin de la rue", "街角~jiējiǎo", "a esquina"], ["el mapa", "la carte", "地图~dìtú", "o mapa"], ["la plaza", "la place", "广场~guǎngchǎng", "a praça"], ["la acera", "le trottoir", "人行道~rénxíngdào", "a calçada"], ["el semáforo", "le feu de circulation", "红绿灯~hónglǜdēng", "o semáforo"], ["la farmacia", "la pharmacie", "药店~yàodiàn", "a farmácia"], ["la parada de autobús", "l’arrêt de bus", "公交车站~gōngjiāochē zhàn", "o ponto de ônibus"], ["el barrio", "le quartier", "街区~jiēqū", "o bairro ou quarteirão"], ["el centro", "le centre-ville", "市中心~shìzhōngxīn", "o centro da cidade"], ["girar a la derecha", "tourner à droite", "往右拐~wǎng yòu guǎi", "virar à direita"], ["girar a la izquierda", "tourner à gauche", "往左拐~wǎng zuǒ guǎi", "virar à esquerda"], ["seguir recto", "aller tout droit", "一直往前走~yìzhí wǎng qián zǒu", "seguir em frente"], ["cruzar la calle", "traverser la rue", "过马路~guò mǎlù", "atravessar a rua"], ["al lado de", "à côté de", "在……旁边~zài … pángbiān", "ao lado de"], ["frente a", "en face de", "在……对面~zài … duìmiàn", "em frente a"], ["ir a pie", "y aller à pied", "走路去~zǒulù qù", "ir a pé"], ["estar lejos", "être loin", "很远~hěn yuǎn", "ser longe"], ["¿cómo llego allí?", "comment je fais pour y aller ?", "怎么去那儿？~zěnme qù nàr?", "como chego lá?"]],
+  "compras": [["el precio", "le prix", "价格~jiàgé", "o preço"], ["el efectivo", "les espèces", "现金~xiànjīn", "o dinheiro em espécie"], ["la tarjeta bancaria", "la carte bancaire", "银行卡~yínhángkǎ", "o cartão bancário"], ["el recibo", "le ticket de caisse", "收据~shōujù", "o recibo"], ["el descuento", "la réduction", "折扣~zhékòu", "o desconto"], ["¿cuánto cuesta?", "ça coûte combien ?", "多少钱？~duōshao qián?", "quanto custa?"], ["el cambio (dinero)", "la monnaie (rendue)", "找零~zhǎolíng", "o troco"], ["una oferta", "une promotion", "优惠活动~yōuhuì huódòng", "uma promoção"], ["el tamaño", "la taille", "大小~dàxiǎo", "o tamanho"], ["el color", "la couleur", "颜色~yánsè", "a cor"], ["la bolsa", "le sac", "袋子~dàizi", "a sacola"], ["caro", "cher", "贵~guì", "caro"], ["barato", "bon marché", "便宜~piányi", "barato"], ["probarse una camisa", "essayer une chemise", "试穿衬衫~shìchuān chènshān", "experimentar uma camisa"], ["¿tienen una talla más grande?", "vous avez une taille au-dessus ?", "有大一号的吗？~yǒu dà yí hào de ma?", "tem um tamanho maior?"], ["pagar con tarjeta", "payer par carte", "刷卡~shuākǎ", "pagar com cartão"], ["hacer una devolución", "rendre un article", "退货~tuìhuò", "devolver um produto"], ["estar agotado", "être en rupture de stock", "卖完了~màiwán le", "estar esgotado"], ["solo estoy mirando", "je regarde seulement", "我只是看看~wǒ zhǐshì kànkan", "estou só olhando"]],
+  "casa": [["el piso (vivienda)", "l’appartement", "公寓~gōngyù", "o apartamento"], ["el dormitorio", "la chambre", "卧室~wòshì", "o quarto"], ["el baño", "la salle de bains", "浴室~yùshì", "o banheiro"], ["la cocina", "la cuisine", "厨房~chúfáng", "a cozinha"], ["la sala de estar", "le salon", "客厅~kètīng", "a sala"], ["la mesa", "la table", "桌子~zhuōzi", "a mesa"], ["la silla", "la chaise", "椅子~yǐzi", "a cadeira"], ["la ventana", "la fenêtre", "窗户~chuānghu", "a janela"], ["la puerta", "la porte", "门~mén", "a porta"], ["la llave", "la clé", "钥匙~yàoshi", "a chave"], ["el alquiler", "le loyer", "房租~fángzū", "o aluguel"], ["el vecino", "le voisin", "邻居~línjū", "o vizinho"], ["la mudanza", "le déménagement", "搬家~bānjiā", "a mudança de casa"], ["encender la luz", "allumer la lumière", "开灯~kāi dēng", "acender a luz"], ["abrir la ventana", "ouvrir la fenêtre", "开窗~kāi chuāng", "abrir a janela"], ["ordenar el cuarto", "ranger la chambre", "收拾房间~shōushi fángjiān", "arrumar o quarto"], ["hacer la cama", "faire le lit", "整理床铺~zhěnglǐ chuángpù", "arrumar a cama"], ["el enchufe", "la prise électrique", "插座~chāzuò", "a tomada"], ["un lugar tranquilo", "un endroit calme", "一个安静的地方~yí ge ānjìng de dìfang", "um lugar tranquilo"]],
+  "plantao": [["el bombero", "le pompier", "消防员~xiāofángyuán", "o bombeiro"], ["el turno", "le service (horaire)", "班次~bāncì", "o turno"], ["estar de guardia", "être de garde", "值班~zhíbān", "estar de plantão"], ["el cuartel de bomberos", "la caserne de pompiers", "消防站~xiāofángzhàn", "o quartel dos bombeiros"], ["el equipo de trabajo", "l’équipe", "工作团队~gōngzuò tuánduì", "a equipe de trabalho"], ["el casco", "le casque", "头盔~tóukuī", "o capacete"], ["los guantes", "les gants", "手套~shǒutào", "as luvas"], ["la radio", "la radio", "对讲机~duìjiǎngjī", "o rádio comunicador"], ["la salida", "la sortie", "出口~chūkǒu", "a saída"], ["la llegada", "l’arrivée", "到达~dàodá", "a chegada"], ["la dirección (domicilio)", "l’adresse", "地址~dìzhǐ", "o endereço"], ["la llamada", "l’appel", "电话~diànhuà", "a chamada telefônica"], ["avisar al equipo", "prévenir l’équipe", "通知队友~tōngzhī duìyǒu", "avisar a equipe"], ["entregar el turno", "passer le relais", "交班~jiāobān", "passar o plantão"], ["revisar el material", "vérifier le matériel", "检查装备~jiǎnchá zhuāngbèi", "revisar o equipamento"], ["esperar aquí", "attendre ici", "在这儿等~zài zhèr děng", "esperar aqui"], ["confirmar la ubicación", "confirmer le lieu", "确认位置~quèrèn wèizhi", "confirmar a localização"], ["el informe", "le rapport", "报告~bàogào", "o relatório"], ["necesitar ayuda", "avoir besoin d’aide", "需要帮助~xūyào bāngzhù", "precisar de ajuda"]],
+  "treino": [["correr", "courir", "跑步~pǎobù", "correr"], ["entrenar", "s’entraîner", "训练~xùnliàn", "treinar"], ["calentar", "s’échauffer", "热身~rèshēn", "aquecer"], ["estirarse", "s’étirer", "拉伸~lāshēn", "alongar-se"], ["la carrera (prueba)", "la course", "跑步比赛~pǎobù bǐsài", "a prova de corrida"], ["el ritmo", "l’allure", "配速~pèisù", "o ritmo de corrida"], ["mantener el ritmo", "garder l’allure", "保持配速~bǎochí pèisù", "manter o ritmo"], ["una serie", "une série", "一组~yì zǔ", "uma série"], ["una repetición", "une répétition", "一次动作~yí cì dòngzuò", "uma repetição de exercício"], ["las pesas", "les haltères", "哑铃~yǎlíng", "os halteres"], ["la sentadilla", "le squat", "深蹲~shēndūn", "o agachamento"], ["las flexiones", "les pompes", "俯卧撑~fǔwòchēng", "as flexões"], ["la pista de atletismo", "la piste d’athlétisme", "田径跑道~tiánjìng pǎodào", "a pista de atletismo"], ["la fuerza", "la force", "力量~lìliang", "a força"], ["la recuperación", "la récupération", "恢复~huīfù", "a recuperação"], ["quedarse sin aliento", "être à bout de souffle", "气喘吁吁~qìchuǎnxūxū", "ficar ofegante"], ["bajar el ritmo", "ralentir", "放慢速度~fàngmàn sùdù", "desacelerar"], ["el objetivo del día", "l’objectif du jour", "当天的目标~dàngtiān de mùbiāo", "a meta do dia"], ["mejorar la marca", "améliorer son chrono", "提高成绩~tígāo chéngjì", "melhorar a marca esportiva"]],
+  "saude": [["la cita", "le rendez-vous", "预约~yùyuē", "a consulta ou compromisso marcado"], ["me duele la cabeza", "j’ai mal à la tête", "我头疼~wǒ tóu téng", "estou com dor de cabeça"], ["la pierna", "la jambe", "腿~tuǐ", "a perna"], ["el brazo", "le bras", "胳膊~gēbo", "o braço"], ["la espalda", "le dos", "背~bèi", "as costas"], ["la garganta", "la gorge", "嗓子~sǎngzi", "a garganta"], ["estoy cansado", "je suis fatigué", "我累了~wǒ lèi le", "estou cansado"], ["tengo fiebre", "j’ai de la fièvre", "我发烧了~wǒ fāshāo le", "estou com febre"], ["sentirse mareado", "avoir la tête qui tourne", "觉得头晕~juéde tóuyūn", "sentir tontura"], ["desde ayer", "depuis hier", "从昨天开始~cóng zuótiān kāishǐ", "desde ontem"], ["dormir bien", "bien dormir", "睡得好~shuì de hǎo", "dormir bem"], ["tomar agua", "boire de l’eau", "喝水~hē shuǐ", "beber água"], ["la temperatura", "la température", "体温~tǐwēn", "a temperatura corporal"], ["el síntoma", "le symptôme", "症状~zhèngzhuàng", "o sintoma"], ["el consultorio", "le cabinet médical", "诊室~zhěnshì", "o consultório"], ["la sala de espera", "la salle d’attente", "候诊室~hòuzhěnshì", "a sala de espera"], ["el formulario", "le formulaire", "表格~biǎogé", "o formulário"], ["la hora de la cita", "l’heure du rendez-vous", "预约时间~yùyuē shíjiān", "o horário marcado"], ["cambiar la cita", "déplacer le rendez-vous", "更改预约~gēnggǎi yùyuē", "remarcar a consulta"]],
+  "viagem": [["el billete", "le billet", "车票~chēpiào", "a passagem terrestre"], ["el aeropuerto", "l’aéroport", "机场~jīchǎng", "o aeroporto"], ["la estación de tren", "la gare", "火车站~huǒchēzhàn", "a estação de trem"], ["el andén", "le quai", "站台~zhàntái", "a plataforma"], ["la puerta de embarque", "la porte d’embarquement", "登机口~dēngjīkǒu", "o portão de embarque"], ["el equipaje", "les bagages", "行李~xíngli", "a bagagem"], ["la maleta", "la valise", "行李箱~xínglixiāng", "a mala"], ["la reserva", "la réservation", "预订~yùdìng", "a reserva"], ["el alojamiento", "l’hébergement", "住宿~zhùsù", "a hospedagem"], ["ida y vuelta", "un aller-retour", "往返~wǎngfǎn", "ida e volta"], ["el horario", "l’horaire", "时刻表~shíkèbiǎo", "a tabela de horários"], ["el retraso", "le retard", "晚点~wǎndiǎn", "o atraso de transporte"], ["un vuelo directo", "un vol direct", "直飞航班~zhífēi hángbān", "um voo direto"], ["hacer transbordo", "changer de ligne", "换乘~huànchéng", "fazer baldeação"], ["el pasaporte", "le passeport", "护照~hùzhào", "o passaporte"], ["tomar el tren", "prendre le train", "坐火车~zuò huǒchē", "pegar o trem"], ["perder el autobús", "rater le bus", "没赶上公交车~méi gǎnshàng gōngjiāochē", "perder o ônibus"], ["registrarse en el hotel", "s’enregistrer à l’hôtel", "办理入住~bànlǐ rùzhù", "fazer o check-in no hotel"], ["¿a qué hora sale?", "ça part à quelle heure ?", "几点出发？~jǐ diǎn chūfā?", "a que horas sai?"]],
+  "negocio": [["el producto", "le produit", "商品~shāngpǐn", "o produto comercial"], ["el pedido", "la commande", "订单~dìngdān", "o pedido"], ["el proveedor", "le fournisseur", "供应商~gōngyìngshāng", "o fornecedor"], ["el cliente", "le client", "客户~kèhù", "o cliente"], ["la cotización", "le devis", "报价~bàojià", "o orçamento comercial"], ["el presupuesto disponible", "le budget disponible", "可用预算~kěyòng yùsuàn", "o orçamento disponível"], ["el costo de envío", "les frais de livraison", "运费~yùnfèi", "o frete"], ["el margen", "la marge", "利润率~lìrùnlǜ", "a margem percentual"], ["la ganancia neta", "le bénéfice net", "净利润~jìng lìrùn", "o lucro líquido"], ["la comisión", "la commission", "佣金~yòngjīn", "a comissão"], ["el plazo de entrega", "le délai de livraison", "交货期~jiāohuòqī", "o prazo de entrega"], ["el inventario", "le stock", "库存~kùcún", "o estoque"], ["la venta", "la vente", "销售~xiāoshòu", "a venda"], ["la factura", "la facture", "发票~fāpiào", "a fatura comercial"], ["comparar precios", "comparer les prix", "比价~bǐjià", "comparar preços"], ["confirmar un pedido", "confirmer une commande", "确认订单~quèrèn dìngdān", "confirmar um pedido"], ["negociar el precio", "négocier le prix", "商量价格~shāngliang jiàgé", "negociar o preço"], ["agotar el stock", "épuiser le stock", "售罄~shòuqìng", "esgotar o estoque"], ["hacer un seguimiento", "faire un suivi", "跟进~gēnjìn", "fazer acompanhamento"]],
+  "video": [["el guion", "le scénario", "脚本~jiǎoběn", "o roteiro"], ["el título", "le titre", "标题~biāotí", "o título"], ["la miniatura", "la vignette", "缩略图~suōlüètú", "a miniatura"], ["los subtítulos", "les sous-titres", "字幕~zìmù", "as legendas"], ["el micrófono", "le micro", "麦克风~màikèfēng", "o microfone"], ["el montaje", "le montage", "剪辑~jiǎnjí", "a montagem ou edição"], ["el sonido", "le son", "声音~shēngyīn", "o som"], ["la escena", "la scène", "场景~chǎngjǐng", "a cena"], ["la duración", "la durée", "时长~shícháng", "a duração de mídia"], ["el ritmo del montaje", "le rythme du montage", "剪辑节奏~jiǎnjí jiézòu", "o ritmo da edição"], ["los espectadores", "les spectateurs", "观众~guānzhòng", "o público espectador"], ["las visualizaciones", "les vues", "播放量~bōfàngliàng", "as visualizações"], ["grabar un video", "tourner une vidéo", "拍视频~pāi shìpín", "gravar um vídeo"], ["publicar un episodio", "publier un épisode", "发布一期节目~fābù yì qī jiémù", "publicar um episódio"], ["responder a un comentario", "répondre à un commentaire", "回复评论~huífù pínglùn", "responder a um comentário"], ["volver a grabar", "réenregistrer", "重录~chónglù", "regravar"], ["recortar un fragmento", "couper un passage", "剪掉一段~jiǎndiào yí duàn", "cortar um trecho"], ["poner en pausa", "mettre en pause", "暂停~zàntíng", "pausar"], ["hacer una prueba de sonido", "faire un essai de son", "试音~shìyīn", "testar o som"]],
+  "tecnologia": [["la aplicación", "l’application", "应用程序~yìngyòng chéngxù", "o aplicativo"], ["la página web", "la page web", "网页~wǎngyè", "a página web"], ["el archivo", "le fichier", "文件~wénjiàn", "o arquivo"], ["la carpeta", "le dossier", "文件夹~wénjiànjiā", "a pasta digital"], ["la pantalla", "l’écran", "屏幕~píngmù", "a tela"], ["el enlace", "le lien", "链接~liànjiē", "o link"], ["la contraseña", "le mot de passe", "密码~mìmǎ", "a senha"], ["la cuenta de usuario", "le compte utilisateur", "账户~zhànghù", "a conta de usuário"], ["el navegador", "le navigateur", "浏览器~liúlǎnqì", "o navegador"], ["la actualización", "la mise à jour", "更新~gēngxīn", "a atualização"], ["el error (programa)", "le bogue", "程序错误~chéngxù cuòwù", "o erro de software"], ["guardar el archivo", "enregistrer le fichier", "保存文件~bǎocún wénjiàn", "salvar o arquivo"], ["reiniciar la aplicación", "relancer l’application", "重新打开应用~chóngxīn dǎkāi yìngyòng", "reabrir o app"], ["hacer una copia de seguridad", "faire une sauvegarde", "备份~bèifèn", "fazer backup"], ["sin conexión", "hors connexion", "离线~líxiàn", "offline"], ["la conexión a internet", "la connexion Internet", "网络连接~wǎngluò liánjiē", "a conexão com a internet"], ["las opciones", "les paramètres", "设置~shèzhì", "as configurações"], ["arreglar un fallo", "corriger un bug", "修复故障~xiūfù gùzhàng", "corrigir uma falha"], ["compartir la pantalla", "partager l’écran", "共享屏幕~gòngxiǎng píngmù", "compartilhar a tela"]],
+  "lazer": [["el pasatiempo", "le loisir", "爱好~àihào", "o passatempo"], ["el cine", "le cinéma", "电影院~diànyǐngyuàn", "o cinema como local"], ["la película", "le film", "电影~diànyǐng", "o filme"], ["el personaje", "le personnage", "角色~juésè", "o personagem"], ["la historia", "l’histoire", "故事~gùshi", "a história"], ["el final", "la fin", "结局~jiéjú", "o desfecho"], ["el juego de gestión", "le jeu de gestion", "经营模拟游戏~jīngyíng mónǐ yóuxì", "o jogo de gestão"], ["el mando", "la manette", "游戏手柄~yóuxì shǒubǐng", "o controle de videogame"], ["la partida", "la partie", "一局~yì jú", "a partida"], ["el equipo (deportivo)", "l’équipe sportive", "运动队~yùndòngduì", "a equipe esportiva"], ["el marcador", "le score", "比分~bǐfēn", "o placar"], ["el partido", "le match", "比赛~bǐsài", "o jogo esportivo"], ["un concierto", "un concert", "一场音乐会~yì chǎng yīnyuèhuì", "um concerto"], ["el museo", "le musée", "博物馆~bówùguǎn", "o museu"], ["el libro", "le livre", "书~shū", "o livro"], ["jugar en línea", "jouer en ligne", "在线玩游戏~zàixiàn wán yóuxì", "jogar online"], ["ganar una partida", "gagner une partie", "赢一局~yíng yì jú", "ganhar uma partida"], ["ver una serie", "regarder une série", "看电视剧~kàn diànshìjù", "assistir a uma série"], ["salir a pasear", "aller se promener", "出去散步~chūqu sànbù", "sair para passear"]],
+  "agenda": [["hoy", "aujourd’hui", "今天~jīntiān", "hoje"], ["mañana (día siguiente)", "demain", "明天~míngtiān", "amanhã"], ["ayer", "hier", "昨天~zuótiān", "ontem"], ["esta semana", "cette semaine", "这周~zhè zhōu", "esta semana"], ["la semana que viene", "la semaine prochaine", "下周~xià zhōu", "a próxima semana"], ["el fin de semana", "le week-end", "周末~zhōumò", "o fim de semana"], ["a las tres", "à trois heures", "三点~sān diǎn", "às três"], ["a mediodía", "à midi", "中午~zhōngwǔ", "ao meio-dia"], ["por la tarde", "l’après-midi", "下午~xiàwǔ", "à tarde"], ["primero", "d’abord", "先~xiān", "primeiro"], ["luego", "ensuite", "然后~ránhòu", "depois"], ["más tarde", "plus tard", "晚一点儿~wǎn yìdiǎnr", "mais tarde"], ["dentro de una hora", "dans une heure", "一小时后~yì xiǎoshí hòu", "daqui a uma hora"], ["reservar tiempo", "se réserver du temps", "留出时间~liúchū shíjiān", "separar um tempo"], ["adelantar una reunión", "avancer une réunion", "提前开会~tíqián kāihuì", "antecipar a reunião"], ["posponer una reunión", "reporter une réunion", "推迟会议~tuīchí huìyì", "adiar uma reunião"], ["estar disponible", "être disponible", "有空~yǒu kòng", "estar disponível"], ["llegar a tiempo", "arriver à l’heure", "准时到~zhǔnshí dào", "chegar no horário"], ["antes de las seis", "avant six heures", "六点前~liù diǎn qián", "antes das seis"]],
+  "relacao": [["la familia", "la famille", "家人~jiārén", "a família"], ["la pareja", "le partenaire", "伴侣~bànlǚ", "o parceiro ou a parceira"], ["el amigo", "l’ami", "朋友~péngyou", "o amigo"], ["la hermana mayor", "la sœur aînée", "姐姐~jiějie", "a irmã mais velha"], ["el hermano menor", "le petit frère", "弟弟~dìdi", "o irmão mais novo"], ["el invitado", "l’invité", "客人~kèrén", "o convidado"], ["la invitación", "l’invitation", "邀请~yāoqǐng", "o convite"], ["la visita", "la visite", "拜访~bàifǎng", "a visita"], ["el regalo", "le cadeau", "礼物~lǐwù", "o presente"], ["el cumpleaños", "l’anniversaire", "生日~shēngrì", "o aniversário"], ["quedar con un amigo", "retrouver un ami", "和朋友见面~hé péngyou jiànmiàn", "combinar de encontrar um amigo"], ["invitar a cenar", "inviter à dîner", "请人吃晚饭~qǐng rén chī wǎnfàn", "convidar para jantar"], ["¿te apetece venir?", "ça te dit de venir ?", "你想来吗？~nǐ xiǎng lái ma?", "você quer vir?"], ["lo pasé muy bien", "j’ai passé un très bon moment", "我玩得很开心~wǒ wán de hěn kāixīn", "eu me diverti muito"], ["te mando un mensaje", "je t’envoie un message", "我给你发消息~wǒ gěi nǐ fā xiāoxi", "eu te mando uma mensagem"], ["nos vemos allí", "on se retrouve là-bas", "我们在那儿见~wǒmen zài nàr jiàn", "a gente se encontra lá"], ["pasar por casa", "passer à la maison", "来家里坐坐~lái jiālǐ zuòzuo", "passar lá em casa"], ["cambiar de plan", "changer de programme", "改变计划~gǎibiàn jìhuà", "mudar de plano"], ["gracias por venir", "merci d’être venu", "谢谢你来~xièxie nǐ lái", "obrigado por vir"]],
+  "mensagem": [["el correo electrónico", "le courriel", "电子邮件~diànzǐ yóujiàn", "o e-mail"], ["el asunto", "l’objet", "主题~zhǔtí", "o assunto da mensagem"], ["el archivo adjunto", "la pièce jointe", "附件~fùjiàn", "o anexo"], ["la respuesta", "la réponse", "回复~huífù", "a resposta"], ["la nota de voz", "le message vocal", "语音留言~yǔyīn liúyán", "a mensagem de voz"], ["la notificación", "la notification", "通知~tōngzhī", "a notificação"], ["un borrador", "un brouillon", "草稿~cǎogǎo", "um rascunho"], ["una videollamada", "un appel vidéo", "视频通话~shìpín tōnghuà", "uma videochamada"], ["dejar un mensaje", "laisser un message", "留言~liúyán", "deixar um recado"], ["volver a llamar", "rappeler", "回电话~huí diànhuà", "retornar a ligação"], ["enviar el enlace", "envoyer le lien", "发送链接~fāsòng liànjiē", "enviar o link"], ["comprobar los datos", "vérifier les informations", "核对信息~héduì xìnxī", "conferir os dados"], ["confirmar la recepción", "confirmer la réception", "确认收到~quèrèn shōudào", "confirmar recebimento"], ["responder por escrito", "répondre par écrit", "书面回复~shūmiàn huífù", "responder por escrito"], ["se cortó la llamada", "la communication a coupé", "电话断了~diànhuà duàn le", "a ligação caiu"], ["te escucho mal", "je t’entends mal", "我听不清你说的话~wǒ tīng bu qīng nǐ shuō de huà", "estou te ouvindo mal"], ["quedamos en contacto", "on reste en contact", "保持联系~bǎochí liánxì", "mantemos contato"], ["saludos cordiales", "bien cordialement", "敬上~jìngshàng", "atenciosamente em mensagem formal"], ["queda pendiente", "ça reste en attente", "还没处理~hái méi chǔlǐ", "ainda está pendente"]],
+  "tempo": [["el tiempo (clima)", "la météo", "天气~tiānqì", "o tempo meteorológico"], ["la lluvia", "la pluie", "雨~yǔ", "a chuva"], ["el viento", "le vent", "风~fēng", "o vento"], ["el sol", "le soleil", "太阳~tàiyáng", "o sol"], ["la sombra", "l’ombre", "阴凉处~yīnliángchù", "o local à sombra"], ["veinte grados", "vingt degrés", "二十度~èrshí dù", "vinte graus"], ["el calor", "la chaleur", "炎热~yánrè", "o calor"], ["el frío", "le froid", "寒冷~hánlěng", "o frio"], ["la tormenta", "l’orage", "雷雨~léiyǔ", "a tempestade com raios"], ["el pronóstico", "les prévisions", "天气预报~tiānqì yùbào", "a previsão do tempo"], ["las nubes", "les nuages", "云~yún", "as nuvens"], ["el paraguas", "le parapluie", "雨伞~yǔsǎn", "o guarda-chuva"], ["hacer frío", "faire froid", "天气冷~tiānqì lěng", "fazer frio"], ["está nublado", "le ciel est couvert", "今天是阴天~jīntiān shì yīntiān", "está nublado"], ["va a llover", "il va pleuvoir", "要下雨了~yào xiàyǔ le", "vai chover"], ["se despeja", "le ciel se dégage", "天放晴了~tiān fàngqíng le", "o tempo está abrindo"], ["buscar refugio", "chercher un abri", "找个地方躲雨~zhǎo ge dìfang duǒyǔ", "procurar abrigo da chuva"], ["cambiar la ruta", "changer d’itinéraire", "改路线~gǎi lùxiàn", "mudar a rota"], ["si mejora el tiempo", "si le temps s’améliore", "如果天气好转~rúguǒ tiānqì hǎozhuǎn", "se o tempo melhorar"]],
+  "relato": [["al principio", "au début", "一开始~yì kāishǐ", "no começo"], ["de repente", "tout à coup", "突然~tūrán", "de repente"], ["mientras tanto", "pendant ce temps", "与此同时~yǔcǐ tóngshí", "enquanto isso"], ["más adelante", "par la suite", "后来~hòulái", "mais adiante na história"], ["al final", "finalement", "最后~zuìhòu", "no final"], ["lo que pasó", "ce qui s’est passé", "发生的事~fāshēng de shì", "o que aconteceu"], ["el personaje principal", "le personnage principal", "主角~zhǔjué", "o protagonista"], ["el problema", "le problème", "问题~wèntí", "o problema"], ["el motivo", "la raison", "原因~yuányīn", "o motivo"], ["la solución", "la solution", "解决办法~jiějué bànfǎ", "a solução"], ["darse cuenta de", "se rendre compte de", "意识到~yìshí dào", "perceber ou dar-se conta de"], ["acordarse de", "se souvenir de", "记得~jìde", "lembrar-se de"], ["olvidarse de", "oublier", "忘记~wàngjì", "esquecer"], ["contar lo ocurrido", "raconter ce qui s’est passé", "讲述发生的事~jiǎngshù fāshēng de shì", "contar o ocorrido"], ["cometer un error", "faire une erreur", "犯错~fàncuò", "cometer um erro"], ["intentar otra vez", "essayer de nouveau", "再试一次~zài shì yí cì", "tentar outra vez"], ["sorprenderse", "être surpris", "感到惊讶~gǎndào jīngyà", "ficar surpreso"], ["resultar bien", "bien se passer", "进展顺利~jìnzhǎn shùnlì", "dar certo"], ["tener un imprevisto", "avoir un imprévu", "遇到意外情况~yùdào yìwài qíngkuàng", "ter um imprevisto"]],
+  "opiniao": [["en mi opinión", "à mon avis", "在我看来~zài wǒ kànlái", "na minha opinião"], ["estoy de acuerdo", "je suis d’accord", "我同意~wǒ tóngyì", "eu concordo"], ["no estoy de acuerdo", "je ne suis pas d’accord", "我不同意~wǒ bù tóngyì", "eu discordo"], ["depende de", "ça dépend de", "取决于~qǔjué yú", "depende de"], ["por ejemplo", "par exemple", "比如~bǐrú", "por exemplo"], ["por un lado", "d’un côté", "一方面~yì fāngmiàn", "por um lado"], ["por otro lado", "de l’autre côté", "另一方面~lìng yì fāngmiàn", "por outro lado"], ["el argumento", "l’argument", "论点~lùndiǎn", "o argumento"], ["la ventaja", "l’avantage", "优点~yōudiǎn", "a vantagem"], ["la desventaja", "l’inconvénient", "缺点~quēdiǎn", "a desvantagem"], ["el punto de vista", "le point de vue", "观点~guāndiǎn", "o ponto de vista"], ["la diferencia", "la différence", "区别~qūbié", "a diferença"], ["en cambio", "en revanche", "相比之下~xiāngbǐ zhīxià", "em contrapartida"], ["sin embargo", "cependant", "然而~rán’ér", "no entanto"], ["me parece razonable", "ça me paraît raisonnable", "我觉得有道理~wǒ juéde yǒu dàolǐ", "parece razoável para mim"], ["prefiero esta opción", "je préfère cette option", "我更喜欢这个选择~wǒ gèng xǐhuan zhège xuǎnzé", "prefiro esta opção"], ["si entiendo bien", "si je comprends bien", "如果我没理解错~rúguǒ wǒ méi lǐjiě cuò", "se entendi bem"], ["¿en qué te basas?", "sur quoi tu te bases ?", "你的依据是什么？~nǐ de yījù shì shénme?", "em que você se baseia?"], ["llegar a un acuerdo", "trouver un accord", "达成一致~dáchéng yízhì", "chegar a um acordo"]],
+  "estudo": [["el cuaderno", "le cahier", "笔记本~bǐjìběn", "o caderno"], ["la frase", "la phrase", "句子~jùzi", "a frase"], ["la palabra", "le mot", "单词~dāncí", "a palavra"], ["la pronunciación", "la prononciation", "发音~fāyīn", "a pronúncia"], ["el significado", "le sens", "意思~yìsi", "o significado"], ["el ejemplo", "l’exemple", "例子~lìzi", "o exemplo"], ["el diccionario", "le dictionnaire", "词典~cídiǎn", "o dicionário"], ["la lección", "la leçon", "课~kè", "a lição"], ["la pregunta", "la question", "提问~tíwèn", "a pergunta"], ["el repaso", "la révision", "复习~fùxí", "a revisão de estudo"], ["leer en voz alta", "lire à voix haute", "大声朗读~dàshēng lǎngdú", "ler em voz alta"], ["escuchar de nuevo", "réécouter", "再听一遍~zài tīng yí biàn", "ouvir de novo"], ["tomar apuntes", "prendre des notes", "记笔记~jì bǐjì", "tomar notas"], ["buscar una palabra", "chercher un mot", "查词~chá cí", "procurar uma palavra"], ["recordar sin mirar", "se rappeler sans regarder", "不看提示回忆~bú kàn tíshì huíyì", "lembrar sem olhar a pista"], ["corregir una frase", "corriger une phrase", "修改句子~xiūgǎi jùzi", "corrigir uma frase"], ["grabar tu voz", "enregistrer ta voix", "录下你的声音~lùxià nǐ de shēngyīn", "gravar sua voz"], ["hablar más despacio", "parler plus lentement", "说慢一点儿~shuō màn yìdiǎnr", "falar mais devagar"], ["entender la idea principal", "comprendre l’idée principale", "理解大意~lǐjiě dàyì", "entender a ideia principal"]],
+  "pedir": [["¿puede repetir?", "vous pouvez répéter ?", "您能再说一遍吗？~nín néng zài shuō yí biàn ma?", "pode repetir?"], ["¿puedo pasar?", "je peux passer ?", "我可以过去吗？~wǒ kěyǐ guòqu ma?", "posso passar?"], ["¿me puede ayudar?", "vous pouvez m’aider ?", "您能帮我吗？~nín néng bāng wǒ ma?", "pode me ajudar?"], ["no entendí esta parte", "je n’ai pas compris cette partie", "我没听懂这一段~wǒ méi tīngdǒng zhè yí duàn", "não entendi essa parte falada"], ["¿qué significa esto?", "ça veut dire quoi ?", "这是什么意思？~zhè shì shénme yìsi?", "o que significa isso?"], ["¿cómo se dice?", "comment on dit ?", "怎么说？~zěnme shuō?", "como se diz?"], ["¿lo puedes escribir?", "tu peux l’écrire ?", "你能写下来吗？~nǐ néng xiěxiàlai ma?", "pode escrever?"], ["¿me lo puede mostrar?", "vous pouvez me montrer ?", "您能给我看看吗？~nín néng gěi wǒ kànkan ma?", "pode me mostrar?"], ["un momento, por favor", "un instant, s’il vous plaît", "请等一下~qǐng děng yíxià", "um momento, por favor"], ["claro que sí", "bien sûr", "当然可以~dāngrán kěyǐ", "claro que sim"], ["no hay problema", "pas de problème", "没问题~méi wèntí", "sem problema"], ["entiendo", "je comprends", "我明白了~wǒ míngbai le", "entendi"], ["no estoy seguro", "je ne suis pas sûr", "我不太确定~wǒ bú tài quèdìng", "não tenho certeza"], ["un poco más despacio", "un peu plus lentement", "再慢一点儿~zài màn yìdiǎnr", "um pouco mais devagar"], ["¿a qué te refieres?", "qu’est-ce que tu veux dire ?", "你指的是什么？~nǐ zhǐ de shì shénme?", "a que você se refere?"], ["¿es esto lo que buscas?", "c’est ce que tu cherches ?", "你找的是这个吗？~nǐ zhǎo de shì zhège ma?", "é isto que você procura?"], ["una pregunta rápida", "une petite question", "问个小问题~wèn ge xiǎo wèntí", "uma pergunta rápida"], ["con permiso", "excusez-moi", "借过一下~jièguò yíxià", "com licença para passar"], ["gracias por tu ayuda", "merci pour ton aide", "谢谢你的帮助~xièxie nǐ de bāngzhù", "obrigado pela ajuda"]],
+  "conectar": [["porque", "parce que", "因为~yīnwèi", "porque"], ["por eso", "c’est pour ça que", "所以~suǒyǐ", "por isso"], ["pero", "mais", "但是~dànshì", "mas"], ["aunque", "même si", "虽然~suīrán", "embora, em construção concessiva"], ["además", "en plus", "而且~érqiě", "além disso"], ["en lugar de", "au lieu de", "不……而……~bù … ér …", "em vez de uma ação, fazer outra"], ["por lo menos", "au moins", "至少~zhìshǎo", "pelo menos"], ["en general", "en général", "一般来说~yìbān láishuō", "em geral"], ["en particular", "en particulier", "特别是~tèbié shì", "em especial"], ["según", "d’après", "根据~gēnjù", "de acordo com"], ["para empezar", "pour commencer", "首先~shǒuxiān", "para começar"], ["dicho de otra manera", "autrement dit", "换句话说~huàn jù huà shuō", "em outras palavras"], ["en resumen", "en résumé", "总之~zǒngzhī", "em resumo"], ["en ese caso", "dans ce cas", "那样的话~nàyàng de huà", "nesse caso"], ["incluso", "même", "甚至~shènzhì", "inclusive, no sentido de até"], ["si… entonces…", "si… alors…", "如果……就……~rúguǒ … jiù …", "se… então…"], ["cada vez más", "de plus en plus", "越来越~yuèláiyuè", "cada vez mais"], ["de momento", "pour l’instant", "暂时~zànshí", "por ora"], ["en cuanto a", "en ce qui concerne", "至于~zhìyú", "quanto a"]],
+  "projeto": [["el plan", "le plan", "计划~jìhuà", "o plano"], ["el plazo", "le délai", "期限~qīxiàn", "o prazo"], ["la tarea", "la tâche", "任务~rènwu", "a tarefa"], ["el progreso", "les progrès", "进展~jìnzhǎn", "o progresso"], ["la prueba", "le test", "测试~cèshì", "o teste"], ["el resultado", "le résultat", "结果~jiéguǒ", "o resultado"], ["la prioridad", "la priorité", "优先事项~yōuxiān shìxiàng", "a prioridade"], ["el requisito", "l’exigence", "要求~yāoqiú", "o requisito"], ["el cambio", "la modification", "变更~biàngēng", "a alteração de projeto"], ["el acuerdo", "l’accord", "协议~xiéyì", "o acordo"], ["la fecha límite", "la date limite", "截止日期~jiézhǐ rìqī", "a data-limite"], ["el próximo paso", "la prochaine étape", "下一步~xià yí bù", "o próximo passo"], ["poner en marcha", "mettre en route", "启动~qǐdòng", "dar início"], ["terminar a tiempo", "finir à temps", "按时完成~ànshí wánchéng", "terminar no prazo"], ["delegar una tarea", "déléguer une tâche", "委派任务~wěipài rènwu", "delegar uma tarefa"], ["encontrar una alternativa", "trouver une solution de rechange", "找到替代方案~zhǎodào tìdài fāng’àn", "encontrar uma alternativa"], ["anotar lo pendiente", "noter ce qu’il reste à faire", "记下待办事项~jìxià dàibàn shìxiàng", "anotar o que está pendente"], ["evaluar el resultado", "évaluer le résultat", "评估结果~pínggū jiéguǒ", "avaliar o resultado"], ["llegar al objetivo", "atteindre l’objectif", "达到目标~dádào mùbiāo", "alcançar a meta"]]
+};
+
+const IMMERSION_ORDER = {
+  es: `
+    apresentar rotina comida cidade agenda pedir
+    compras casa plantao treino saude viagem
+    relacao lazer relato mensagem tecnologia video
+    negocio projeto estudo tempo opiniao
+    viagem plantao negocio video conectar projeto
+  `,
+  fr: `
+    apresentar estudo rotina comida casa cidade pedir agenda relacao
+    compras viagem tempo treino saude rotina lazer mensagem cidade
+    viagem compras relacao plantao agenda relato comida video saude
+    mensagem casa tecnologia lazer treino negocio tempo viagem relacao opiniao estudo
+    relato plantao video negocio conectar tecnologia agenda projeto viagem opiniao
+    saude mensagem relato negocio opiniao
+  `,
+  zh: `
+    apresentar estudo rotina agenda casa comida pedir relacao compras cidade
+    apresentar tempo comida lazer rotina agenda estudo plantao
+    compras cidade comida viagem agenda casa pedir treino saude relacao mensagem
+    tempo rotina plantao compras lazer viagem relato
+    saude treino cidade viagem mensagem relacao tempo plantao compras
+    comida lazer video tecnologia negocio agenda estudo projeto
+    relato viagem casa mensagem relacao treino saude tecnologia lazer
+    video opiniao agenda compras negocio estudo conectar projeto
+    plantao tempo viagem relato tecnologia negocio saude mensagem video
+    lazer compras projeto cidade opiniao rotina conectar
+    negocio relato mensagem projeto viagem estudo tecnologia opiniao relacao
+    video plantao saude tempo conectar lazer projeto opiniao
+  `
+};
+
+const IMMERSION_PROFILES = {
+  es: {
+    band: 1, start: 'A2 em compreensão de temas familiares, a confirmar; produção pode estar abaixo.',
+    goal: 'B1 funcional em conversa e viagens. B2 é a etapa seguinte.',
+    focus: 'Interação oral e redução do portunhol', context: 'Bombeiros, corrida, viagens pela América Latina, YouTube, jogos de gestão e e-commerce.',
+    minutes: [8, 12, 30, 30], passive: 25, voice: 'es-419',
+    estimate: 'Partindo de A2, com 4–6 h semanais entre estudo e input compreendido, planeje 6–12 meses para B1 funcional. B2 pode pedir mais 9–18 meses. Se a fala estiver em A1, use a faixa longa e faça o diagnóstico de novo após 4 semanas.',
+    baseline: 'Ouça 2–3 min de conteúdo graduado e resuma sem legenda. Grave 90 s sobre sua rotina, responda a duas perguntas e tente pedir a repetição em espanhol.',
+    phonetics: 'Compare uma frase inteira com a fonte. Priorize o ritmo, as cinco vogais e um desvio de portunhol por vez. Anote o erro e a frase correta.',
+    proof: 'Converse por 8–10 min sobre temas familiares, resolva um imprevisto de viagem e escreva um recado com ação e prazo. Use uma amostra nova de DELE B1 para checar compreensão.',
+    pitfalls: 'A leitura costuma parecer mais fácil para brasileiros. Confira o que você entende sem legenda e produza frases inteiras; monitore falsos cognatos como embarazada e apellido.',
+    searches: ['rutina diaria', 'consejos para correr', 'viajes por Latinoamérica', 'juegos de gestión', 'cómo editar un video', 'cómo vender por internet']
+  },
+  fr: {
+    band: 0, start: 'A0–A1 inicial, a confirmar pelas primeiras amostras.',
+    goal: 'A2 para resolver o cotidiano, depois B1 funcional em viagem, escuta e conversa.',
+    focus: 'Compreensão de fala ligada e pronúncia', context: 'Viagens, alimentação, corrida, cinema, rotina e criação de conteúdo. Usar a Fluency Academy já disponível.',
+    minutes: [6, 12, 25, 25], passive: 20, voice: 'fr-FR',
+    estimate: 'Partindo de A0, com 3–5 h semanais consistentes, planeje 6–12 meses para A2 e 12–24 meses totais para B1 funcional. Recalibre com escuta inédita, escrita e uma conversa a cada mês.',
+    baseline: 'Faça o teste indicativo da TV5MONDE, tente identificar nomes e números de uma lição Première classe e grave 30 s de apresentação com o que já souber.',
+    phonetics: 'Ataque um alvo por vez: /y/ × /u/, nasais, consoantes finais ou ligação entre palavras. Primeiro ouça, depois imite grupos inteiros de sentido.',
+    proof: 'Resolva reservas e mudanças de horário, sustente 5–8 min de conversa familiar e escreva uma mensagem explicando um plano. Na meta B1, faça um modelo DELF com áudio novo.',
+    pitfalls: 'Compreender a transcrição pode esconder dificuldade de escuta. Ouça antes de ler. Aproveite uma aula da Fluency Academy no bloco ativo em lugar de somar outra sessão.',
+    searches: ['routine du matin', 'course à pied débutant', 'prendre le train en France', 'cuisine facile', 'jeux de gestion', 'monter une vidéo']
+  },
+  zh: {
+    band: 0, start: 'Fundação de pinyin e tons, a confirmar por escuta e gravação.',
+    goal: 'Autonomia em situações cotidianas e leitura graduada em chinês simplificado.',
+    focus: 'Discriminar e produzir tons, com leitura sem depender do pinyin', context: 'Pinyin, comida, viagens, tecnologia e negociação simples. HelloChinese e Yoyo Chinese no início; Skritter para escrita conforme a fase.',
+    minutes: [5, 10, 25, 25], passive: 20, voice: 'zh-CN',
+    estimate: 'Do início, com 3–5 h semanais, planeje 3–6 meses para uma base sonora útil, 9–18 meses para tarefas familiares e 18–36 meses para autonomia conversacional e leitura graduada mais estáveis. Verifique a versão do HSK se decidir prestar prova.',
+    baseline: 'Ouça pares tonais do Yoyo Chinese e tente identificar os tons de 10 exemplos sem olhar. Grave a repetição de três frases e leia uma linha curta em caracteres.',
+    phonetics: 'Use primeiro o áudio nativo e pinyin com tons, depois esconda o apoio na leitura. Trabalhe um par de tons por sessão. Use chorusing curto e faça shadowing só quando conseguir acompanhar com clareza.',
+    proof: 'Faça um pedido, confirme preço e horário, peça reparo se não entender e sustente 5–8 min em temas conhecidos. Compare um leitor graduado inédito, escondendo o pinyin na primeira leitura.',
+    pitfalls: 'Áudio rápido e pinyin sempre visível podem mascarar pouca discriminação tonal. Use HelloChinese e Yoyo para a base, Du Chinese para ler, Mandarin Corner quando entender a cena e Skritter em pequenas doses.',
+    searches: ['日常生活 慢速中文', '跑步 初学者', '点餐 初级中文', '坐火车 慢速中文', '手机应用 初级中文', '网购 初级中文']
+  }
+};
+
+const IMMERSION_RESOURCES = {
+  es: [
+    ['Dreaming Spanish', 'https://app.dreaming.com/browse', 'Filtre Superbeginner ou Beginner e escolha um vídeo visual. Passe para Intermediate quando conseguir recontar o assunto.'],
+    ['Spanish Language Coach · False Beginners', 'https://www.spanishlanguagecoach.com/spanish-false-beginners-links', 'Escolha um episódio curto ou um trecho. Reouça com a transcrição em espanhol.'],
+    ['Easy Spanish', 'https://www.easy-spanish.org/', 'Use vídeos curtos de rua. Identifique ideia e registro primeiro; confira com legendas no idioma.'],
+    ['Spanish Language Coach · Intermediate', 'https://www.spanishlanguagecoach.com/post/lista-de-episodios-intermediate-spanish-podcast', 'Selecione 3–8 minutos e confira a transcrição. No tema rotina, experimente E129 sobre a semana de quatro dias.'],
+    ['Instituto Cervantes · DELE B1', 'https://cvc.cervantes.es/ensenanza/dele/b1/indice-B1.htm', 'Use uma amostra inédita para medir compreensão e produção; guarde o resultado com seu áudio.']
+  ],
+  fr: [
+    ['TV5MONDE · Première classe', 'https://apprendre.tv5monde.com/fr/exercices/premiere-classe', 'Selecione a unidade A1 do tema, veja o vídeo e faça a escuta antes da transcrição.'],
+    ['TV5MONDE · A2', 'https://apprendre.tv5monde.com/fr/exercices/a2-elementaire', 'Filtre pelo assunto e faça um exercício de compreensão. Use a Fluency Academy no lugar deste item se a aula cobrir a mesma função.'],
+    ['InnerFrench · Podcast', 'https://innerfrench.com/podcast-show/innerfrench/', 'Use um trecho com transcrição conforme o tema. Para estudar o método, comece por E01, Apprendre le français naturellement.'],
+    ['RFI · Journal en français facile', 'https://francaisfacile.rfi.fr/fr/podcasts/journal-en-fran%C3%A7ais-facile/', 'Use uma notícia curta, de preferência sobre um tema conhecido. Ouça o começo sem texto, só então confira a transcrição.'],
+    ['France Éducation international · DELF B1', 'https://www.france-education-international.fr/en/node/105', 'Use as amostras e critérios do DELF em uma semana de avaliação.']
+  ],
+  zh: [
+    ['Yoyo Chinese · Pinyin Chart', 'https://yoyochinese.com/chinese-learning-tools/Mandarin-Chinese-pronunciation-lesson/pinyin-chart-table', 'Abra a aba Tone Pairs. Compare dois tons e repita três sílabas do núcleo da semana.'],
+    ['Du Chinese · Leitura graduada', 'https://duchinese.net/', 'Comece em Newbie ou Beginner com áudio. Experimente Anne in China e, no tema comida, Drink Tea or Water.'],
+    ['Mandarin Bean · Lições graduadas', 'https://mandarinbean.com/all-lessons/', 'Escolha Beginner ou Intermediate. Procure uma história do tema e faça uma leitura sem pinyin antes de conferi-lo.'],
+    ['Mandarin Corner · Conteúdo graduado', 'https://mandarincorner.org/', 'Escolha Slow Chinese ou Conversation por assunto. Ouça um fragmento e compare com a legenda em caracteres simplificados.'],
+    ['Chinese Test Service · HSK', 'https://www.chinesetest.cn/', 'Confira a versão e o edital aplicáveis à prova. Use exemplos oficiais para medir preparação, com fala avaliada separadamente quando necessário.']
+  ]
+};
+
+const IMMERSION_TECHNIQUES = [
+  ['Input compreensível', 'Na primeira passada, procure assunto, intenção e dois detalhes; reveja com imagens ou legenda no idioma. Se ainda não conseguir explicar a cena, reduza a dificuldade. Use português para destravar um detalhe indispensável e volte ao idioma.'],
+  ['Tempos mortos', 'Deixe áudio conhecido pronto para lavar louça, caminhar em local seguro ou esperar. Tente lembrar a ideia após ouvir. Em direção, ocorrências ou tarefas que exijam atenção, priorize a tarefa. Se usar áudio dirigindo, escolha antes de sair e deixe a prática ativa para quando parar.'],
+  ['Dispositivos e feed', 'Comece pelo idioma de uma conta ou de um app de lazer. Escolha três buscas no idioma, veja conteúdo que entende até o fim, siga bons criadores e use “Não tenho interesse” para limpar sugestões fora do foco. Mantenha listas prontas para o dia em que o feed falhar.'],
+  ['Barril de conteúdos', 'Guarde 3 vídeos curtos, 2 áudios conhecidos, 2 leituras e 1 trecho para repetir. Classifique pelo uso e revise a fila na folga. Salve títulos com nível, assunto e um ponto de partida no campo Nota. Use Em fila para novidades e Repetir para trechos úteis.'],
+  ['Micro-hábitos', 'Ao olhar um objeto, descreva a ação real com uma frase: abro a janela agora, guardo a chave aqui. Se travar, procure como um falante diria a frase, diga-a em voz alta e use-a de novo no próximo dia.'],
+  ['Chorusing e shadowing', 'Chorusing é acompanhar junto com o áudio, com apoio da transcrição. No shadowing, fale logo atrás do áudio. Em ambos, pratique trechos já compreendidos de 5–15 segundos, grave uma tentativa e ajuste um detalhe.'],
+  ['Sentence mining e flashcards', 'Retire 1–3 frases completas cuja intenção você entendeu. Salve fonte e tempo na resposta, revise tentando lembrar antes de virar e use a frase em outro contexto. Em mandarim, prefira hanzi na frente e pinyin com tons no verso. Se a fila crescer, reduza cartões novos.'],
+  ['Leitura e escrita ativas', 'Leia primeiro para identificar a intenção. Feche o texto, escreva sua versão e compare. Peça à IA até três ajustes com uma frase-modelo. Reescreva sem olhar e guarde apenas as correções que voltam a aparecer.'],
+  ['Interação e roleplay', 'Num vídeo revisto, pause antes da resposta de alguém, responda e compare. Faça uma pergunta de seguimento. Na simulação, peça uma fala por vez, um imprevisto e correção ao final para manter o fluxo.'],
+  ['Controle de nível', 'No início do roteiro, guarde uma amostra de escuta sem texto e de fala sem leitura. A cada quatro semanas use outro material do mesmo nível. Se recuperar ideia e detalhes em duas amostras, teste a faixa seguinte; se precisar traduzir frase por frase, use a anterior.']
+];
+
+const IMMERSION_LANGS = ['es', 'fr', 'zh'];
+const IMMERSION_TYPES = ['Plantão', 'Pós-plantão', 'Folga 1', 'Folga 2'];
+const IMMERSION_FOLDERS = ['Vídeos curtos', 'Áudios para tempos mortos', 'Leituras graduadas', 'Trechos para repetir'];
+const IMMERSION_STATES = ['Em fila', 'Repetir', 'Concluído'];
+const IMMERSION_BANDS = ['Fundação', 'Elementar', 'Intermediário'];
+const IMMERSION_DAY_NAMES = ['Entender a cena', 'Escutar e imitar', 'Ler e minerar frases', 'Responder ao vídeo', 'Escrever com correção', 'Simular uma situação', 'Revisar e medir'];
+const IMMERSION_KEY = 'immersion';
+const IMMERSION_VIEWS = {};
+const IMMERSION_TABS = [['study', 'Estudar'], ['materials', 'Materiais'], ['review', 'Revisar'], ['plan', 'Meu plano']];
+const IMMERSION_MATERIALS = [['trecho', 'Trecho'], ['vocab', 'Vocabulário'], ['barrel', 'Barril']];
+const IMMERSION_INTERVALS = [1, 3, 7, 14, 30];
+const IMMERSION_LEVEL_TASKS = [
+  'Use frases curtas. Aceite imagem, transcrição e pausas. Produza uma resposta por vez.',
+  'Trabalhe com um trecho de 1–4 min e responda em 3–5 frases conectadas. Procure esclarecer uma palavra ou um detalhe sem recorrer ao português.',
+  'Use uma fala inédita mais longa e responda em 60–120 s. Explique um motivo, considere uma objeção e feche com uma decisão ou resumo.'
+];
+const IMMERSION_TRANSFER = [
+  'Conte outra versão trocando a pessoa, a hora ou o local. Reuse a estrutura principal.',
+  'Mude a situação para ontem ou amanhã e explique em que momento o plano mudou.',
+  'Converta a conversa entre amigos em um pedido profissional, ajustando pronomes e formas de cortesia.',
+  'Relate para uma terceira pessoa o que o interlocutor disse, incluindo o motivo e a ação combinada.',
+  'Inclua duas opções e uma condição que faria você trocar de escolha.',
+  'Prepare uma versão de uma frase e outra de um minuto. Compare o que cada versão precisa preservar.'
+];
+const IMMERSION_PERCENT = new Intl.NumberFormat('pt-BR', { style: 'percent', maximumFractionDigits: 1 });
+
+function immersionEscape(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[char]);
+}
+
+function immersionURL(value) {
+  try {
+    const url = new URL(value);
+    return ['https:', 'http:'].includes(url.protocol) ? url.href : '';
+  } catch {
+    return '';
+  }
+}
+
+function immersionOptions(values, selected) {
+  return values.map((value, index) => `<option value="${index}" ${index === selected ? 'selected' : ''}>${immersionEscape(value)}</option>`).join('');
+}
+
+function immersionState(lang) {
+  const saved = getStore(lang, IMMERSION_KEY) || {};
+  return {
+    done: saved.done || {},
+    profile: saved.profile || {},
+    items: saved.items || [],
+    cards: saved.cards || []
+  };
+}
+
+function saveImmersion(lang, state) {
+  if (setStore(lang, IMMERSION_KEY, state)) return true;
+  toast('Não foi possível salvar no armazenamento deste navegador.', 'err');
+  return false;
+}
+
+function immersionProfile(lang, state) {
+  return { ...IMMERSION_PROFILES[lang], choice: -1, ...state.profile };
+}
+
+function immersionWeekCount(lang) {
+  return Math.ceil(PROGRAMS[lang].totalDays / 7);
+}
+
+function immersionDoneCount(lang, state) {
+  const total = PROGRAMS[lang].totalDays;
+  return Object.keys(state.done).filter(key => {
+    const day = Number(key);
+    return Number.isInteger(day) && day >= 1 && day <= total && state.done[key] === true;
+  }).length;
+}
+
+function nextImmersionDay(lang, state, from = 1) {
+  const count = PROGRAMS[lang].totalDays;
+  for (let day = from; day <= count; day++) {
+    if (!state.done[day]) return day;
+  }
+  return 0;
+}
+
+function immersionView(lang) {
+  if (!IMMERSION_VIEWS[lang]) {
+    const count = PROGRAMS[lang].totalDays;
+    const stored = getStore(lang, 'immersionNavigation') || {};
+    const legacyWeek = getStore(lang, 'immersionWeek');
+    const programDay = Number(getStore(lang, 'currentDay'));
+    const programFallback = Number.isInteger(programDay) && programDay >= 1 && programDay <= count ? programDay : 1;
+    let fallback = programFallback;
+    if (Number.isInteger(legacyWeek) && legacyWeek >= 1 && legacyWeek <= immersionWeekCount(lang)) {
+      const first = (legacyWeek - 1) * 7 + 1;
+      const pending = nextImmersionDay(lang, immersionState(lang), first);
+      fallback = pending && pending <= first + 6 ? pending : first;
+    }
+    const day = Number.isInteger(stored.day) && stored.day >= 1 && stored.day <= count ? stored.day : fallback;
+    const type = Number.isInteger(stored.type) && stored.type >= 0 && stored.type < IMMERSION_TYPES.length ? stored.type : 2;
+    IMMERSION_VIEWS[lang] = {
+      week: Math.ceil(day / 7), day, type, edit: -1, revealed: false,
+      pane: 'study', material: 'trecho', returnFocus: '', drafts: {}
+    };
+  }
+  return IMMERSION_VIEWS[lang];
+}
+
+function saveImmersionPosition(lang, view) {
+  setStore(lang, 'immersionNavigation', { day: view.day, type: view.type });
+}
+
+function immersionBand(lang, week, profile) {
+  if (profile.choice !== -1) return profile.choice;
+  const day = (week - 1) * 7 + 1;
+  if (lang === 'zh') return day > 360 ? 2 : day > 120 ? 1 : 0;
+  if (lang === 'fr') return day > 180 ? 2 : day > 60 ? 1 : 0;
+  return day > 80 ? 2 : profile.band;
+}
+
+function immersionLesson(lang, week, profile) {
+  const order = IMMERSION_ORDER[lang].trim().split(/\s+/);
+  const key = order[week - 1];
+  const theme = IMMERSION_THEMES[key];
+  const visit = order.slice(0, week - 1).filter(value => value === key).length;
+  const parts = [key, ...theme.related];
+  const words = new Set();
+  const lexicon = parts.map((part, partIndex) => IMMERSION_LEXICON[part].flatMap((row, index) => {
+    const [word, pinyin] = row[IMMERSION_LANGS.indexOf(lang)].split('~');
+    if (words.has(word)) return [];
+    words.add(word);
+    return [{ word, pinyin, meaning: row[3], core: partIndex === 0 && index < 8 }];
+  }));
+  const band = immersionBand(lang, week, profile);
+  const [grammar, base, extension] = theme.languages[lang];
+  const primary = IMMERSION_RESOURCES[lang][lang === 'es' ? [0, 0, 2][band] : [0, 1, lang === 'fr' ? 2 : 3][band]];
+  const companion = IMMERSION_RESOURCES[lang][lang === 'es' ? [1, 1, 3][band] : lang === 'fr' ? [1, 0, 3][band] : [1, 2, 2][band]];
+  const firstDay = (week - 1) * 7 + 1;
+  return {
+    theme, parts, lexicon, band, grammar, base, extension, primary, companion,
+    transfer: IMMERSION_TRANSFER[visit % IMMERSION_TRANSFER.length],
+    firstDay, lastDay: Math.min(firstDay + 6, PROGRAMS[lang].totalDays),
+    final: week === order.length,
+    phase: PROGRAMS[lang].phases.find(phase => firstDay <= phase.end)
+  };
+}
+
+function immersionDayParts(index, lesson, lang, profile, minutes) {
+  const { theme, grammar, primary, companion, band, transfer, final } = lesson;
+  const question = band ? theme.questions.join(' ') : theme.questions[0];
+  const short = minutes <= 12;
+  const labels = PROGRAMS[lang].name;
+  const range = short ? 'uma frase' : band === 2 ? 'um minuto' : 'três frases';
+  const core = short ? 'duas expressões' : 'quatro expressões';
+  const cue = lesson.lexicon[0][index % 8];
+  const days = [
+    [
+      ['Escuta sem legenda', `Use o trecho do app ou ${primary[0]}. Identifique quem, onde e o propósito da cena. Abra a transcrição na segunda passada.`, 'trecho'],
+      ['Conferir compreensão', `Responda: ${question} Confira na transcrição e releia ${core} do núcleo.`, 'vocab'],
+      ['Micro-hábito', `Faça uma ação real ligada ao tema. Diga uma frase que use “${cue.word}” ou procure uma forma mais natural de descrever a ação.`]
+    ],
+    [
+      ['Reescutar com texto', `Escolha 5–15 s da cena em ${primary[0]}. Observe onde as palavras se unem e marque um trecho que já entendeu.`, 'trecho'],
+      ['Chorusing e shadowing', `Repita junto duas vezes. Quando acompanhar com clareza, repita logo atrás do áudio e grave uma tentativa. ${profile.phonetics}`],
+      ['Relembrar', `Diga sem olhar ${core} e use uma delas em uma frase da sua rotina.`, 'vocab']
+    ],
+    [
+      ['Leitura ativa', `Leia o trecho da semana ou um texto em ${companion[0]}. Circule a estrutura “${grammar}” quando ela aparecer e procure a intenção geral.`, 'trecho'],
+      ['Sentence mining', `Salve ${short ? 'uma frase' : 'até três frases'} que você já compreendeu. Na frente, escreva a frase com a lacuna que quer lembrar. No verso, registre solução, sentido e fonte.`, 'cards'],
+      ['Recuperar sem olhar', `Feche o texto e conte a ideia em ${range}. Se travar, abra o núcleo e procure uma expressão.`, 'vocab']
+    ],
+    [
+      ['Pausar e responder', `Reveja um vídeo em ${primary[0]}. Pause antes da resposta de alguém, diga a sua em ${labels} e compare. Alternativa no app: ${theme.interact}`, 'trecho'],
+      ['Pergunta de seguimento', `Responda em ${range}, faça uma pergunta de volta e tente recuperar ${core} do vocabulário.`, 'vocab'],
+      ['Fechar uma lacuna', 'Procure a forma natural de dizer uma frase que faltou. Grave a mesma resposta mais uma vez.']
+    ],
+    [
+      ['Ler e escrever sem copiar', `Leia o trecho, feche a transcrição e escreva ${short ? 'duas' : band === 2 ? 'seis a oito' : 'quatro a seis'} frases para cumprir a missão. Use “${grammar}”.`, 'trecho'],
+      ['Corrigir com IA', 'Cole sua versão ao final do prompt de correção. Revise um problema de clareza e um de escolha de expressão.', 'writing'],
+      ['Reescrever', `Reescreva ${range} sem olhar e salve uma frase reutilizável no baralho.`, 'cards']
+    ],
+    [
+      ['Preparar', `Leia a missão e escolha ${core} que você realmente usaria. ${theme.roleplay}`, 'vocab'],
+      ['Roleplay', `Faça ${short ? 'duas trocas' : 'quatro a seis trocas'} com uma pessoa ou com IA. ${transfer}`, 'roleplay'],
+      ['Feedback', 'Ao acabar, anote uma frase que resolveu a situação e uma lacuna. Tente mais uma resposta incorporando o ajuste.']
+    ],
+    [
+      ['Escuta inédita', `Abra ${companion[0]} e escolha outro trecho do tema. Ouça sem texto e diga a ideia, um detalhe e sua confiança.`, 'trecho'],
+      ['Produção sem roteiro', `Cumpra a missão em ${range} e compare com a primeira gravação. Em semana de avaliação, confira o recurso oficial da seção Meu plano.`, 'roleplay'],
+      ['Revisar e abastecer', 'Revise cartões vencidos. Envie um trecho compreensível para a pasta Repetir e salve outro para a próxima sessão.', 'cards']
+    ]
+  ];
+  const review = [
+    ['Amostra inédita', `Use ${IMMERSION_RESOURCES[lang][4][0]} ou um trecho novo de ${companion[0]}. Registre a ideia e dois detalhes sem legenda.`, 'trecho'],
+    ['Tarefa de saída', profile.proof, 'roleplay'],
+    ['Comparar evidências', 'Reabra sua gravação inicial e compare clareza, velocidade e dependência de apoio. Salve um check-in com a principal evidência e uma meta concreta para o próximo ciclo.', 'checkin']
+  ];
+  const activities = final && index === lesson.lastDay - lesson.firstDay ? review : days[index];
+  const first = Math.floor(minutes * 0.4);
+  const second = Math.floor(minutes * 0.4);
+  return activities.map((activity, position) => [position === 0 ? first : position === 1 ? second : minutes - first - second, ...activity]);
+}
+
+function buildImmersionProgress(lang, state) {
+  const done = immersionDoneCount(lang, state);
+  const total = PROGRAMS[lang].totalDays;
+  const allDone = IMMERSION_LANGS.reduce((sum, key) => sum + (key === lang ? done : immersionDoneCount(key, immersionState(key))), 0);
+  const allTotal = IMMERSION_LANGS.reduce((sum, key) => sum + PROGRAMS[key].totalDays, 0);
+  return `<div class="im-progress-label"><span>Progresso · ${PROGRAMS[lang].name}</span><strong>${IMMERSION_PERCENT.format(done / total)}</strong></div>
+    <progress value="${done}" max="${total}" aria-label="Progresso da trilha de ${PROGRAMS[lang].name}"></progress>
+    <div class="im-progress-foot"><span>${done} de ${total} dias concluídos</span><span>Geral · ${IMMERSION_PERCENT.format(allDone / allTotal)} <span class="im-muted">(${allDone}/${allTotal})</span></span></div>`;
+}
+
+function immersionResource(resource, index, state) {
+  const saved = state.items.some(item => item.url === immersionURL(resource[1]));
+  return `<li><div><a href="${resource[1]}" target="_blank" rel="noopener noreferrer">${immersionEscape(resource[0])} ↗</a>
+    <div class="im-muted">${immersionEscape(resource[2])}</div></div>
+    <button type="button" class="im-button" data-im-action="save-resource" data-value="${index}" aria-disabled="${saved}">${saved ? '✓ Salvo' : 'Guardar'}</button></li>`;
+}
+
+function immersionDayTitle(lesson, day) {
+  return lesson.final && day === lesson.lastDay ? 'Avaliação de saída' : IMMERSION_DAY_NAMES[day - lesson.firstDay];
+}
+
+function immersionWeekPicker(lang, selected) {
+  const phases = PROGRAMS[lang].phases;
+  const groups = phases.map(() => []);
+  IMMERSION_ORDER[lang].trim().split(/\s+/).forEach((key, i) => {
+    const start = i * 7 + 1;
+    const phase = phases.findIndex(item => start <= item.end);
+    groups[phase].push(`<option value="${i + 1}" ${i + 1 === selected ? 'selected' : ''}>Semana ${i + 1} · ${immersionEscape(IMMERSION_THEMES[key].title)}</option>`);
+  });
+  return groups.map((options, i) => `<optgroup label="${immersionEscape(phases[i].name)}">${options.join('')}</optgroup>`).join('');
+}
+
+function immersionPending(lang, state, day) {
+  const later = nextImmersionDay(lang, state, day + 1);
+  if (later) return { day: later, label: `Próximo pendente · D${later}` };
+  const first = nextImmersionDay(lang, state);
+  return first && first < day ? { day: first, label: `Voltar ao pendente · D${first}` } : null;
+}
+
+function immersionStudyNavigation(lesson, state, view) {
+  const count = lesson.lastDay - lesson.firstDay + 1;
+  const days = Array.from({ length: count }, (_, index) => lesson.firstDay + index);
+  const done = days.filter(day => state.done[day]).length;
+  return `<div class="im-rail-info" id="im-week-progress">${done} de ${count} na semana</div>
+    <div class="im-day-rail" role="group" aria-label="Dias da semana ${view.week}">
+      ${days.map(day => `<button type="button" class="im-button im-day-chip ${state.done[day] ? 'im-chip-done' : ''}" id="im-chip-${day}"
+        aria-label="Dia ${day} · ${immersionDayTitle(lesson, day)} · ${state.done[day] ? 'concluído' : 'pendente'}"
+        aria-pressed="${day === view.day}" data-im-action="select-day" data-value="${day}">
+        <span>D${day}</span><span aria-hidden="true" class="im-chip-status">${state.done[day] ? '✓' : '·'}</span>
+      </button>`).join('')}
+    </div>`;
+}
+
+function immersionStudyDay(lesson, lang, profile, state, view) {
+  const day = view.day;
+  const index = day - lesson.firstDay;
+  const minutes = profile.minutes[view.type];
+  const tasks = immersionDayParts(index, lesson, lang, profile, minutes);
+  const words = lesson.lexicon.flat();
+  const count = lesson.lastDay - lesson.firstDay + 1;
+  const daily = lesson.final ? words.slice(index, index + 4)
+    : words.slice(Math.floor(index * words.length / count), Math.floor((index + 1) * words.length / count));
+  const markupLang = lang === 'zh' ? 'zh-Hans' : lang;
+  const pending = immersionPending(lang, state, day);
+  const done = !!state.done[day];
+  const actions = {
+    trecho: ['material', 'Abrir trecho e fontes'],
+    vocab: ['material', 'Ver vocabulário'],
+    cards: ['review', 'Abrir flashcards'],
+    writing: ['writing', 'Copiar prompt de correção'],
+    roleplay: ['roleplay', 'Copiar prompt de simulação'],
+    checkin: ['checkin', 'Abrir check-in']
+  };
+  return `<article class="im-panel im-session" id="im-day-${day}" aria-labelledby="im-day-title">
+    <div class="im-session-top">
+      <div><span class="im-kicker">Dia ${day}</span><h3 id="im-day-title" tabindex="-1">${immersionDayTitle(lesson, day)}</h3></div>
+      <span class="im-session-time">${minutes} min</span>
+    </div>
+    <ol class="im-tasks">${tasks.map(([duration, title, action, target], step) => `<li>
+      <span class="im-task-time">${duration} min</span><div><strong>${title}</strong><p>${immersionEscape(action)}</p>
+        ${target ? `<div class="im-actions im-task-actions">
+          ${target === 'trecho' && index === 0 && step === 0 && day !== PROGRAMS[lang].totalDays
+            ? '<button type="button" class="im-button" data-im-action="speak">Ouvir no app</button>' : ''}
+          <button type="button" class="im-text-button" id="im-task-${day}-${step}" data-im-action="${actions[target][0]}" data-value="${target}">${actions[target][1]}</button>
+        </div>` : ''}
+      </div></li>`).join('')}</ol>
+    <details class="im-subpanel im-day-words" id="im-day-words-${day}" data-keep>
+      <summary>${lesson.final ? 'Vocabulário para revisar' : 'Vocabulário deste dia'} · ${daily.length} itens</summary>
+      <ul>${daily.map(row => `<li><strong lang="${markupLang}">${immersionEscape(row.word)}</strong>
+        ${row.pinyin ? `<span lang="zh-Latn">(${immersionEscape(row.pinyin)})</span>` : ''} · ${immersionEscape(row.meaning)}</li>`).join('')}</ul>
+    </details>
+    <footer class="im-session-footer">
+      <button id="im-complete" type="button" class="im-button ${done ? 'im-complete-done' : 'im-primary'}" data-im-action="toggle-day">${done ? '✓ Concluído · Desmarcar' : 'Concluir dia ' + day}</button>
+      ${pending ? `<button id="im-next-day" type="button" class="im-button" data-im-action="next-day">${pending.label} →</button>` : ''}
+    </footer>
+  </article>`;
+}
+
+function immersionStudy(lesson, lang, profile, state, view) {
+  const { theme, phase } = lesson;
+  const count = immersionWeekCount(lang);
+  return `<section class="im-panel im-week" id="im-week">
+    <div class="im-week-nav">
+      <button type="button" class="im-button" id="im-prev-week" data-im-action="select-week" data-value="${view.week - 1}" aria-label="Semana anterior" ${view.week === 1 ? 'disabled' : ''}>←</button>
+      <label for="im-picker" class="im-sr">Selecionar semana</label>
+      <select id="im-picker">${immersionWeekPicker(lang, view.week)}</select>
+      <button type="button" class="im-button" id="im-next-week" data-im-action="select-week" data-value="${view.week + 1}" aria-label="Próxima semana" ${view.week === count ? 'disabled' : ''}>→</button>
+    </div>
+    <div class="im-week-title">
+      <div><p class="im-kicker">Semana ${view.week} de ${count} · ${lesson.final ? 'Encerramento' : phase.num}</p>
+        <h2>${immersionEscape(theme.title)}</h2></div>
+      <label for="im-day-type">Escala 24×72<select id="im-day-type">${immersionOptions(IMMERSION_TYPES.map((name, i) => `${name} · ${profile.minutes[i]} min`), view.type)}</select></label>
+    </div>
+    <div id="im-day-navigation">${immersionStudyNavigation(lesson, state, view)}</div>
+    <details id="im-brief" class="im-subpanel im-brief" data-keep>
+      <summary>Objetivo, gramática e missão</summary>
+      <div class="im-brief-content">
+        <p>${immersionEscape(theme.goal)}.</p>
+        <p><strong>Gramática</strong> · ${immersionEscape(lesson.grammar)}</p>
+        <p><strong>Missão</strong> · ${immersionEscape(theme.roleplay)} ${immersionEscape(lesson.transfer)}</p>
+        ${profile.passive ? `<p class="im-muted">Em tempos mortos, reserve até ${profile.passive} min para um áudio que você já entende.</p>` : ''}
+      </div>
+    </details>
+  </section>
+  <div id="im-session-area">${immersionStudyDay(lesson, lang, profile, state, view)}</div>`;
+}
+
+function immersionVocabulary(lesson, lang) {
+  return lesson.lexicon.map((rows, group) => `<details class="im-subpanel" id="im-leituras-${group}" data-keep ${group === 0 ? 'open' : ''}>
+    <summary>${immersionEscape(IMMERSION_THEMES[lesson.parts[group]].title)} <span class="im-muted">· ${rows.length} itens</span></summary>
+    <ul class="im-word-list">${rows.map((row, index) => `<li>
+      <div><strong lang="${lang === 'zh' ? 'zh-Hans' : lang}">${immersionEscape(row.word)}</strong> ${row.core ? '<span class="im-core">Núcleo</span>' : ''}
+      ${row.pinyin ? `<small lang="zh-Latn">${immersionEscape(row.pinyin)}</small>` : ''}
+      <div class="im-muted">${immersionEscape(row.meaning)}</div></div>
+      <button type="button" class="im-button" data-im-action="save-word" data-value="${group}:${index}" aria-label="Salvar ${immersionEscape(row.word)} nos flashcards">+ Cartão</button>
+    </li>`).join('')}</ul>
+  </details>`).join('');
+}
+
+function immersionSavedItems(items) {
+  return IMMERSION_FOLDERS.map((folder, folderIndex) => {
+    const entries = items.map((item, index) => [item, index]).filter(([item]) => item.folder === folderIndex);
+    return `<details class="im-subpanel" data-keep id="im-folder-${folderIndex}" ${entries.length ? 'open' : ''}>
+      <summary>${folder} <span class="im-muted">· ${entries.length}</span></summary>
+      ${entries.length ? `<ul class="im-items">${entries.map(([item, index]) => `<li><div>
+        <a href="${immersionEscape(immersionURL(item.url))}" target="_blank" rel="noopener noreferrer">${immersionEscape(item.title)} ↗</a>
+        <small>${IMMERSION_STATES[item.status]}${item.note ? ' · ' + immersionEscape(item.note) : ''}</small>
+        </div><div class="im-actions"><button type="button" class="im-button" data-im-action="edit-resource" data-value="${index}">Editar</button>
+        <button type="button" class="im-button" data-im-action="remove-resource" data-value="${index}">Remover</button></div>
+      </li>`).join('')}</ul>` : '<p class="im-muted">Pasta vazia.</p>'}
+    </details>`;
+  }).join('');
+}
+
+function immersionDate(offset = 0) {
+  const date = new Date();
+  date.setDate(date.getDate() + offset);
+  return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
+}
+
+function immersionDeck(cards, revealed, lang) {
+  const today = immersionDate();
+  const index = cards.findIndex(card => card.due <= today);
+  return `<p class="im-muted">${cards.filter(card => card.due <= today).length} para revisar hoje · ${cards.length} no baralho</p>
+    ${index < 0 ? '<p>Fila em dia. Adicione uma frase quando encontrar algo que vale repetir.</p>' : `<div class="im-flash">
+      <strong lang="${lang === 'zh' ? 'zh-Hans' : lang}">${immersionEscape(cards[index].front)}</strong>
+      ${revealed ? `<p>${immersionEscape(cards[index].back)}</p>
+        <div class="im-actions"><button type="button" class="im-button" data-im-action="review-again" data-value="${index}">Errei · amanhã</button>
+        <button type="button" class="im-button im-primary" data-im-action="review-known" data-value="${index}">Lembrei · ${IMMERSION_INTERVALS[cards[index].step]} d</button>
+        <button type="button" class="im-button" data-im-action="remove-card" data-value="${index}">Remover cartão</button></div>`
+      : '<button type="button" class="im-button" data-im-action="reveal-card">Mostrar resposta</button>'}
+    </div>`}`;
+}
+
+function immersionTabs(view) {
+  return IMMERSION_TABS.map(([id, label]) => {
+    const selected = id === view.pane;
+    return `<button type="button" role="tab" id="im-tab-${id}" aria-controls="im-pane-${id}" aria-selected="${selected}" tabindex="${selected ? '0' : '-1'}" data-im-action="tab" data-value="${id}">${label}</button>`;
+  }).join('');
+}
+
+function immersionReturn(view) {
+  return `<button type="button" class="im-button im-return" data-im-action="back-study" data-study-return>← Voltar ao dia ${view.day}</button>`;
+}
+
+function immersionMaterialNav(view) {
+  return IMMERSION_MATERIALS.map(([id, label]) =>
+    `<button type="button" class="im-button" aria-controls="im-${id}" aria-pressed="${view.material === id}" data-im-action="material" data-value="${id}">${label}</button>`
+  ).join('');
+}
+
+function buildImmersion(lang) {
+  const state = immersionState(lang);
+  const profile = immersionProfile(lang, state);
+  const view = immersionView(lang);
+  const lesson = immersionLesson(lang, view.week, profile);
+  const { theme, primary, companion } = lesson;
+  const edit = state.items[view.edit];
+  const activeTime = profile.minutes.reduce((total, value) => total + value, 0) * 7 / 4;
+  const weeklyHours = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(activeTime / 60);
+  const localGoals = ['Hora, lugar e ação', 'Sequência, escolha e motivo', 'Contexto, contraponto e decisão'];
+  const special = lang === 'zh' ? ' Use o pinyin do vocabulário só depois de tentar ler os caracteres.' : '';
+  const query = theme.queries[IMMERSION_LANGS.indexOf(lang)];
+  const youtubeQuery = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(query);
+  const firstLink = IMMERSION_RESOURCES[lang].indexOf(primary);
+  const secondLink = IMMERSION_RESOURCES[lang].indexOf(companion);
+  return `<section id="immersion" class="im-layout">
+    <header class="im-hero">
+      <div class="im-hero-title"><p class="im-kicker">${PROGRAMS[lang].name}</p><h1>Roteiro semanal</h1></div>
+      <div class="im-progress" id="im-progress">${buildImmersionProgress(lang, state)}</div>
+    </header>
+    <nav class="im-tabs" id="im-tabs" role="tablist" aria-label="Áreas do roteiro">${immersionTabs(view)}</nav>
+    <div id="im-status" class="im-sr" role="status" aria-live="polite"></div>
+    <div id="im-pane-study" class="im-pane" role="tabpanel" aria-labelledby="im-tab-study" ${view.pane === 'study' ? '' : 'hidden'}>
+      ${immersionStudy(lesson, lang, profile, state, view)}
+    </div>
+    <div id="im-pane-materials" class="im-pane" role="tabpanel" aria-labelledby="im-tab-materials" ${view.pane === 'materials' ? '' : 'hidden'}>
+      <div class="im-subnav">
+        ${immersionReturn(view)}
+        <div class="im-actions" role="group" aria-label="Materiais da semana">${immersionMaterialNav(view)}</div>
+      </div>
+      <div data-im-material="trecho" ${view.material === 'trecho' ? '' : 'hidden'}>
+      <section class="im-panel" id="im-trecho" aria-labelledby="im-trecho-heading">
+      <h2 id="im-trecho-heading" tabindex="-1">Trecho da semana</h2>
+      <div class="im-panel-content">
+        <p><strong>${IMMERSION_BANDS[lesson.band]}</strong> · ${localGoals[lesson.band]}. Ouça antes de abrir a transcrição.${special}</p>
+        <div class="im-actions"><button type="button" class="im-button im-primary" data-im-action="speak">Ouvir trecho</button>
+          <button type="button" class="im-button" data-im-action="stop">Parar áudio</button></div>
+        <p class="im-muted">O botão usa a voz disponível no dispositivo. Use os links abaixo como referência de fala nativa.</p>
+        <details class="im-subpanel" data-keep id="im-transcript"><summary>Mostrar transcrição</summary><div class="im-reading" lang="${lang === 'zh' ? 'zh-Hans' : lang}"><p>${immersionEscape(lesson.base)}</p>
+          <p>${immersionEscape(lesson.extension)}</p></div></details>
+        <details class="im-subpanel" id="im-gloss" data-keep><summary>Conferir o sentido em português</summary><p>${immersionEscape(theme.gloss)}</p></details>
+        <p><strong>Para conferir o sentido</strong> · ${immersionEscape(theme.questions[0])} ${lesson.band ? immersionEscape(theme.questions[1]) : ''}</p>
+        <p class="im-muted">Para encontrar outro trecho, use as fontes abaixo ou abra o barril.</p>
+        <p><a href="${youtubeQuery}" target="_blank" rel="noopener noreferrer">Buscar no YouTube · ${immersionEscape(query)} ↗</a></p>
+        <ul class="im-resources">${immersionResource(primary, firstLink, state)}${immersionResource(companion, secondLink, state)}</ul>
+      </div>
+    </section>
+      </div>
+      <div data-im-material="vocab" ${view.material === 'vocab' ? '' : 'hidden'}>
+      <section class="im-panel" id="im-vocab" aria-labelledby="im-vocab-heading">
+      <h2 id="im-vocab-heading" tabindex="-1">Vocabulário <span class="im-heading-meta">· ${lesson.lexicon.flat().length} itens</span></h2>
+      <div class="im-panel-content"><p>Comece pelas oito expressões do núcleo. Abra os grupos complementares quando precisar.</p>
+      <div class="im-vocab-groups">${immersionVocabulary(lesson, lang)}</div></div>
+    </section>
+      </div>
+      <div data-im-material="barrel" ${view.material === 'barrel' ? '' : 'hidden'}>
+      <section class="im-panel" id="im-barrel" aria-labelledby="im-barrel-heading">
+      <h2 id="im-barrel-heading" tabindex="-1">Barril de conteúdos <span class="im-heading-meta" id="im-barrel-count">· ${state.items.length} salvos</span></h2>
+      <div class="im-panel-content">
+        <p>Salve o tempo exato do trecho na nota e mantenha os materiais que merecem outra escuta em Repetir.</p>
+        <div class="im-barrel-folders" id="im-barrel-folders">${immersionSavedItems(state.items)}</div>
+        <form class="im-form im-edit-form" id="im-barrel-form">
+          <h3>${edit ? 'Editar material' : 'Guardar um material'}</h3>
+          <label>Título <input id="im-barrel-title" name="title" required maxlength="120" value="${immersionEscape(edit?.title)}"></label>
+          <label>Link <input type="url" name="url" required maxlength="1000" value="${immersionEscape(edit?.url)}"></label>
+          <label>Pasta <select name="folder">${immersionOptions(IMMERSION_FOLDERS, edit?.folder ?? 0)}</select></label>
+          <label>Situação <select name="status">${immersionOptions(IMMERSION_STATES, edit?.status ?? 0)}</select></label>
+          <label>Nota, nível e ponto de partida <input name="note" maxlength="200" value="${immersionEscape(edit?.note)}"></label>
+          <div class="im-actions"><button type="submit" class="im-button im-primary">Salvar material</button>
+          ${edit ? '<button type="button" class="im-button" data-im-action="cancel-edit">Cancelar</button>' : ''}</div>
+        </form>
+      </div>
+    </section>
+      </div>
+    </div>
+    <div id="im-pane-review" class="im-pane" role="tabpanel" aria-labelledby="im-tab-review" ${view.pane === 'review' ? '' : 'hidden'}>
+      <div class="im-subnav">${immersionReturn(view)}</div>
+      <section class="im-panel" id="im-cards" aria-labelledby="im-cards-heading">
+      <h2 id="im-cards-heading" tabindex="-1">Flashcards</h2>
+      <div class="im-panel-content">
+        <div id="im-deck">${immersionDeck(state.cards, view.revealed, lang)}</div>
+        <form class="im-form im-edit-form" id="im-card-form">
+          <label>Frente · frase ou expressão <input name="front" required maxlength="260" lang="${lang === 'zh' ? 'zh-Hans' : lang}"></label>
+          <label>Verso · sentido, som e fonte <textarea name="back" required maxlength="500" rows="2"></textarea></label>
+          <div><button type="submit" class="im-button im-primary">Criar cartão</button></div>
+        </form>
+      </div>
+    </section>
+    </div>
+    <div id="im-pane-plan" class="im-pane" role="tabpanel" aria-labelledby="im-tab-plan" ${view.pane === 'plan' ? '' : 'hidden'}>
+      <section class="im-panel" id="im-profile" aria-labelledby="im-profile-heading">
+      <h2 id="im-profile-heading" tabindex="-1">Meu plano</h2>
+      <div class="im-panel-content">
+        <form class="im-form" id="im-profile-form">
+          <label>Nível atual <input name="start" required maxlength="170" value="${immersionEscape(profile.start)}"></label>
+          <label>Objetivo <input name="goal" required maxlength="170" value="${immersionEscape(profile.goal)}"></label>
+          <label>Principal dificuldade / habilidade <input name="focus" required maxlength="150" value="${immersionEscape(profile.focus)}"></label>
+          <label>Interesses e aplicações <textarea name="context" required maxlength="300" rows="2">${immersionEscape(profile.context)}</textarea></label>
+          <label>Nível dos materiais <select name="choice">${immersionOptions(['Automático por fase', ...IMMERSION_BANDS], profile.choice + 1)}</select></label>
+          <fieldset class="im-minute-fields"><legend>Minutos ativos</legend>
+          ${IMMERSION_TYPES.map((label, i) => `<label>${label}<input type="number" name="min${i}" min="5" max="90" required value="${profile.minutes[i]}"></label>`).join('')}</fieldset>
+          <label>Minutos em tempos mortos <input type="number" name="passive" min="0" max="120" required value="${profile.passive}"></label>
+          <div><button type="submit" class="im-button im-primary">Salvar meu plano</button></div>
+        </form>
+        <details class="im-subpanel im-diagnosis" id="im-diagnosis" data-keep>
+          <summary>Diagnóstico, metas e estimativas</summary>
+          <div class="im-brief-content"><p>Seu ponto de partida é uma hipótese de trabalho. Ajuste o perfil depois da atividade diagnóstica.</p>
+        <p><strong>Diagnóstico inicial</strong> · ${profile.baseline}</p>
+        <p><strong>Horizonte de estudo</strong> · ${profile.estimate}</p>
+        <p><strong>Verificação da meta</strong> · ${profile.proof}</p>
+        <p><strong>Ponto de atenção</strong> · ${profile.pitfalls}</p>
+        <p class="im-muted">Sua configuração atual soma cerca de ${weeklyHours} h de prática ativa por semana nessa trilha, em média na escala 24×72. As faixas acima pressupõem também input compreensível e prática regular de fala. Se dividir a carga entre as três trilhas, recalcule pela carga efetivamente feita em cada idioma.</p>
+        <ul class="im-resources">${immersionResource(IMMERSION_RESOURCES[lang][4], 4, state)}</ul></div>
+        </details>
+      </div>
+    </section>
+      <details class="im-panel" id="im-method" data-keep>
+      <summary>Como estudar por imersão</summary>
+      <div class="im-panel-content">
+        <dl class="im-method-list">${IMMERSION_TECHNIQUES.map(([title, body]) => `<div><dt>${title}</dt><dd>${body}</dd></div>`).join('')}</dl>
+        <p><strong>Buscas para treinar o feed</strong> · ${profile.searches.map(immersionEscape).join(' · ')}</p>
+        <p><strong>Ritmo na escala</strong> · Plantão: áudio familiar ou dois cartões. Pós-plantão: reescuta e imitação leve. Folga 1: trecho novo e escrita. Folga 2: simulação, gravação e reposição do barril. Se estiver com os três ativos, concentre o bloco principal no espanhol e alterne francês e mandarim como estudos leves.</p>
+        <p><strong>Leitura do vídeo de referência</strong> · Os cinco pilares ajudam a escolher e iniciar sessões. O barril (03:41) tira a escolha da hora da sessão. Os 15–30 minutos de imersão ativa (05:04) funcionam como referência para folgas e podem encolher no plantão. A previsão do vídeo para B1 → C1 (11:10) é um exemplo feito por IA. Use as estimativas do seu idioma e confira a produção em tarefas reais.</p>
+        <p class="im-muted">Roteiro, perfil, barril e flashcards ficam no navegador. O check-in do app continua disponível para registrar suas métricas.</p>
+        <div class="im-actions">
+          <a href="https://www.youtube.com/watch?v=nVlM7IYEHvE" target="_blank" rel="noopener noreferrer">Vídeo de referência ↗</a>
+          <a href="https://eric.ed.gov/?id=ED230069" target="_blank" rel="noopener noreferrer">Krashen e Terrell ↗</a>
+          <a href="https://doi.org/10.2167/illt039.0" target="_blank" rel="noopener noreferrer">Paul Nation ↗</a>
+          <a href="https://www.coe.int/en/web/portfolio/self-assessment-grid" target="_blank" rel="noopener noreferrer">Autoavaliação do QECR ↗</a>
+        </div>
+      </div>
+    </details>
+    </div>
+    <dialog class="im-copy-dialog" id="im-copy-dialog" aria-labelledby="im-copy-title">
+      <h3 id="im-copy-title">Copiar prompt</h3>
+      <p>Selecione e copie o texto para o seu chat de estudo.</p>
+      <textarea aria-label="Prompt para copiar" readonly rows="7"></textarea>
+      <form method="dialog"><button type="submit" class="im-button">Fechar</button></form>
+    </dialog>
+  </section>`;
+}
+
+function immersionScroll(target) {
+  const nav = document.getElementById('im-tabs');
+  if (target.getBoundingClientRect().top < nav.getBoundingClientRect().bottom ||
+      target.getBoundingClientRect().top > document.getElementById('content').getBoundingClientRect().bottom - 80) {
+    target.scrollIntoView({ block: 'start', behavior: 'auto' });
+  }
+}
+
+function immersionFocus(id) {
+  const target = document.getElementById(id);
+  if (!target) return;
+  target.focus({ preventScroll: true });
+  immersionScroll(target);
+}
+
+function openImmersionPane(pane, heading) {
+  const view = immersionView(currentLang);
+  view.pane = pane;
+  for (const [id] of IMMERSION_TABS) {
+    const selected = id === pane;
+    const tab = document.getElementById('im-tab-' + id);
+    tab.setAttribute('aria-selected', String(selected));
+    tab.tabIndex = selected ? 0 : -1;
+    document.getElementById('im-pane-' + id).hidden = !selected;
+  }
+  if (heading) immersionFocus(heading);
+  else immersionScroll(document.getElementById('im-pane-' + pane));
+}
+
+function openImmersionMaterial(material, entry) {
+  const view = immersionView(currentLang);
+  if (entry) view.returnFocus = entry;
+  view.material = material;
+  document.querySelectorAll('#immersion [data-im-material]').forEach(panel => {
+    panel.hidden = panel.dataset.imMaterial !== material;
+  });
+  document.querySelectorAll('#immersion .im-subnav [data-im-action="material"]').forEach(button => {
+    button.setAttribute('aria-pressed', String(button.dataset.value === material));
+  });
+  openImmersionPane('materials', 'im-' + material + '-heading');
+}
+
+function immersionSelectDay(day, focusId) {
+  const lang = currentLang;
+  const view = immersionView(lang);
+  if (!Number.isInteger(day) || day < 1 || day > PROGRAMS[lang].totalDays) return;
+  const week = Math.ceil(day / 7);
+  const changedWeek = week !== view.week;
+  view.week = week;
+  view.day = day;
+  view.returnFocus = '';
+  saveImmersionPosition(lang, view);
+  if (changedWeek) {
+    window.speechSynthesis?.cancel();
+    immersionRedraw(false);
+  } else {
+    refreshImmersionSession(lang);
+  }
+  immersionFocus(focusId || 'im-day-title');
+}
+
+function selectImmersionWeek(week, focusId) {
+  const lang = currentLang;
+  if (!Number.isInteger(week) || week < 1 || week > immersionWeekCount(lang)) return;
+  const view = immersionView(lang);
+  if (week === view.week) return;
+  const first = (week - 1) * 7 + 1;
+  const last = Math.min(first + 6, PROGRAMS[lang].totalDays);
+  const pending = nextImmersionDay(lang, immersionState(lang), first);
+  const ends = focusId === 'im-prev-week' && week === 1 || focusId === 'im-next-week' && week === immersionWeekCount(lang);
+  immersionSelectDay(pending && pending <= last ? pending : first, ends ? 'im-picker' : focusId);
+}
+
+function refreshImmersionSession(lang) {
+  const view = immersionView(lang);
+  const state = immersionState(lang);
+  const profile = immersionProfile(lang, state);
+  const lesson = immersionLesson(lang, view.week, profile);
+  const open = document.getElementById('im-day-words-' + view.day)?.open;
+  document.getElementById('im-day-navigation').innerHTML = immersionStudyNavigation(lesson, state, view);
+  document.getElementById('im-session-area').innerHTML = immersionStudyDay(lesson, lang, profile, state, view);
+  if (open) document.getElementById('im-day-words-' + view.day).open = true;
+  document.querySelectorAll('#immersion [data-study-return]').forEach(button => {
+    button.textContent = '← Voltar ao dia ' + view.day;
+  });
+}
+
+function immersionRedraw(keepOpen = true) {
+  const open = new Map();
+  document.querySelectorAll('#immersion details[data-keep]').forEach(details => {
+    if (keepOpen || details.id.startsWith('im-folder-') || details.id === 'im-method' || details.id === 'im-diagnosis') {
+      open.set(details.id, details.open);
+    }
+  });
+  const focusId = document.activeElement?.id;
+  renderPage('imersao');
+  for (const [id, isOpen] of open) {
+    const details = document.getElementById(id);
+    if (details) details.open = isOpen;
+  }
+  if (focusId) document.getElementById(focusId)?.focus({ preventScroll: true });
+}
+
+function restoreImmersionDrafts(lang) {
+  for (const [id, fields] of Object.entries(immersionView(lang).drafts)) {
+    const form = document.getElementById(id);
+    if (!form) continue;
+    for (const [name, value] of Object.entries(fields)) {
+      const field = form.elements.namedItem(name);
+      if (field) field.value = value;
+    }
+  }
+}
+
+function trackImmersionDraft(event) {
+  const form = event.target.form;
+  if (!form?.matches('#im-profile-form, #im-barrel-form, #im-card-form')) return;
+  immersionView(currentLang).drafts[form.id] = Object.fromEntries(new FormData(form));
+}
+
+function immersionTabKeys(event) {
+  const tab = event.target.closest('#im-tabs [role="tab"]');
+  if (!tab || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+  event.preventDefault();
+  const index = IMMERSION_TABS.findIndex(([id]) => id === tab.dataset.value);
+  const length = IMMERSION_TABS.length;
+  const position = { Home: 0, End: length - 1, ArrowLeft: (index + length - 1) % length, ArrowRight: (index + 1) % length }[event.key];
+  const [id] = IMMERSION_TABS[position];
+  openImmersionPane(id);
+  document.getElementById('im-tab-' + id).focus({ preventScroll: true });
+}
+
+function updateImmersionResources(lang, state) {
+  const folders = document.getElementById('im-barrel-folders');
+  const open = new Map(Array.from(folders.querySelectorAll('details'), item => [item.id, item.open]));
+  folders.innerHTML = immersionSavedItems(state.items);
+  folders.querySelectorAll('details').forEach(item => {
+    if (open.has(item.id)) item.open = open.get(item.id);
+  });
+  document.getElementById('im-barrel-count').textContent = '· ' + state.items.length + ' salvos';
+  document.querySelectorAll('#immersion [data-im-action="save-resource"]').forEach(button => {
+    const resource = IMMERSION_RESOURCES[lang][Number(button.dataset.value)];
+    const saved = state.items.some(item => item.url === immersionURL(resource[1]));
+    button.textContent = saved ? '✓ Salvo' : 'Guardar';
+    button.setAttribute('aria-disabled', String(saved));
+  });
+}
+
+function addImmersionCard(state, front, back) {
+  const normalize = value => value.trim().toLocaleLowerCase().normalize('NFC');
+  if (!front || !back) {
+    toast('Preencha a frente e o verso do cartão.', 'err');
+    return false;
+  }
+  if (state.cards.some(card => normalize(card.front) === normalize(front))) {
+    toast('Esta frase já está no baralho.');
+    return false;
+  }
+  state.cards.push({ front, back, due: immersionDate(), step: 0 });
+  return true;
+}
+
+function speakImmersion(lesson, lang, profile) {
+  if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
+    toast('A voz do dispositivo não está disponível. Use um dos áudios indicados.', 'err');
+    return;
+  }
+  speechSynthesis.cancel();
+  const text = lesson.band === 0 ? lesson.base : lesson.base + ' ' + lesson.extension;
+  const utterance = new SpeechSynthesisUtterance(text);
+  const voices = speechSynthesis.getVoices();
+  const langTag = profile.voice.toLowerCase();
+  const accent = lang === 'es' ? /^(es-(mx|us|ar|co|cl|pe|419))$/i : lang === 'zh' ? /^zh-(hans|cn)/i : /^fr-fr/i;
+  utterance.voice = voices.find(voice => voice.lang.toLowerCase() === langTag)
+    || voices.find(voice => accent.test(voice.lang))
+    || voices.find(voice => voice.lang.toLowerCase().startsWith(lang + '-'))
+    || null;
+  utterance.lang = utterance.voice?.lang || (lang === 'es' ? 'es-MX' : profile.voice);
+  utterance.rate = [0.83, 0.93, 1][lesson.band];
+  utterance.onerror = event => {
+    if (!['canceled', 'interrupted'].includes(event.error)) toast('Não foi possível reproduzir esta voz. Use o áudio de uma das fontes.', 'err');
+  };
+  speechSynthesis.speak(utterance);
+}
+
+function immersionPrompt(kind, lesson, lang, profile) {
+  const prefix = `Aja como parceiro de prática de ${PROGRAMS[lang].name}. Faixa da atividade: ${IMMERSION_BANDS[lesson.band]}. Meu nível relatado: ${profile.start} Minha meta: ${profile.goal} Prioridade: ${profile.focus}. Interesses: ${profile.context} `
+    + (lang === 'zh' ? 'Use caracteres simplificados e mostre pinyin com tons na correção. ' : lang === 'es' ? 'Use espanhol latino-americano natural e sinalize portunhol recorrente. ' : 'Use francês natural e aponte uma ligação ou redução relevante na revisão de pronúncia, se houver áudio. ');
+  const mission = `Missão: ${lesson.theme.roleplay} Estrutura: ${lesson.grammar}. ${IMMERSION_LEVEL_TASKS[lesson.band]} `;
+  return prefix + mission + (kind === 'roleplay'
+    ? `Faça uma fala por vez no idioma e espere minha resposta. Introduza um imprevisto coerente. ${lesson.transfer} Ao final, faça até três correções, com frase natural e nova tentativa. Comece com sua primeira fala.`
+    : 'Vou enviar meu texto abaixo. Identifique o que consegui comunicar. Faça até três ajustes prioritários no formato original → revisão → motivo curto. Dê uma versão natural que preserve minha intenção e uma tarefa curta de reescrita. Faça uma pergunta se o sentido estiver ambíguo.\n\n');
+}
+
+async function copyImmersionPrompt(prompt) {
+  try {
+    await navigator.clipboard.writeText(prompt);
+    toast('Prompt copiado. Cole no seu chat de estudo.');
+  } catch {
+    const dialog = document.getElementById('im-copy-dialog');
+    if (!dialog) return;
+    const input = dialog.querySelector('textarea');
+    input.value = prompt;
+    dialog.showModal();
+    input.focus();
+    input.select();
+  }
+}
+
+function saveImmersionResource(lang, state, index) {
+  const resource = IMMERSION_RESOURCES[lang][index];
+  if (!resource) return;
+  const url = immersionURL(resource[1]);
+  if (state.items.some(item => item.url === url)) return;
+  const mid = immersionView(lang).week;
+  const choice = immersionBand(lang, mid, immersionProfile(lang, state));
+  const folder = { es: [0, 1, 0, 1, 2], fr: [0, 0, 1, 1, 2], zh: [3, 2, 2, 0, 2] }[lang][index];
+  state.items.push({ title: resource[0], url, folder, status: 0, note: IMMERSION_BANDS[choice] + ' · ' + resource[2] });
+  if (!saveImmersion(lang, state)) return;
+  updateImmersionResources(lang, state);
+  toast('Material guardado no barril.');
+}
+
+function immersionClick(event) {
+  const button = event.target.closest('#immersion [data-im-action]');
+  if (!button || button.getAttribute('aria-disabled') === 'true') return;
+  const lang = currentLang;
+  const view = immersionView(lang);
+  const state = immersionState(lang);
+  const profile = immersionProfile(lang, state);
+  const lesson = immersionLesson(lang, view.week, profile);
+  const action = button.dataset.imAction;
+  const value = button.dataset.value;
+  const index = Number(value);
+
+  switch (action) {
+    case 'tab':
+      if (value === 'study') view.returnFocus = '';
+      openImmersionPane(value);
+      break;
+    case 'material':
+      openImmersionMaterial(value, button.id);
+      break;
+    case 'review':
+      view.returnFocus = button.id;
+      openImmersionPane('review', 'im-cards-heading');
+      break;
+    case 'back-study': {
+      const focusId = view.returnFocus || 'im-day-title';
+      view.returnFocus = '';
+      openImmersionPane('study', focusId);
+      break;
+    }
+    case 'next-day': {
+      const pending = immersionPending(lang, state, view.day);
+      if (pending) immersionSelectDay(pending.day);
+      break;
+    }
+    case 'toggle-day': {
+      const day = view.day;
+      const completed = state.done[day] !== true;
+      if (completed) state.done[day] = true;
+      else delete state.done[day];
+      if (!saveImmersion(lang, state)) return;
+      refreshImmersionSession(lang);
+      document.getElementById('im-progress').innerHTML = buildImmersionProgress(lang, state);
+      document.getElementById('im-status').textContent = completed ? 'Dia ' + day + ' concluído.' : 'Dia ' + day + ' desmarcado.';
+      document.getElementById('im-complete').focus({ preventScroll: true });
+      break;
+    }
+    case 'select-day': immersionSelectDay(index, button.id); break;
+    case 'select-week': selectImmersionWeek(index, button.id); break;
+    case 'speak': speakImmersion(lesson, lang, profile); break;
+    case 'stop': window.speechSynthesis?.cancel(); break;
+    case 'checkin': go('checkin', null); break;
+    case 'writing':
+    case 'roleplay': void copyImmersionPrompt(immersionPrompt(action, lesson, lang, profile)); break;
+    case 'save-resource': saveImmersionResource(lang, state, index); break;
+    case 'edit-resource':
+      if (view.edit !== index) delete view.drafts['im-barrel-form'];
+      view.edit = index;
+      immersionRedraw();
+      immersionFocus('im-barrel-title');
+      break;
+    case 'cancel-edit':
+      view.edit = -1;
+      delete view.drafts['im-barrel-form'];
+      immersionRedraw();
+      immersionFocus('im-barrel-heading');
+      break;
+    case 'remove-resource':
+      state.items.splice(index, 1);
+      if (!saveImmersion(lang, state)) return;
+      if (view.edit === index) {
+        view.edit = -1;
+        delete view.drafts['im-barrel-form'];
+        immersionRedraw();
+      } else {
+        if (view.edit > index) view.edit--;
+        updateImmersionResources(lang, state);
+      }
+      immersionFocus('im-barrel-heading');
+      toast('Material removido.');
+      break;
+    case 'save-word': {
+      const [group, row] = value.split(':').map(Number);
+      const { word, meaning, pinyin } = lesson.lexicon[group][row];
+      if (!addImmersionCard(state, word, [meaning, pinyin].filter(Boolean).join(' · ')) || !saveImmersion(lang, state)) return;
+      document.getElementById('im-deck').innerHTML = immersionDeck(state.cards, view.revealed, lang);
+      toast('Cartão adicionado.');
+      break;
+    }
+    case 'reveal-card':
+      view.revealed = true;
+      document.getElementById('im-deck').innerHTML = immersionDeck(state.cards, view.revealed, lang);
+      document.querySelector('[data-im-action="review-known"]').focus({ preventScroll: true });
+      break;
+    case 'review-known':
+    case 'review-again':
+    case 'remove-card': {
+      const card = state.cards[index];
+      if (!card) return;
+      if (action === 'remove-card') state.cards.splice(index, 1);
+      else if (action === 'review-again') {
+        card.step = 0;
+        card.due = immersionDate(1);
+      } else {
+        card.due = immersionDate(IMMERSION_INTERVALS[card.step]);
+        card.step = Math.min(card.step + 1, IMMERSION_INTERVALS.length - 1);
+      }
+      if (!saveImmersion(lang, state)) return;
+      view.revealed = false;
+      document.getElementById('im-deck').innerHTML = immersionDeck(state.cards, false, lang);
+      (document.querySelector('[data-im-action="reveal-card"]') || document.getElementById('im-cards-heading')).focus({ preventScroll: true });
+      break;
+    }
+  }
+}
+
+function immersionChange(event) {
+  const input = event.target;
+  if (input.id === 'im-picker') {
+    selectImmersionWeek(Number(input.value), input.id);
+  } else if (input.id === 'im-day-type') {
+    const view = immersionView(currentLang);
+    const value = Number(input.value);
+    if (!Number.isInteger(value) || value < 0 || value >= IMMERSION_TYPES.length) return;
+    view.type = value;
+    saveImmersionPosition(currentLang, view);
+    refreshImmersionSession(currentLang);
+  } else {
+    trackImmersionDraft(event);
+  }
+}
+
+function immersionSubmit(event) {
+  const form = event.target;
+  if (!form.matches('#im-profile-form, #im-barrel-form, #im-card-form')) return;
+  event.preventDefault();
+  const lang = currentLang;
+  const view = immersionView(lang);
+  const state = immersionState(lang);
+  const fields = new FormData(form);
+  const field = key => String(fields.get(key) ?? '').trim();
+
+  if (form.id === 'im-profile-form') {
+    state.profile = {
+      start: field('start'), goal: field('goal'), focus: field('focus'), context: field('context'),
+      choice: Number(field('choice')) - 1, minutes: IMMERSION_TYPES.map((_, i) => Number(field('min' + i))),
+      passive: Number(field('passive'))
+    };
+    if (!['start', 'goal', 'focus', 'context'].every(key => state.profile[key])) {
+      toast('Preencha os quatro campos do seu plano.', 'err');
+      return;
+    }
+  } else if (form.id === 'im-barrel-form') {
+    const url = immersionURL(field('url'));
+    const title = field('title');
+    if (!url || !title) {
+      toast('Use um título e um endereço começando com https:// ou http://.', 'err');
+      return;
+    }
+    if (state.items.some((item, index) => item.url === url && index !== view.edit)) {
+      toast('Este link já está no barril.');
+      return;
+    }
+    const item = { title, url, note: field('note'), folder: Number(field('folder')), status: Number(field('status')) };
+    if (state.items[view.edit]) state.items[view.edit] = item;
+    else state.items.push(item);
+    if (!saveImmersion(lang, state)) return;
+    view.edit = -1;
+    delete view.drafts[form.id];
+    immersionRedraw();
+    const folder = document.getElementById('im-folder-' + item.folder);
+    if (folder) folder.open = true;
+    toast('Material salvo.');
+    return;
+  } else if (!addImmersionCard(state, field('front'), field('back'))) {
+    return;
+  }
+
+  if (!saveImmersion(lang, state)) return;
+  delete view.drafts[form.id];
+  immersionRedraw();
+  const addedCard = form.id === 'im-card-form';
+  immersionFocus(addedCard ? 'im-cards-heading' : 'im-profile-heading');
+  toast(addedCard ? 'Cartão adicionado.' : 'Plano atualizado.');
+}
+
+const immersionRoot = document.getElementById('page-root');
+immersionRoot.addEventListener('click', immersionClick);
+immersionRoot.addEventListener('change', immersionChange);
+immersionRoot.addEventListener('input', trackImmersionDraft);
+immersionRoot.addEventListener('keydown', immersionTabKeys);
+immersionRoot.addEventListener('submit', immersionSubmit);
+
+for (const lang of IMMERSION_LANGS) CONTENT[lang].imersao = () => buildImmersion(lang);
+
 function boot() {
   if (boot._done) return;    // idempotente
   boot._done = true;
   try {
     initTheme();             // resolve tema antes de pintar
-    runMigrations();         // migra formatos anteriores
+    try { runMigrations(); } catch (err) { console.warn("Armazenamento local indisponível.", err); }
     /* Restaura idioma */
     let lang = 'es';
     try { lang = localStorage.getItem('polyglot.meta.lang') || 'es'; } catch(e) {}
@@ -3409,7 +4667,7 @@ function boot() {
     let page = 'visao';
     try { page = localStorage.getItem('polyglot.meta.page') || 'visao'; } catch(e) {}
     if (!CONTENT[lang] || !CONTENT[lang][page]) page = 'visao';
-    if (!fezCheckinHoje(lang)) page = 'checkin';
+    if (page !== 'imersao' && !fezCheckinHoje(lang)) page = 'checkin';
     go(page, null);
   } catch (err) {
     // Falha no boot não pode deixar a tela vazia
