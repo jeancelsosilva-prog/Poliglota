@@ -2413,7 +2413,7 @@ function buildHistorico(lang) {
 /* ═══════════════════════════════════════════════════════
    VERSÃO E STORAGE — polyglot.{lang}.{key}
 ═══════════════════════════════════════════════════════ */
-const APP_VERSION = '2.4.0';
+const APP_VERSION = '2.5.0';
 
 /* Chave com prefixo polyglot + lang + key
    Exemplo: polyglot.es.checkins */
@@ -5041,7 +5041,9 @@ function buildImmersion(lang) {
       <div class="im-panel-content">
         <p><strong>${IMMERSION_BANDS[lesson.band]}</strong> · ${localGoals[lesson.band]}. Ouça antes de abrir a transcrição.${special}</p>
         ${leitorPainel(lesson, lang)}
-        <p class="im-muted">A voz do aparelho serve para treinar o ouvido e repetir. Para pronúncia nativa, use também os áudios abaixo.</p>
+        <p class="im-muted">${leitorNuvemConfigurada()
+          ? 'A voz natural é gerada por IA: serve para treinar o ouvido e repetir. Para ouvir nativos de verdade, use também os áudios abaixo.'
+          : 'A voz do aparelho serve para treinar o ouvido e repetir. Para pronúncia nativa, use também os áudios abaixo.'}</p>
         <details class="im-subpanel" data-keep id="im-transcript"><summary>Mostrar transcrição</summary><div class="im-reading" lang="${lang === 'zh' ? 'zh-Hans' : lang}">${leitorTranscricao(lesson, lang)}</div></details>
         <details class="im-subpanel" id="im-gloss" data-keep><summary>Conferir o sentido em português</summary><p>${immersionEscape(theme.gloss)}</p></details>
         <p><strong>Para conferir o sentido</strong> · ${immersionEscape(theme.questions[0])} ${lesson.band ? immersionEscape(theme.questions[1]) : ''}</p>
@@ -5308,13 +5310,13 @@ function addImmersionCard(state, front, back) {
 }
 
 /* ═══════════════════════════════════════════════════════
-   LEITOR DE TEXTO — voz do aparelho, frase por frase
-   · escolhe a melhor voz do idioma e deixa trocar;
-   · lê uma frase por vez (o Chrome corta falas longas) e destaca a frase;
-   · velocidade ajustável, pausar, repetir, anterior e próxima;
+   LEITOR DE TEXTO — voz natural (internet) ou voz do aparelho, frase por frase
+   · voz natural: o worker gera a fala com o Gemini. Cada frase ouvida fica guardada
+     neste aparelho: não gasta a cota de novo e toca até sem internet;
+   · sem internet, sem cota ou com falha, cai para a melhor voz do aparelho e avisa;
+   · lê uma frase por vez e destaca a frase; velocidade, pausar, repetir, anterior e próxima;
    · pode pausar depois de cada frase para você repetir (shadowing);
-   · sem voz do idioma no aparelho, explica como instalar em vez de ler
-     com sotaque errado. No mandarim lê os caracteres, nunca o pinyin.
+   · sem voz nenhuma, explica como instalar a do aparelho. No mandarim lê os caracteres, nunca o pinyin.
 ═══════════════════════════════════════════════════════ */
 const LEITOR_IDIOMAS = {
   es: { prefixo: 'es', nome: 'espanhol', preferidos: ['es-mx', 'es-us', 'es-419', 'es-co', 'es-ar', 'es-cl', 'es-pe', 'es-es'] },
@@ -5325,11 +5327,57 @@ const LEITOR_IDIOMAS = {
 const LEITOR_VELOCIDADES = [[0.6, 'Bem devagar'], [0.75, 'Devagar'], [0.9, 'Quase normal'], [1, 'Normal'], [1.15, 'Rápido']];
 /* Vozes de efeito ou muito robóticas que vêm no macOS e no iOS: ficam por último */
 const LEITOR_VOZES_RUINS = /\b(eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley|albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|ralph|fred|junior|kathy|espeak|compact)\b/i;
-const LEITOR = { lang: '', chave: '', frases: [], fimContinuo: 0, i: -1, estado: 'parado', token: 0, timer: null, umaSo: false, velocidade: 1, pausar: false, atual: null };
+/* Vozes naturais do Gemini oferecidas no app. Falam os três idiomas: o worker manda o idioma junto. */
+const LEITOR_NUVEM = [['Kore', 'feminina, firme'], ['Aoede', 'feminina, leve'], ['Charon', 'masculina, didática'], ['Puck', 'masculina, animada']];
+const LEITOR_NUVEM_PADRAO = 'Kore';
+const LEITOR_CACHE = 'poliglota-voz-v1';
+const LEITOR_CACHE_MAX = 250;   // frases guardadas no aparelho (~0,3 MB cada); as mais antigas saem primeiro
+const LEITOR = {
+  lang: '', chave: '', frases: [], fimContinuo: 0, i: -1, estado: 'parado', token: 0, timer: null, umaSo: false,
+  velocidade: 1, pausar: false, atual: null,
+  modo: '', carregando: false, urlAudio: '',
+  nuvemFalhouEm: 0, nuvemPausa: 0, nuvemMotivo: '',
+};
 let LEITOR_VOZES = [];
+const LEITOR_AUDIOS = new Map();   // frase pedida nesta aba → Promise<Blob>
+let LEITOR_AUDIO = null;           // um só elemento de áudio: no iPhone ele fica liberado depois do primeiro toque
 
 function leitorSuportado() {
   return !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
+}
+
+/* Voz natural: precisa do worker e de áudio no navegador */
+function leitorNuvemConfigurada() {
+  return /^https:\/\//.test(typeof WORKER_URL === 'string' ? WORKER_URL : '')
+    && typeof fetch === 'function' && !!window.Audio && !!window.Blob && !!(window.URL && URL.createObjectURL);
+}
+
+/* Para ler, basta uma das duas: a voz natural ou uma voz do aparelho */
+function leitorPodeLer() {
+  return leitorNuvemConfigurada() || leitorSuportado();
+}
+
+function leitorUrlVoz() {
+  return String(WORKER_URL).replace(/\/analisar\/?$/, '').replace(/\/+$/, '') + '/voz';
+}
+
+/* Depois de uma falha, a voz natural descansa: 2 min; 15 min se a cota acabou; 30 min se o servidor não tem a rota */
+function leitorNuvemEmPausa() {
+  return !!LEITOR.nuvemFalhouEm && Date.now() - LEITOR.nuvemFalhouEm < LEITOR.nuvemPausa;
+}
+
+/* Durante a pausa, só toca o que já está guardado, porque há a voz do aparelho para o resto.
+   Sem voz do aparelho, cada toque tenta a internet de novo: é a única forma de ouvir. */
+function leitorSoGuardado(lang) {
+  return leitorNuvemEmPausa() && leitorSuportado() && !!leitorVoz(lang);
+}
+
+function leitorMarcarFalhaNuvem(erro) {
+  if (!erro || erro.semCopia) return;
+  const s = erro.status;
+  LEITOR.nuvemMotivo = erro.cota ? 'cota' : (s === 404 || s === 405 || s === 503) ? 'servidor' : 'falha';
+  LEITOR.nuvemPausa = { cota: 15, servidor: 30, falha: 2 }[LEITOR.nuvemMotivo] * 60000;
+  LEITOR.nuvemFalhouEm = Date.now();
 }
 
 function leitorCarregarVozes() {
@@ -5379,17 +5427,35 @@ function leitorVozesDo(lang) {
 
 function leitorPrefs(lang) {
   const salvo = getStore(lang, 'leitor') || {};
+  /* Até a v2.4 só havia vozes do aparelho: aquela escolha é esquecida uma vez, e a voz natural vira a padrão */
+  const atual = salvo.v === 2;
   return {
-    voz: typeof salvo.voz === 'string' ? salvo.voz : '',
+    voz: atual && typeof salvo.voz === 'string' ? salvo.voz : '',
     velocidade: LEITOR_VELOCIDADES.some(([v]) => v === salvo.velocidade) ? salvo.velocidade : 0,
     pausar: salvo.pausar === true,
   };
 }
 
 function leitorSalvarPrefs(lang, mudanca) {
-  setStore(lang, 'leitor', { ...leitorPrefs(lang), ...mudanca });
+  setStore(lang, 'leitor', { ...leitorPrefs(lang), ...mudanca, v: 2 });
 }
 
+/* Voz natural escolhida (ou a padrão), mesmo durante a pausa depois de uma falha; null = voz do aparelho */
+function leitorVozNuvem(lang) {
+  if (!leitorNuvemConfigurada()) return null;
+  const escolhida = leitorPrefs(lang).voz;
+  if (!escolhida) return LEITOR_NUVEM_PADRAO;
+  if (!escolhida.startsWith('nuvem:')) return null;
+  const nome = escolhida.slice(6);
+  return LEITOR_NUVEM.some(([n]) => n === nome) ? nome : LEITOR_NUVEM_PADRAO;
+}
+
+function leitorNomeNuvem(nome) {
+  const item = LEITOR_NUVEM.find(([n]) => n === nome);
+  return 'voz natural ' + nome + (item ? ' (' + item[1] + ')' : '');
+}
+
+/* Voz do aparelho: a escolhida, se for do aparelho; senão a melhor do idioma */
 function leitorVoz(lang) {
   const vozes = leitorVozesDo(lang);
   const escolhida = leitorPrefs(lang).voz;
@@ -5464,26 +5530,54 @@ function leitorAvisoSemVoz(lang) {
   return 'Este aparelho não tem voz em ' + LEITOR_IDIOMAS[lang].nome + ' instalada. Para instalar: no Android, Configurações › Sistema › Idiomas › Saída de texto em voz; no iPhone, Ajustes › Acessibilidade › Conteúdo Falado › Vozes; no Windows, Configurações › Hora e idioma › Fala. Depois, recarregue a página.';
 }
 
+const LEITOR_MOTIVOS = {
+  cota: 'A voz natural atingiu o limite gratuito por agora',
+  servidor: 'A voz natural ainda não está ligada no servidor',
+  falha: 'A voz natural não respondeu (confira a internet)',
+};
+
 function leitorTextoStatus(lang) {
+  const L = LEITOR;
+  const ativo = L.lang === lang && L.estado !== 'parado' && L.i >= 0;
+  const posicao = ativo ? (L.estado === 'pausado' ? 'Pausado na frase ' : 'Frase ') + (L.i + 1) + ' de ' + L.frases.length : '';
+  const nuvem = leitorVozNuvem(lang);
+  if (nuvem) {
+    if (ativo && L.carregando) return 'Gerando a voz natural da frase ' + (L.i + 1) + '…';
+    if (ativo && L.modo === 'nuvem') return posicao + ' · ' + leitorNomeNuvem(nuvem);
+    const reserva = leitorSuportado() ? leitorVoz(lang) : null;
+    if (leitorNuvemEmPausa()) {
+      const motivo = LEITOR_MOTIVOS[L.nuvemMotivo] || LEITOR_MOTIVOS.falha;
+      const inicio = posicao ? posicao + ' · ' : '';
+      return reserva
+        ? inicio + motivo + '. Enquanto isso, leio com a voz do aparelho (' + reserva.name + '); as frases já ouvidas continuam com a voz natural.'
+        : inicio + motivo + '. Tente de novo daqui a pouco.';
+    }
+    if (ativo && L.modo === 'aparelho' && reserva) return posicao + ' · voz do aparelho (' + reserva.name + ')';
+    const nome = leitorNomeNuvem(nuvem);
+    return nome.charAt(0).toUpperCase() + nome.slice(1) + '. Na primeira vez, cada frase leva alguns segundos para ficar pronta; depois fica guardada neste aparelho.';
+  }
   if (!leitorSuportado()) return 'Este navegador não lê textos em voz alta.';
   if (!LEITOR_VOZES.length && !leitorCarregarVozes.esperou) return 'Carregando as vozes do aparelho…';
   const voz = leitorVoz(lang);
   if (!voz) return leitorAvisoSemVoz(lang);
-  if (LEITOR.lang === lang && LEITOR.estado !== 'parado' && LEITOR.i >= 0) {
-    return (LEITOR.estado === 'pausado' ? 'Pausado na frase ' : 'Frase ') + (LEITOR.i + 1) + ' de ' + LEITOR.frases.length + ' · ' + voz.name;
-  }
-  return 'Voz: ' + leitorRotuloVoz(voz) + (leitorBoaVoz(voz) ? '' : '. Se soar robótica, escolha outra na lista.');
+  if (ativo) return posicao + ' · ' + voz.name;
+  const dica = leitorNuvemConfigurada() ? '. Se soar robótica, escolha uma voz natural na lista.' : '. Se soar robótica, escolha outra na lista.';
+  return 'Voz: ' + leitorRotuloVoz(voz) + (leitorBoaVoz(voz) ? '' : dica);
 }
 
 function leitorOpcoesVoz(lang) {
-  const vozes = leitorVozesDo(lang);
-  if (!vozes.length) return '<option value="">Nenhuma voz deste idioma</option>';
-  const atual = leitorVoz(lang);
-  return vozes.slice(0, 20).map(v => `<option value="${immersionEscape(leitorIdVoz(v))}" ${atual && leitorIdVoz(v) === leitorIdVoz(atual) ? 'selected' : ''}>${immersionEscape(leitorRotuloVoz(v))}</option>`).join('');
+  const nuvem = leitorVozNuvem(lang);
+  const vozes = leitorSuportado() ? leitorVozesDo(lang) : [];
+  const atual = nuvem ? null : leitorVoz(lang);
+  const doAparelho = vozes.slice(0, 20).map(v => `<option value="${immersionEscape(leitorIdVoz(v))}" ${atual && leitorIdVoz(v) === leitorIdVoz(atual) ? 'selected' : ''}>${immersionEscape(leitorRotuloVoz(v))}</option>`).join('');
+  if (!leitorNuvemConfigurada()) return doAparelho || '<option value="">Nenhuma voz deste idioma</option>';
+  const naturais = LEITOR_NUVEM.map(([n, d]) => `<option value="nuvem:${n}" ${nuvem === n ? 'selected' : ''}>${n} · ${d} ★</option>`).join('');
+  return `<optgroup label="Voz natural (internet)">${naturais}</optgroup>`
+    + `<optgroup label="Voz do aparelho">${doAparelho || '<option value="" disabled>Nenhuma voz deste idioma</option>'}</optgroup>`;
 }
 
 function leitorPainel(lesson, lang) {
-  if (!leitorSuportado()) return '<p class="im-muted">Este navegador não lê textos em voz alta. Use os áudios indicados abaixo.</p>';
+  if (!leitorPodeLer()) return '<p class="im-muted">Este navegador não lê textos em voz alta. Use os áudios indicados abaixo.</p>';
   leitorCarregarVozes();
   const vel = leitorVelocidade(lang, lesson.band);
   const ativo = LEITOR.lang === lang;
@@ -5506,44 +5600,234 @@ function leitorPainel(lesson, lang) {
   </div>`;
 }
 
-/* Tempo para repetir a frase em voz alta, pelo tamanho dela */
+/* Tempo para repetir a frase em voz alta, pelo tamanho dela (voz do aparelho, sem duração conhecida) */
 function leitorEspera(frase, lang, velocidade) {
   const segundos = lang === 'zh' ? frase.replace(/\s/g, '').length / 4.5 : frase.split(/\s+/).length / 2.6;
   return Math.min(12000, Math.max(1500, (segundos / (velocidade || 1)) * 1100 + 800));
 }
 
+/* ── Áudio da voz natural ── */
+function leitorAudio() {
+  if (!LEITOR_AUDIO && window.Audio) {
+    LEITOR_AUDIO = new Audio();
+    LEITOR_AUDIO.preload = 'auto';
+  }
+  return LEITOR_AUDIO;
+}
+
+/* PCM de 16 bits (mono, little-endian) com o cabeçalho WAV de 44 bytes */
+function leitorWavDePcm(pcm, taxa) {
+  const dados = pcm.length % 2 ? pcm.subarray(0, pcm.length - 1) : pcm;
+  const cab = new DataView(new ArrayBuffer(44));
+  const escreve = (pos, s) => { for (let k = 0; k < s.length; k++) cab.setUint8(pos + k, s.charCodeAt(k)); };
+  escreve(0, 'RIFF'); cab.setUint32(4, 36 + dados.length, true); escreve(8, 'WAVE');
+  escreve(12, 'fmt '); cab.setUint32(16, 16, true); cab.setUint16(20, 1, true); cab.setUint16(22, 1, true);
+  cab.setUint32(24, taxa, true); cab.setUint32(28, taxa * 2, true); cab.setUint16(32, 2, true); cab.setUint16(34, 16, true);
+  escreve(36, 'data'); cab.setUint32(40, dados.length, true);
+  return new Blob([cab.buffer, dados], { type: 'audio/wav' });
+}
+
+/* O base64 do worker vira um áudio tocável. WAV e formatos comprimidos passam direto; PCM puro ganha cabeçalho. */
+function leitorWav(b64, mime) {
+  const bin = atob(String(b64).replace(/\s/g, ''));
+  const bytes = new Uint8Array(bin.length);
+  for (let k = 0; k < bin.length; k++) bytes[k] = bin.charCodeAt(k);
+  const tipo = String(mime || '').toLowerCase();
+  const riff = bytes.length > 12 && bytes[0] === 82 && bytes[1] === 73 && bytes[2] === 70 && bytes[3] === 70;
+  if (riff) return new Blob([bytes], { type: 'audio/wav' });
+  if (/mpeg|mp3|ogg|opus|webm|aac|mp4/.test(tipo)) return new Blob([bytes], { type: tipo.split(';')[0].trim() });
+  return leitorWavDePcm(bytes, Number((tipo.match(/rate=(\d+)/) || [])[1]) || 24000);
+}
+
+/* iPhone e iPad (o iPad se apresenta como Mac, mas tem toque) */
+function leitorIOS() {
+  return /iP(hone|ad|od)/.test(navigator.userAgent || '') || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
+/* Chamado dentro do toque: o iPhone só deixa tocar som se um toque iniciar o áudio uma vez.
+   A voz do aparelho também é liberada, porque ela é a reserva quando a voz natural falha. */
+function leitorDesbloquearAudio() {
+  const audio = leitorAudio();
+  if (audio && !leitorDesbloquearAudio.feito) {
+    leitorDesbloquearAudio.feito = true;
+    try {
+      if (!leitorDesbloquearAudio.url) leitorDesbloquearAudio.url = URL.createObjectURL(leitorWavDePcm(new Uint8Array(480), 24000));
+      audio.src = leitorDesbloquearAudio.url;
+      const p = audio.play();
+      if (p && p.catch) p.catch(e => { if (e && e.name === 'NotAllowedError') leitorDesbloquearAudio.feito = false; });
+    } catch (e) { leitorDesbloquearAudio.feito = false; }
+  }
+  if (!leitorDesbloquearAudio.fala && leitorSuportado() && leitorIOS()) {
+    leitorDesbloquearAudio.fala = true;
+    try { const u = new SpeechSynthesisUtterance(''); u.volume = 0; speechSynthesis.speak(u); } catch (e) { /* segue sem a reserva liberada */ }
+  }
+}
+
+function leitorPararAudio() {
+  const audio = LEITOR_AUDIO;
+  if (audio && !audio.paused) { try { audio.pause(); } catch (e) { /* nada a parar */ } }
+}
+
+function leitorChaveCache(frase, lang, voz) {
+  return 'https://voz.poliglota.invalid/v1/' + lang + '/' + voz + '?t=' + encodeURIComponent(frase);
+}
+
+async function leitorCacheAbrir() {
+  try { return window.caches ? await caches.open(LEITOR_CACHE) : null; } catch (e) { return null; }
+}
+
+/* Guarda no máximo LEITOR_CACHE_MAX frases; confere na 1ª gravação e depois a cada 10 */
+async function leitorPodarCache(cache) {
+  leitorPodarCache.vezes = (leitorPodarCache.vezes || 0) + 1;
+  if (leitorPodarCache.vezes % 10 !== 1) return;
+  try {
+    const chaves = await cache.keys();
+    for (const k of chaves.slice(0, Math.max(0, chaves.length - LEITOR_CACHE_MAX))) await cache.delete(k);
+  } catch (e) { /* sem acesso ao cache: deixa como está */ }
+}
+
+/* Áudio de uma frase: memória desta aba → guardado no aparelho → worker.
+   soGuardado: só o que já está guardado (durante a pausa depois de uma falha). */
+function leitorAudioNuvem(frase, lang, voz, soGuardado) {
+  const chave = leitorChaveCache(frase, lang, voz);
+  const pronto = LEITOR_AUDIOS.get(chave);
+  if (pronto) return pronto;
+  const promessa = (async () => {
+    const cache = await leitorCacheAbrir();
+    if (cache) {
+      try {
+        const guardado = await cache.match(chave);
+        if (guardado) return await guardado.blob();
+      } catch (e) { /* segue para o worker */ }
+    }
+    if (soGuardado) { const e = new Error('frase ainda não guardada'); e.semCopia = true; throw e; }
+    const controle = new AbortController();
+    const relogio = setTimeout(() => controle.abort(), 30000);
+    let resp;
+    let dados = null;
+    try {
+      resp = await fetch(leitorUrlVoz(), {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controle.signal,
+        body: JSON.stringify({ texto: frase, voz, idioma: lang }),
+      });
+      try { dados = await resp.json(); } catch (e) { dados = null; }
+    } finally {
+      clearTimeout(relogio);
+    }
+    if (!resp.ok || !dados || typeof dados.audio !== 'string' || !dados.audio) {
+      const e = new Error((dados && dados.error) || ('HTTP ' + resp.status));
+      e.status = resp.status;
+      /* 429 da cota do Gemini (pausa longa) ≠ 429 do limite por minuto do worker (pausa curta) */
+      e.cota = !!(dados && dados.cota) || (resp.status === 429 && !(dados && dados.ritmo));
+      throw e;
+    }
+    const blob = leitorWav(dados.audio, dados.mime);
+    if (cache) {
+      try {
+        await cache.put(chave, new Response(blob, { headers: { 'Content-Type': blob.type } }));
+        leitorPodarCache(cache);
+      } catch (e) { /* aparelho sem espaço: toca, só não guarda */ }
+    }
+    return blob;
+  })();
+  LEITOR_AUDIOS.set(chave, promessa);
+  promessa.catch(() => { if (LEITOR_AUDIOS.get(chave) === promessa) LEITOR_AUDIOS.delete(chave); });
+  if (LEITOR_AUDIOS.size > 60) LEITOR_AUDIOS.delete(LEITOR_AUDIOS.keys().next().value);
+  return promessa;
+}
+
+function leitorTocarBlob(blob, velocidade, token, aoTerminar, aoFalhar) {
+  const audio = leitorAudio();
+  const anterior = LEITOR.urlAudio;
+  const url = URL.createObjectURL(blob);
+  const vale = () => token === LEITOR.token && audio.src === url;
+  LEITOR.urlAudio = url;
+  audio.onended = () => { if (vale()) aoTerminar(audio.duration); };
+  audio.onerror = () => { if (vale()) aoFalhar(new Error('áudio ilegível')); };
+  audio.onloadedmetadata = () => { if (vale()) { try { audio.playbackRate = audio.defaultPlaybackRate || velocidade; } catch (e) { /* fica na velocidade normal */ } } };
+  try { audio.preservesPitch = true; audio.mozPreservesPitch = true; audio.webkitPreservesPitch = true; } catch (e) { /* navegador antigo */ }
+  audio.defaultPlaybackRate = velocidade;
+  audio.playbackRate = velocidade;
+  audio.src = url;
+  if (anterior) URL.revokeObjectURL(anterior);
+  const p = audio.play();
+  if (p && p.catch) p.catch(e => { if (vale() && !(e && e.name === 'AbortError')) aoFalhar(e); });
+}
+
+/* ── Leitura ── */
 function leitorFalar(i, umaSo) {
   const L = LEITOR;
   clearTimeout(L.timer);
-  if (!leitorSuportado()) return;
   if (i < 0 || i >= L.frases.length) { leitorTerminar(); return; }
+  const nuvem = leitorVozNuvem(L.lang);
+  if (nuvem) leitorFalarNuvem(i, umaSo, nuvem);
+  else leitorFalarAparelho(i, umaSo);
+}
+
+function leitorFalarNuvem(i, umaSo, voz) {
+  const L = LEITOR;
+  if (leitorSuportado() && (speechSynthesis.speaking || speechSynthesis.pending)) speechSynthesis.cancel();
+  leitorPararAudio();
+  leitorDesbloquearAudio();
+  const token = ++L.token;
+  Object.assign(L, { i, estado: 'tocando', umaSo: !!umaSo, modo: 'nuvem', carregando: false });
+  leitorRefletir();
+  const lang = L.lang;
+  const emPausa = leitorSoGuardado(lang);
+  /* Só avisa "gerando" se demorar: frase guardada toca na hora, sem piscar o aviso */
+  const aviso = setTimeout(() => { if (token === L.token) { L.carregando = true; leitorRefletir(); } }, 350);
+  leitorAudioNuvem(L.frases[i], lang, voz, emPausa).then(blob => {
+    clearTimeout(aviso);
+    if (token !== L.token || L.estado !== 'tocando') return;
+    if (L.carregando) { L.carregando = false; leitorRefletir(); }
+    leitorTocarBlob(blob, L.velocidade || 1, token, duracao => leitorDepoisDaFrase(i, token, duracao), erro => leitorFalhaNuvem(i, token, erro));
+    /* Prepara a próxima frase enquanto esta toca: só uma, para não gastar a cota à toa */
+    const limite = i < L.fimContinuo ? L.fimContinuo : L.frases.length;
+    if (!L.umaSo && i + 1 < limite) leitorAudioNuvem(L.frases[i + 1], lang, voz, emPausa).catch(() => {});
+  }, erro => {
+    clearTimeout(aviso);
+    if (token !== L.token) return;
+    L.carregando = false;
+    leitorFalhaNuvem(i, token, erro);
+  });
+}
+
+/* A voz natural falhou nesta frase: lê com a voz do aparelho e deixa a natural descansar */
+function leitorFalhaNuvem(i, token, erro) {
+  const L = LEITOR;
+  if (token !== L.token) return;
+  if (erro && erro.name === 'NotAllowedError') {
+    L.estado = 'pausado';
+    leitorRefletir();
+    leitorStatus('O navegador pediu um toque antes do som: toque em ▶ Continuar.');
+    return;
+  }
+  leitorMarcarFalhaNuvem(erro);
+  if (leitorSuportado() && leitorVoz(L.lang)) { leitorFalarAparelho(i, L.umaSo); return; }
+  L.token++;
+  Object.assign(L, { estado: 'pausado', modo: 'nenhum', carregando: false });
+  leitorRefletir();
+}
+
+function leitorFalarAparelho(i, umaSo) {
+  const L = LEITOR;
+  leitorPararAudio();
+  if (!leitorSuportado()) { L.estado = 'parado'; leitorRefletir(); return; }
   const voz = leitorVoz(L.lang);
   if (!voz) { L.estado = 'parado'; leitorRefletir(); return; }   // o status explica como instalar a voz
   const token = ++L.token;
-  L.i = i;
-  L.estado = 'tocando';
-  L.umaSo = !!umaSo;
+  Object.assign(L, { i, estado: 'tocando', umaSo: !!umaSo, modo: 'aparelho', carregando: false });
   const fala = new SpeechSynthesisUtterance(L.frases[i]);
   fala.voice = voz;
   fala.lang = voz.lang;
   fala.rate = L.velocidade || 1;
-  fala.onend = () => {
-    if (token !== L.token || L.estado !== 'tocando') return;
-    if (L.umaSo) { L.estado = 'pausado'; leitorRefletir(); return; }
-    const limite = i < L.fimContinuo ? L.fimContinuo : L.frases.length;
-    if (i + 1 >= limite) { leitorTerminar(); return; }
-    if (L.pausar) {
-      leitorStatus('Sua vez: repita a frase em voz alta.');
-      L.timer = setTimeout(() => { if (token === L.token && L.estado === 'tocando') leitorFalar(i + 1); }, leitorEspera(L.frases[i], L.lang, fala.rate));
-    } else {
-      leitorFalar(i + 1);
-    }
-  };
+  fala.onend = () => leitorDepoisDaFrase(i, token, 0);
   fala.onerror = ev => {
     if (token !== L.token || ['interrupted', 'canceled'].includes(ev.error)) return;
-    L.estado = 'parado';
+    const pediuToque = ev.error === 'not-allowed';
+    L.estado = pediuToque ? 'pausado' : 'parado';
     leitorRefletir();
-    leitorStatus('Esta voz falhou (' + ev.error + '). Escolha outra voz na lista.');
+    leitorStatus(pediuToque ? 'O navegador pediu um toque antes do som: toque em ▶ Continuar.' : 'Esta voz falhou (' + ev.error + '). Escolha outra voz na lista.');
   };
   L.atual = fala;   // segura a referência: sem ela o Chrome às vezes perde o fim da fala
   leitorRefletir();
@@ -5555,19 +5839,43 @@ function leitorFalar(i, umaSo) {
   else speechSynthesis.speak(fala);
 }
 
+/* Fim de uma frase (as duas vozes): para, segue ou espera você repetir */
+function leitorDepoisDaFrase(i, token, duracao) {
+  const L = LEITOR;
+  if (token !== L.token || L.estado !== 'tocando') return;
+  if (L.umaSo) { L.estado = 'pausado'; leitorRefletir(); return; }
+  const limite = i < L.fimContinuo ? L.fimContinuo : L.frases.length;
+  if (i + 1 >= limite) { leitorTerminar(); return; }
+  if (L.pausar) {
+    leitorStatus('Sua vez: repita a frase em voz alta.');
+    const vel = L.velocidade || 1;
+    /* Com a voz natural, a pausa usa a duração real do áudio */
+    const espera = duracao > 0 && isFinite(duracao)
+      ? Math.min(15000, Math.max(1500, (duracao / vel) * 1000 + 900))
+      : leitorEspera(L.frases[i], L.lang, vel);
+    L.timer = setTimeout(() => { if (token === L.token && L.estado === 'tocando') leitorFalar(i + 1); }, espera);
+  } else {
+    leitorFalar(i + 1);
+  }
+}
+
 function leitorPausar() {
   LEITOR.token++;
   clearTimeout(LEITOR.timer);
+  leitorPararAudio();
   if (leitorSuportado() && (speechSynthesis.speaking || speechSynthesis.pending)) speechSynthesis.cancel();
   LEITOR.estado = 'pausado';
+  LEITOR.carregando = false;
   leitorRefletir();
 }
 
 function leitorParar() {
   LEITOR.token++;
   clearTimeout(LEITOR.timer);
+  leitorPararAudio();
   if (leitorSuportado() && (speechSynthesis.speaking || speechSynthesis.pending)) speechSynthesis.cancel();
   LEITOR.estado = 'parado';
+  LEITOR.carregando = false;
   LEITOR.i = -1;
   leitorRefletir();
 }
@@ -5576,6 +5884,7 @@ function leitorTerminar() {
   LEITOR.token++;
   clearTimeout(LEITOR.timer);
   LEITOR.estado = 'parado';
+  LEITOR.carregando = false;
   LEITOR.i = -1;
   leitorRefletir();
   leitorStatus('Fim do trecho. Toque numa frase para ouvir de novo.');
@@ -5583,10 +5892,10 @@ function leitorTerminar() {
 
 /* Botões do painel e frases da transcrição */
 function leitorAcao(acao, lesson, lang, valor) {
-  if (!leitorSuportado()) { toast('Este navegador não lê textos em voz alta. Use os áudios indicados.', 'err'); return; }
+  if (!leitorPodeLer()) { toast('Este navegador não lê textos em voz alta. Use os áudios indicados.', 'err'); return; }
   leitorCarregarVozes();
   const L = leitorPreparar(lesson, lang);
-  if (!leitorVoz(lang)) { leitorRefletir(); return; }
+  if (!leitorVozNuvem(lang) && !leitorVoz(lang)) { leitorRefletir(); return; }
   const atual = Math.max(0, L.i);
   const tocando = L.estado === 'tocando';
   switch (acao) {
@@ -5604,11 +5913,38 @@ function leitorAcao(acao, lesson, lang, valor) {
 
 /* Uma palavra ou a frente de um cartão, sem mexer na leitura do trecho */
 function leitorPalavra(texto, lang) {
-  if (!leitorSuportado() || !texto) return;
+  if (!texto) return;
   leitorCarregarVozes();
-  const voz = leitorVoz(lang);
-  if (!voz) { toast(leitorAvisoSemVoz(lang), 'err', 9000); return; }
   if (LEITOR.estado === 'tocando') leitorPausar();
+  const nuvem = leitorVozNuvem(lang);
+  if (!nuvem) { leitorPalavraAparelho(texto, lang); return; }
+  if (leitorSuportado() && (speechSynthesis.speaking || speechSynthesis.pending)) speechSynthesis.cancel();
+  leitorPararAudio();
+  leitorDesbloquearAudio();
+  const token = ++LEITOR.token;
+  const vel = Math.min(1, leitorPrefs(lang).velocidade || 0.9);
+  leitorAudioNuvem(texto, lang, nuvem, leitorSoGuardado(lang)).then(blob => {
+    if (token !== LEITOR.token) return;
+    leitorTocarBlob(blob, vel, token, () => {}, erro => {
+      if (erro && erro.name === 'NotAllowedError') { toast('Toque de novo para ouvir.', 'err'); return; }
+      leitorPalavraAparelho(texto, lang);
+    });
+  }, erro => {
+    if (token !== LEITOR.token) return;
+    leitorMarcarFalhaNuvem(erro);
+    leitorPalavraAparelho(texto, lang);
+    leitorStatus(leitorTextoStatus(lang));
+  });
+}
+
+function leitorPalavraAparelho(texto, lang) {
+  const voz = leitorSuportado() ? leitorVoz(lang) : null;
+  if (!voz) {
+    toast(leitorVozNuvem(lang)
+      ? 'A voz natural não respondeu e este aparelho não tem voz em ' + LEITOR_IDIOMAS[lang].nome + '. Tente de novo daqui a pouco.'
+      : leitorSuportado() ? leitorAvisoSemVoz(lang) : 'Este navegador não lê textos em voz alta.', 'err', 9000);
+    return;
+  }
   const fala = new SpeechSynthesisUtterance(texto);
   fala.voice = voz;
   fala.lang = voz.lang;
@@ -5625,18 +5961,28 @@ function leitorPalavra(texto, lang) {
 /* Velocidade, voz e pausa para repetir */
 function leitorAjuste(campo) {
   const lang = currentLang;
+  const meu = LEITOR.lang === lang;
   if (campo.id === 'lt-velocidade') {
     const v = Number(campo.value);
     leitorSalvarPrefs(lang, { velocidade: v });
-    if (LEITOR.lang === lang) LEITOR.velocidade = v;
+    if (meu) LEITOR.velocidade = v;
+    /* Voz natural tocando: muda a velocidade na hora, sem recomeçar a frase */
+    const audio = LEITOR_AUDIO;
+    if (meu && LEITOR.estado === 'tocando' && LEITOR.modo === 'nuvem' && !LEITOR.carregando && audio && !audio.paused) {
+      try { audio.defaultPlaybackRate = v; audio.playbackRate = v; } catch (e) { /* segue na velocidade anterior */ }
+      leitorStatus(leitorTextoStatus(lang));
+      return;
+    }
   } else if (campo.id === 'lt-voz') {
     leitorSalvarPrefs(lang, { voz: campo.value });
+    /* Escolheu uma voz natural: tenta de novo já, sem esperar a pausa depois de uma falha */
+    if (!campo.value || campo.value.startsWith('nuvem:')) LEITOR.nuvemFalhouEm = 0;
   } else if (campo.id === 'lt-pausar') {
     leitorSalvarPrefs(lang, { pausar: campo.checked });
-    if (LEITOR.lang === lang) LEITOR.pausar = campo.checked;
+    if (meu) LEITOR.pausar = campo.checked;
   }
   /* Trocou voz ou velocidade no meio da leitura: recomeça a frase atual já com o ajuste */
-  if (campo.id !== 'lt-pausar' && LEITOR.lang === lang && LEITOR.estado === 'tocando') leitorFalar(Math.max(0, LEITOR.i));
+  if (campo.id !== 'lt-pausar' && meu && LEITOR.estado === 'tocando') leitorFalar(Math.max(0, LEITOR.i));
   else leitorStatus(leitorTextoStatus(lang));
 }
 
@@ -5656,6 +6002,7 @@ function leitorRefletir() {
     botao.textContent = tocando ? '⏸ Pausar' : meu && L.estado === 'pausado' ? '▶ Continuar' : '▶ Ouvir o trecho';
     botao.setAttribute('aria-pressed', String(tocando));
   }
+  if (painel) painel.setAttribute('aria-busy', String(meu && L.carregando));
   document.querySelectorAll('.lt-frase.lt-atual').forEach(el => { el.classList.remove('lt-atual'); el.removeAttribute('aria-current'); });
   if (meu && L.estado !== 'parado' && L.i >= 0) {
     const el = document.querySelector('.lt-frase[data-value="' + L.i + '"]');
