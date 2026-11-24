@@ -1,20 +1,24 @@
 /**
- * Cloudflare Worker — Políglota Coach  ·  v3 (Claude + GPT)
+ * Cloudflare Worker — Políglota Coach  ·  v3.1 (Gemini + Claude + GPT)
  *
  * Rotas
  *   GET  /           saúde: JSON com provedores, modelos e se as chaves estão configuradas
  *   POST /analisar   análise do check-in (POST em / também funciona)
  *
- * Ordem dos provedores: Claude primeiro; se falhar, GPT.
+ * Ordem padrão dos provedores: Gemini (tem plano gratuito) → Claude → GPT.
+ * Só entram na fila os provedores com chave cadastrada; se um falhar, passa ao próximo.
  * Resposta para o app:
  *   sucesso → { analysis, provider, model, fallbacks: [{ provider, erro }] }
  *   falha   → { error, tentativas: [{ provider, erro }] }
  *
  * Variáveis do worker (Settings → Variables and Secrets)
- *   ANTHROPIC_API_KEY  segredo   chave da Anthropic (provedor principal)
- *   OPENAI_API_KEY     segredo   chave da OpenAI (reserva)
+ *   GEMINI_API_KEY     segredo   chave do Google AI Studio (GOOGLE_API_KEY também vale)
+ *   ANTHROPIC_API_KEY  segredo   chave da Anthropic (precisa de créditos de API)
+ *   OPENAI_API_KEY     segredo   chave da OpenAI (precisa de créditos de API)
  *   ALLOWED_ORIGIN     texto     endereço do site, sem caminho. Ex.: https://seu-usuario.github.io
  *                                Mais de um: separe por vírgula. Vazio = aceita qualquer site.
+ *   ORDEM_PROVEDORES   opcional  padrão: gemini,claude,gpt
+ *   GEMINI_MODEL       opcional  padrão: gemini-3.6-flash,gemini-3.5-flash-lite (tenta na ordem)
  *   CLAUDE_MODEL       opcional  padrão: claude-sonnet-5-5
  *   OPENAI_MODEL       opcional  padrão: gpt-6.1-terra,gpt-5-mini (tenta na ordem, se o modelo não existir na conta)
  *   LIMITE_DIARIO      opcional  máximo de análises por dia (padrão 60); só vale com o KV abaixo
@@ -24,12 +28,16 @@
  * um arquivo só, sem etapa de build para instalar pacotes.
  */
 
-const VERSAO = '3.0.0';
+const VERSAO = '3.1.0';
+const ORDEM_PADRAO = 'gemini,claude,gpt';
+const MODELOS_GEMINI = 'gemini-3.6-flash,gemini-3.5-flash-lite';
 const MODELO_CLAUDE = 'claude-sonnet-5-5';
 const MODELOS_GPT = 'gpt-6.1-terra,gpt-5-mini';
 const LIMITE_SAIDA = 6000;       // teto de tokens por resposta (inclui o raciocínio do modelo)
-const PRAZO_CLAUDE_MS = 22000;   // o app desiste em 45 s: sobra tempo para a reserva
+const PRAZO_GEMINI_MS = 20000;   // o app desiste em 45 s: sobra tempo para a reserva
+const PRAZO_CLAUDE_MS = 22000;
 const PRAZO_GPT_MS = 18000;
+const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta';
 const CORPO_MAX = 24000;         // tamanho máximo do pedido, em caracteres
 const TEXTO_MAX = 600;           // caracteres por campo de texto livre
 const POR_MINUTO = 8;            // análises por minuto por endereço IP
@@ -314,6 +322,97 @@ async function chamarModeloGPT(env, modelo, sistema, usuario, semEsforco) {
   return { texto: saida, modelo: (dados && dados.model) || modelo };
 }
 
+/* ─── Gemini ──────────────────────────────────────── */
+function chaveGemini(env) {
+  return env.GEMINI_API_KEY || env.GOOGLE_API_KEY || '';
+}
+
+async function postarGemini(url, chave, corpo, extras) {
+  return comPrazo(PRAZO_GEMINI_MS, async sinal => {
+    const r = await fetch(url, {
+      method: 'POST', signal: sinal,
+      headers: { 'Content-Type': 'application/json', 'x-goog-api-key': chave, ...(extras || {}) },
+      body: JSON.stringify(corpo),
+    });
+    return { resp: r, dados: await lerJson(r) };
+  });
+}
+
+/* Texto final, nos dois formatos de resposta (Interactions e generateContent), sem o raciocínio */
+function textoDoGemini(dados) {
+  if (!dados) return '';
+  if (typeof dados.output_text === 'string' && dados.output_text.trim()) return dados.output_text.trim();
+  if (Array.isArray(dados.steps)) {
+    const partes = [];
+    dados.steps.filter(s => s && s.type === 'model_output').forEach(s => {
+      (Array.isArray(s.content) ? s.content : []).forEach(c => { if (c && c.type === 'text' && typeof c.text === 'string') partes.push(c.text); });
+    });
+    if (partes.length) return partes.join('').trim();
+  }
+  const candidato = Array.isArray(dados.candidates) ? dados.candidates[0] : null;
+  const partes = candidato && candidato.content && Array.isArray(candidato.content.parts) ? candidato.content.parts : [];
+  return partes.filter(p => p && !p.thought && typeof p.text === 'string').map(p => p.text).join('').trim();
+}
+
+function respostaGemini(r, modelo) {
+  const { resp, dados } = r;
+  if (!resp.ok) {
+    const erro = (dados && dados.error) || {};
+    const msg = erro.message || erro.status || ('HTTP ' + resp.status);
+    if (chaveRecusada(r)) throw falha(resp.status, 'chave do Gemini recusada: confira o segredo GEMINI_API_KEY (' + msg + ')');
+    const e = falha(resp.status, msg);
+    /* Modelo inexistente ou cota gratuita deste modelo esgotada: vale tentar o próximo modelo */
+    e.tentarOutroModelo = resp.status === 404 || resp.status === 429;
+    throw e;
+  }
+  const saida = textoDoGemini(dados);
+  if (!saida) {
+    const c = dados && Array.isArray(dados.candidates) ? dados.candidates[0] : null;
+    const motivo = String((dados && dados.status) || (c && c.finishReason) || (dados && dados.promptFeedback && dados.promptFeedback.blockReason) || '');
+    throw falha(200, /incomplete|MAX_TOKENS/i.test(motivo) ? 'resposta cortada no limite de tokens'
+      : /SAFETY|BLOCK|PROHIBITED|RECITATION/i.test(motivo) ? 'resposta bloqueada pelo filtro de segurança' : 'resposta vazia');
+  }
+  return { texto: saida, modelo: (dados && (dados.model || dados.modelVersion)) || modelo };
+}
+
+/* Chave inválida ou sem permissão: não adianta trocar de API nem de modelo */
+function chaveRecusada(r) {
+  const erro = (r.dados && r.dados.error) || {};
+  return r.resp.status === 401 || r.resp.status === 403 || /api[ _-]?key/i.test(String(erro.message || '') + ' ' + String(erro.status || ''));
+}
+
+/* API atual do Gemini (Interactions). Se ela recusar o formato (400) ou não existir para
+   esta chave (404 sem citar o modelo), tenta a API anterior (generateContent). */
+async function chamarModeloGemini(chave, modelo, sistema, usuario) {
+  const atual = await postarGemini(GEMINI_BASE + '/interactions', chave, {
+    model: modelo,
+    system_instruction: sistema,
+    input: usuario,
+    generation_config: { max_output_tokens: LIMITE_SAIDA, thinking_level: 'low' },
+  }, { 'Api-Revision': '2026-05-20' });
+  const citaModelo = JSON.stringify(atual.dados || '').includes(modelo);
+  if (!chaveRecusada(atual) && (atual.resp.status === 400 || (atual.resp.status === 404 && !citaModelo))) {
+    const anterior = await postarGemini(GEMINI_BASE + '/models/' + encodeURIComponent(modelo) + ':generateContent', chave, {
+      systemInstruction: { parts: [{ text: sistema }] },
+      contents: [{ role: 'user', parts: [{ text: usuario }] }],
+      generationConfig: { maxOutputTokens: 8192 },
+    });
+    return respostaGemini(anterior, modelo);
+  }
+  return respostaGemini(atual, modelo);
+}
+
+async function chamarGemini(env, sistema, usuario) {
+  const chave = chaveGemini(env);
+  const modelos = (texto(env.GEMINI_MODEL, 200) || MODELOS_GEMINI).split(',').map(m => m.trim()).filter(Boolean);
+  let ultimo = null;
+  for (const modelo of modelos) {
+    try { return await chamarModeloGemini(chave, modelo, sistema, usuario); }
+    catch (e) { ultimo = e; if (!e.tentarOutroModelo) throw e; }
+  }
+  throw ultimo || falha(0, 'nenhum modelo Gemini configurado');
+}
+
 /* Tenta os modelos GPT na ordem; só passa ao próximo quando o problema é o modelo */
 async function chamarGPT(env, sistema, usuario) {
   const modelos = (texto(env.OPENAI_MODEL, 200) || MODELOS_GPT).split(',').map(m => m.trim()).filter(Boolean);
@@ -369,15 +468,26 @@ async function consumirCotaDiaria(env) {
   return true;
 }
 
+/* Provedores em ordem (ORDEM_PROVEDORES), cada um com o seu modelo e se tem chave */
+const PROVEDORES = {
+  gemini: { chamar: chamarGemini, chave: env => chaveGemini(env), modelo: env => texto(env.GEMINI_MODEL, 200) || MODELOS_GEMINI },
+  claude: { chamar: chamarClaude, chave: env => env.ANTHROPIC_API_KEY, modelo: env => texto(env.CLAUDE_MODEL, 80) || MODELO_CLAUDE },
+  gpt:    { chamar: chamarGPT,    chave: env => env.OPENAI_API_KEY,    modelo: env => texto(env.OPENAI_MODEL, 200) || MODELOS_GPT },
+};
+
+function ordemProvedores(env) {
+  const pedida = (texto(env.ORDEM_PROVEDORES, 60) || ORDEM_PADRAO).toLowerCase().split(',').map(p => p.trim());
+  const validos = pedida.filter((p, i) => Object.prototype.hasOwnProperty.call(PROVEDORES, p) && pedida.indexOf(p) === i);
+  return validos.length ? validos : ORDEM_PADRAO.split(',');
+}
+
 function saude(env) {
   return {
     status: 'ok',
     servico: 'Políglota Worker',
     versao: VERSAO,
-    provedores: [
-      { id: 'claude', modelo: texto(env.CLAUDE_MODEL, 80) || MODELO_CLAUDE, configurado: !!env.ANTHROPIC_API_KEY },
-      { id: 'gpt', modelo: texto(env.OPENAI_MODEL, 200) || MODELOS_GPT, configurado: !!env.OPENAI_API_KEY },
-    ],
+    ordem: ordemProvedores(env),
+    provedores: ordemProvedores(env).map(id => ({ id, modelo: PROVEDORES[id].modelo(env), configurado: !!PROVEDORES[id].chave(env) })),
     origemRestrita: listaOrigens(env).length > 0,
     limiteDiario: env.LIMITES ? (Number(env.LIMITE_DIARIO) || 60) : null,
   };
@@ -417,11 +527,11 @@ async function tratar(request, env) {
     return json({ error: 'Limite diário de análises atingido. Tente amanhã; a Análise local continua funcionando.' }, 429, cors);
   }
 
-  const provedores = [];
-  if (env.ANTHROPIC_API_KEY) provedores.push({ id: 'claude', chamar: chamarClaude });
-  if (env.OPENAI_API_KEY) provedores.push({ id: 'gpt', chamar: chamarGPT });
+  const provedores = ordemProvedores(env)
+    .filter(id => PROVEDORES[id].chave(env))
+    .map(id => ({ id, chamar: PROVEDORES[id].chamar }));
   if (!provedores.length) {
-    return json({ error: 'Nenhuma chave de IA configurada no worker (ANTHROPIC_API_KEY ou OPENAI_API_KEY).', tentativas: [] }, 500, cors);
+    return json({ error: 'Nenhuma chave de IA configurada no worker (GEMINI_API_KEY, ANTHROPIC_API_KEY ou OPENAI_API_KEY).', tentativas: [] }, 500, cors);
   }
 
   const { sistema, usuario } = montarPrompt(body);
