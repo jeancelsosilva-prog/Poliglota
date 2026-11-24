@@ -42,7 +42,8 @@
   --bd:#202a36; --bd2:#151d27;
   --grid:rgba(150,185,225,.070);   /* textura de malha do fundo */
   --rule:rgba(150,185,225,.16);    /* linhas de régua */
-  --tx:#dbe4ee; --tx2:#78889a; --tx3:#465565;
+  /* tx3 sobe para ~4,6:1 nos cartões (antes 2,4:1); tx2 sobe junto para manter a hierarquia */
+  --tx:#dbe4ee; --tx2:#8796a8; --tx3:#74859a;
 
   /* Geometria dura — instrumento, não cartão */
   --r:2px; --r2:2px;
@@ -97,16 +98,16 @@
   --bd:#ccd4de;  --bd2:#e2e8ef;
   --grid:rgba(30,60,95,.055);
   --rule:rgba(30,60,95,.12);
-  --tx:#0d151f;  --tx2:#4a5a6b; --tx3:#7d8b9b;
+  --tx:#0d151f;  --tx2:#4a5a6b; --tx3:#5f6e7f;
 
-  /* Idiomas — tons mais fechados p/ contraste em fundo claro */
-  --es:   #b8901c;
-  --es-a: rgba(184,144,28,.10);
-  --es-b: rgba(184,144,28,.30);
+  /* Idiomas — tons mais fechados p/ contraste em fundo claro (texto ≥ 4,5:1 sobre branco) */
+  --es:   #806200;
+  --es-a: rgba(128,98,0,.10);
+  --es-b: rgba(128,98,0,.30);
 
-  --fr:   #2f6ede;
-  --fr-a: rgba(47,110,222,.10);
-  --fr-b: rgba(47,110,222,.30);
+  --fr:   #275fc4;
+  --fr-a: rgba(39,95,196,.10);
+  --fr-b: rgba(39,95,196,.30);
 
   --zh:   #cf3123;
   --zh-a: rgba(207,49,35,.10);
@@ -115,10 +116,10 @@
 
   /* Fases */
   --p1:#5c4be0; --p1a:rgba(92,75,224,.09);  --p1b:rgba(92,75,224,.30);
-  --p2:#b8901c; --p2a:rgba(184,144,28,.09); --p2b:rgba(184,144,28,.30);
-  --p3:#12965c; --p3a:rgba(18,150,92,.09);  --p3b:rgba(18,150,92,.30);
+  --p2:#8a6600; --p2a:rgba(138,102,0,.09);  --p2b:rgba(138,102,0,.30);
+  --p3:#0e7a4a; --p3a:rgba(14,122,74,.09);  --p3b:rgba(14,122,74,.30);
   --p4:#d24343; --p4a:rgba(210,67,67,.09);  --p4b:rgba(210,67,67,.30);
-  --p5:#d9700f; --p5a:rgba(217,112,15,.09); --p5b:rgba(217,112,15,.30);
+  --p5:#a85400; --p5a:rgba(168,84,0,.09);   --p5b:rgba(168,84,0,.30);
   --p6:#7a55ee; --p6a:rgba(122,85,238,.09); --p6b:rgba(122,85,238,.30);
 
   --shadow-sm: 0 1px 2px rgba(22,22,42,.05);
@@ -406,6 +407,10 @@ input[type="range"]::-moz-range-thumb{
 .ao-sec{padding:14px 17px;border-bottom:1px solid var(--bd2);font-size:var(--fs-md);line-height:1.72}
 .ao-sec:last-child{border-bottom:none}
 .ao-lbl{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);letter-spacing:.12em;color:var(--accent);text-transform:uppercase;margin-bottom:6px;transition:color .3s}
+.ao-txt{white-space:pre-line}
+.btn-xs{padding:5px 9px;font-size:var(--fs-2xs)}
+.hist-acoes{white-space:nowrap}
+.hist-acoes .btn + .btn{margin-left:6px}
 .ao-loading{padding:20px 17px;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-sm);color:var(--tx3)}
 .ao-loading::after{content:'';animation:ell 1.4s infinite}
 @keyframes ell{0%{content:'.'}34%{content:'..'}67%{content:'...'}}
@@ -1007,6 +1012,62 @@ html,body{max-width:100%;overflow-x:hidden}
   .im-items li { flex-wrap: wrap; }
 }
 
+
+/* ═══════════════════════════════════════════════════════
+   MODO VIAGEM (V0) — mapa, trechos e passaporte
+═══════════════════════════════════════════════════════ */
+.jn-vh{position:absolute!important;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+#toast.jn{border-left-color:var(--es)}
+.t-track.jn{padding:2px 0 0 1px}
+.t-track.jn .t-pip{position:relative}
+.t-track.jn .t-pip::before{content:'';position:absolute;left:-1px;top:50%;width:9px;height:9px;border-radius:50%;background:inherit;transform:translateY(-50%)}
+.t-track.jn .t-lbl.on{color:var(--accent)}
+.jn-guia{display:flex;gap:12px;align-items:flex-start;background:var(--s2);border:1px solid var(--bd2);border-radius:var(--r);padding:12px 14px;margin-bottom:14px}
+.jn-guia-av{width:32px;height:32px;border-radius:50%;border:1px solid var(--accent-b);background:var(--accent-a);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.jn-guia-av svg{width:17px;height:17px}
+.jn-guia p{margin:0;font-size:var(--fs-md);line-height:1.55;color:var(--tx)}
+.jn-guia small{display:block;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);letter-spacing:.12em;text-transform:uppercase;color:var(--tx3);margin-bottom:2px}
+.jn-linha{list-style:none;margin:4px 0 0;padding:0}
+.jn-est{position:relative;margin-left:8px;padding:0 0 20px 22px;border-left:3px solid var(--fc)}
+.jn-est:last-child{padding-bottom:2px;border-left-color:transparent}
+.jn-est::before{content:'';position:absolute;left:-10px;top:2px;width:17px;height:17px;box-sizing:border-box;border-radius:50%;border:3px solid var(--fc);background:var(--s1)}
+.jn-est.jn-aqui::before{background:var(--fc)}
+.jn-est.jn-futura{border-left-style:dashed}
+.jn-est.jn-futura .jn-est-head,.jn-est.jn-futura .jn-trechos{opacity:.5}
+.jn-est-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.jn-est-cod{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-xs);letter-spacing:.1em;color:var(--fc)}
+.jn-est-nome{font-family:'Space Grotesk',sans-serif;font-size:var(--fs-lg);font-weight:600;color:var(--tx)}
+.jn-est-fase{font-size:var(--fs-sm);color:var(--tx2)}
+.jn-est-aqui{font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-2xs);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent-b);background:var(--accent-a);padding:2px 6px;border-radius:2px}
+.jn-est-resumo{margin-left:auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-xs);color:var(--tx3)}
+.jn-trechos{list-style:none;display:flex;flex-wrap:wrap;gap:14px 9px;margin:0;padding:12px 0 2px}
+.jn-t{position:relative;display:block;flex-shrink:0;width:14px;height:14px;box-sizing:border-box;border-radius:50%;border:1.5px solid var(--tx3)}
+.jn-t.aceso{background:var(--fc);border-color:var(--fc)}
+.jn-t.futuro{border-style:dashed;border-color:var(--tx3)}
+.jn-t.atual{outline:2px solid var(--tx);outline-offset:2px}
+.jn-t.rt{box-shadow:0 0 0 2px var(--s1),0 0 0 4px var(--es)}
+.jn-t.av::after{content:'';position:absolute;left:50%;top:-9px;width:5px;height:5px;background:var(--tx2);transform:translateX(-50%) rotate(45deg)}
+.jn-legenda{display:flex;flex-wrap:wrap;gap:12px 18px;margin-top:18px;padding-top:14px;border-top:1px solid var(--bd2);font-size:var(--fs-xs);color:var(--tx2);--fc:var(--tx2)}
+.jn-legenda span{display:inline-flex;align-items:center;gap:8px}
+.jn-pass{list-style:none;display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:14px 10px;margin:6px 0 0;padding:0}
+.jn-cb{width:100%;max-width:100px;aspect-ratio:1;justify-self:center;box-sizing:border-box;border-radius:50%;border:1.5px dashed var(--tx3);color:var(--tx2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;padding:8px;text-align:center;font-family:'JetBrains Mono',ui-monospace,monospace;line-height:1.2;transform:rotate(var(--rot,0deg))}
+.jn-cb svg{width:18px;height:18px;flex-shrink:0;margin-bottom:3px}
+.jn-cb-t{font-size:var(--fs-xs);font-weight:600}
+.jn-cb-d{font-size:var(--fs-2xs);color:var(--tx3)}
+.jn-cb-esp{border:3px double var(--es);color:var(--es)}
+.jn-cb-hoje{border-style:solid;border-color:var(--accent);color:var(--accent)}
+.jn-cb-novo{animation:jn-carimbo .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes jn-carimbo{from{opacity:0;transform:rotate(var(--rot,0deg)) scale(1.4)}to{opacity:1;transform:rotate(var(--rot,0deg)) scale(1)}}
+@media(prefers-reduced-motion:reduce){.jn-cb-novo{animation:none}}
+.jn-cnt{margin-left:auto;font-family:'JetBrains Mono',ui-monospace,monospace;font-size:var(--fs-xs);color:var(--tx3)}
+.jn-nota{margin:16px 0 0;font-size:var(--fs-sm);line-height:1.55;color:var(--tx2)}
+.jn-outra{margin-top:14px;padding-top:12px;border-top:1px solid var(--bd2)}
+.jn-outra summary{cursor:pointer;font-size:var(--fs-md);color:var(--tx2)}
+.jn-outra summary:hover{color:var(--tx)}
+.jn-outra[open] summary{margin-bottom:12px}
+.jn-rodape{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;font-size:var(--fs-sm);color:var(--tx3)}
+.jn-sep{height:1px;background:var(--bd);margin:28px 0 26px}
+.jn-off{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;background:var(--s2);border:1px dashed var(--bd);border-radius:var(--r);padding:12px 14px;margin-bottom:18px;font-size:var(--fs-md);color:var(--tx2)}
 </style>
 </head>
 <body>
@@ -1053,7 +1114,7 @@ html,body{max-width:100%;overflow-x:hidden}
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 5.5V8l1.5 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Visão Geral
   </button>
   <button class="s-item" data-page="fases" onclick="go('fases',this)">
-    <svg class="s-ico" fill="none" viewBox="0 0 16 16"><rect x="1.5" y="10" width="2.5" height="4" rx="1" fill="currentColor"/><rect x="5.5" y="7" width="2.5" height="7" rx="1" fill="currentColor"/><rect x="9.5" y="4" width="2.5" height="10" rx="1" fill="currentColor"/></svg>Fases
+    <svg class="s-ico" fill="none" viewBox="0 0 16 16"><rect x="1.5" y="10" width="2.5" height="4" rx="1" fill="currentColor"/><rect x="5.5" y="7" width="2.5" height="7" rx="1" fill="currentColor"/><rect x="9.5" y="4" width="2.5" height="10" rx="1" fill="currentColor"/></svg><span class="nav-fases-lbl">Fases</span>
   </button>
   <button class="s-item" data-page="rotinas" onclick="go('rotinas',this)">
     <svg class="s-ico" fill="none" viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M5 1v3M11 1v3M2 7h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Rotinas
@@ -1112,7 +1173,7 @@ html,body{max-width:100%;overflow-x:hidden}
   </button>
   <button class="bn-item" data-page="fases" onclick="go('fases',null)" aria-label="Fases">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
-    <span>Fases</span>
+    <span class="nav-fases-lbl">Fases</span>
   </button>
   <button class="bn-item" data-page="historico" onclick="go('historico',null)" aria-label="Histórico">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
@@ -1124,7 +1185,7 @@ html,body{max-width:100%;overflow-x:hidden}
   </button>
 </nav>
 <div id="backdrop" onclick="toggleSidebar()"></div>
-<div id="toast"></div>
+<div id="toast" role="status" aria-live="polite"></div>
 <script>
 'use strict';
 
@@ -1213,7 +1274,7 @@ const CONTENT = {
         <ul class="ilist">
           <li><span class="dot da"></span><div><strong>Fluency Academy</strong> — espinha dorsal. 30–60 min de estudo ativo guiado com protocolo de escuta fixo.</div></li>
           <li><span class="dot d1"></span><div><strong>Drops</strong> — vocabulário visual. 10–15 min diários, focado em temas cotidianos funcionais.</div></li>
-          <li><span class="dot d5"></span><div><strong>Escuta no Uber</strong> — input extensivo seguro. Podcasts, músicas, séries em áudio, shadowing em voz alta. Sem leitura ou celular.</div></li>
+          <li><span class="dot d5"></span><div><strong>Escuta em momentos ociosos</strong> — input extensivo seguro. Podcasts, músicas, séries em áudio, shadowing em voz alta. Sem leitura ou celular.</div></li>
           <li><span class="dot d3"></span><div><strong>Oral diário</strong> — fala desde o Dia 1. Shadowing, respostas, resumos, gravações de voz.</div></li>
           <li><span class="dot da"></span><div><strong>Desportuguesização</strong> — módulo permanente. Falsos cognatos, pronúncia, construções reais no lugar de portunhol.</div></li>
         </ul>
@@ -1242,7 +1303,7 @@ const CONTENT = {
         <ul class="ilist">
           <li><span class="dot d3"></span><div><strong>Folga recuperado:</strong> Sessão completa ou padrão. Aulas novas, escuta ativa, produção oral, gravações.</div></li>
           <li><span class="dot da"></span><div><strong>Pós-plantão (recuperação):</strong> Sessão mínima ou padrão leve. Drops, revisão, escuta extensiva. Nada de conteúdo novo.</div></li>
-          <li><span class="dot d4"></span><div><strong>Dia de plantão (24h):</strong> Sessão mínima. Tarefas curtas, conteúdo familiar, escuta passiva no Uber. Zero pressão cognitiva.</div></li>
+          <li><span class="dot d4"></span><div><strong>Dia de plantão (24h):</strong> Sessão mínima. Tarefas curtas, conteúdo familiar, escuta passiva em momentos ociosos. Zero pressão cognitiva.</div></li>
         </ul>
       </div>`,
 
@@ -1256,7 +1317,7 @@ const CONTENT = {
             <li><span class="dot d1"></span>Diagnóstico Dia 1: gravação oral + teste de compreensão de entrada</li>
             <li><span class="dot d1"></span>Fluency Academy: unidades básicas com foco em som e ritmo da língua</li>
             <li><span class="dot d1"></span>Drops: categorias — saudações, números, rotina, corpo, família, alimentos</li>
-            <li><span class="dot d1"></span>Uber: músicas lentas em espanhol (reggaeton lento, baladas), podcasts para iniciantes</li>
+            <li><span class="dot d1"></span>Momentos ociosos:músicas lentas em espanhol (reggaeton lento, baladas), podcasts para iniciantes</li>
             <li><span class="dot d1"></span>Oral: shadowing de frases da aula, descrição da rotina em 3–5 frases simples</li>
             <li><span class="dot d1"></span>Desportuguesização: RR vs R, LL/Y, vogais abertas, H mudo, J/G</li>
             <li><span class="dot d1"></span>Gramática: apenas presente e ser/estar quando necessário para produção</li>
@@ -1271,7 +1332,7 @@ const CONTENT = {
           <ul class="ilist">
             <li><span class="dot d2"></span>Fluency Academy: unidades intermediárias baixas com frases em contexto</li>
             <li><span class="dot d2"></span>Drops: trabalho, transporte, sentimentos, lazer, lugares, viagem</li>
-            <li><span class="dot d2"></span>Uber: Español con Juan, Dreaming Spanish nível iniciante/básico</li>
+            <li><span class="dot d2"></span>Momentos ociosos:Español con Juan, Dreaming Spanish nível iniciante/básico</li>
             <li><span class="dot d2"></span>Oral: substituição de elementos em frases, respostas pessoais, 2–3 min sem roteiro</li>
             <li><span class="dot d2"></span>Séries: La Casa de Papel ou Club de Cuervos com legenda em espanhol</li>
             <li><span class="dot d2"></span>Gramática: pretérito indefinido, verbos reflexivos, quando bloqueiam a compreensão</li>
@@ -1286,7 +1347,7 @@ const CONTENT = {
           <ul class="ilist">
             <li><span class="dot d3"></span>Fluency Academy: nível intermediário, conteúdos mais rápidos e naturais</li>
             <li><span class="dot d3"></span>Drops: música, cinema, jogos, negócios, tecnologia</li>
-            <li><span class="dot d3"></span>Uber: podcasts nativos (lento-médio), episódios de séries em áudio</li>
+            <li><span class="dot d3"></span>Momentos ociosos:podcasts nativos (lento-médio), episódios de séries em áudio</li>
             <li><span class="dot d3"></span>Oral: reconto de histórias, resumos de episódios, gravações de 3–5 min</li>
             <li><span class="dot d3"></span>Redução gradual de legendas: espanhol → sem legenda em trechos curtos</li>
             <li><span class="dot d3"></span>Introdução de leitura: artigos curtos, letras de músicas analisadas</li>
@@ -1300,7 +1361,7 @@ const CONTENT = {
           <p class="acc-desc">Expor-se a espanhol nativo sem suporte. Desenvolver estratégias para contornar vocabulário desconhecido. Consolidar fala espontânea.</p>
           <ul class="ilist">
             <li><span class="dot d4"></span>Fluency Academy: conteúdos nativos, variedades regionais</li>
-            <li><span class="dot d4"></span>Uber: podcasts nativos em velocidade normal, notícias em espanhol</li>
+            <li><span class="dot d4"></span>Momentos ociosos:podcasts nativos em velocidade normal, notícias em espanhol</li>
             <li><span class="dot d4"></span>Oral: improviso sobre temas novos, defesa de opiniões, narração de experiências</li>
             <li><span class="dot d4"></span>Interação: comentários em espanhol, encontrar parceiro de conversação</li>
             <li><span class="dot d4"></span>Jogos: jogar em espanhol, interagir em comunidades hispânicas</li>
@@ -1314,7 +1375,7 @@ const CONTENT = {
           <p class="acc-desc">Estabilizar o nível alcançado, aprofundar em temas de interesse e preparar-se para manutenção pós-programa.</p>
           <ul class="ilist">
             <li><span class="dot d5"></span>Conteúdo exclusivamente nativo e autêntico</li>
-            <li><span class="dot d5"></span>Uber: qualquer podcast ou conteúdo de interesse real</li>
+            <li><span class="dot d5"></span>Momentos ociosos:qualquer podcast ou conteúdo de interesse real</li>
             <li><span class="dot d5"></span>Oral: debates, explicações, monólogos de 10+ min, gravações completas</li>
             <li><span class="dot d5"></span>Fluency Academy: consolidação das lacunas identificadas ao longo do plano</li>
             <li><span class="dot d5"></span>Produção de conteúdo em espanhol (roteiro, texto ou diário) — para prática e portfólio</li>
@@ -1332,7 +1393,7 @@ const CONTENT = {
         <div class="rot-body">
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-at">ATIVO</span><div>Fluency Academy 45–60 min com protocolo completo: escuta global → transcrição → consulta pontual → repetição em voz alta → shadowing → frases pessoais</div></div>
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-dr">DROPS</span><div>10–15 min · Vocabulário novo + revisão de categorias ativas · Reutilize ao menos 3 palavras em frases orais após</div></div>
-          <div class="trow"><div class="tslot">Uber</div><span class="tpill tp-au">ÁUDIO</span><div>Escuta extensiva segura · Podcasts, músicas, episódios em áudio · Shadowing em voz alta quando sozinho · Sem leitura ou celular</div></div>
+          <div class="trow"><div class="tslot">Ocioso</div><span class="tpill tp-au">ÁUDIO</span><div>Escuta extensiva segura · Podcasts, músicas, episódios em áudio · Shadowing em voz alta quando sozinho · Sem leitura ou celular</div></div>
           <div class="trow"><div class="tslot">Tarde</div><span class="tpill tp-or">ORAL</span><div>15–20 min · Gravação de voz: resumo do que aprendeu, reconto de história, improviso sobre tema · Ouça e anote 1 correção prioritária</div></div>
           <div class="trow"><div class="tslot">Banho</div><span class="tpill tp-au">ÁUDIO</span><div>Shadowing ou revisão oral de expressões da aula · 5–10 min</div></div>
           <div class="trow"><div class="tslot">Noite</div><span class="tpill tp-lv">LEVE</span><div>5–10 min · Série ou vídeo em espanhol · Exposição leve, sem pressão · Pode ser com legenda em espanhol</div></div>
@@ -1343,7 +1404,7 @@ const CONTENT = {
         <div class="rot-body">
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-at">ATIVO</span><div>Fluency Academy 30–40 min · Protocolo completo mas reduzido: foco nas etapas de escuta, repetição e shadowing</div></div>
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-dr">DROPS</span><div>10 min · Vocabulário prioritário do dia · Ao menos 2 frases orais com as palavras novas</div></div>
-          <div class="trow"><div class="tslot">Uber</div><span class="tpill tp-au">ÁUDIO</span><div>Escuta extensiva · Conteúdo familiar ou conteúdo novo com dificuldade moderada</div></div>
+          <div class="trow"><div class="tslot">Ocioso</div><span class="tpill tp-au">ÁUDIO</span><div>Escuta extensiva · Conteúdo familiar ou conteúdo novo com dificuldade moderada</div></div>
           <div class="trow"><div class="tslot">Noite</div><span class="tpill tp-or">ORAL</span><div>10 min · Descrição da rotina do dia em espanhol · Shadowing de trecho da aula</div></div>
         </div>
       </div>
@@ -1351,7 +1412,7 @@ const CONTENT = {
         <div class="rot-head rm" onclick="toggleRot(this.parentElement)"><span class="rot-label">· SESSÃO MÍNIMA</span><div class="rot-meta"><span>~25–35 min total</span><span class="rot-chev">▶</span></div></div>
         <div class="rot-body">
           <div class="trow"><div class="tslot">Qualquer</div><span class="tpill tp-dr">DROPS</span><div>10 min Drops · Apenas revisão de palavras já estudadas · Sem vocabulário novo</div></div>
-          <div class="trow"><div class="tslot">Uber</div><span class="tpill tp-au">ÁUDIO</span><div>Conteúdo familiar e fácil · Músicas, podcast já ouvido, episódio revisitado · Sem exigência de compreensão total</div></div>
+          <div class="trow"><div class="tslot">Ocioso</div><span class="tpill tp-au">ÁUDIO</span><div>Conteúdo familiar e fácil · Músicas, podcast já ouvido, episódio revisitado · Sem exigência de compreensão total</div></div>
           <div class="trow"><div class="tslot">Banho</div><span class="tpill tp-rv">REVISÃO</span><div>5 min · Revisitar expressões e frases já aprendidas · Repetição oral simples</div></div>
         </div>
       </div>
@@ -1414,7 +1475,7 @@ const CONTENT = {
           <div class="card-title" style="margin-bottom:10px">Tipos de exposição</div>
           <ul class="ilist">
             <li><span class="dot d1"></span><div><strong>Estudo ativo:</strong> Fluency Academy (atenção concentrada, protocolo fixo)</div></li>
-            <li><span class="dot d2"></span><div><strong>Escuta extensiva:</strong> Uber/banho — Dreaming Spanish, Easy Spanish, El Español y yo, podcasts leves</div></li>
+            <li><span class="dot d2"></span><div><strong>Escuta extensiva:</strong> momentos ociosos e banho — Dreaming Spanish, Easy Spanish, El Español y yo, podcasts leves</div></li>
             <li><span class="dot d3"></span><div><strong>Revisão:</strong> Episódios já vistos, músicas já ouvidas, aulas revisitadas</div></li>
             <li><span class="dot d4"></span><div><strong>Prática oral:</strong> Shadowing, gravações, improviso, descrição de rotina</div></li>
             <li><span class="dot d5"></span><div><strong>Exposição leve:</strong> Séries antes de dormir, vídeos no feed, reacts em espanhol</div></li>
@@ -1597,7 +1658,7 @@ const CONTENT = {
         <div class="rot-body">
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-at">ATIVO</span><div>Fluency Academy 45–60 min: escuta global → transcrição em francês → consulta pontual → repetição em voz alta → shadowing → fonética ativa (identificar e corrigir 1 som-problema) → frases pessoais</div></div>
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-dr">VOCAB</span><div>Drops (T1) ou Memrise (T2) · 10–15 min · Vocabulário novo + reutilizar 3 palavras em frases orais</div></div>
-          <div class="trow"><div class="tslot">Uber</div><span class="tpill tp-au">ÁUDIO</span><div>InnerFrench / Coffee Break French / podcast de interesse · Shadowing suave ou apenas escuta · Sem celular</div></div>
+          <div class="trow"><div class="tslot">Ocioso</div><span class="tpill tp-au">ÁUDIO</span><div>InnerFrench / Coffee Break French / podcast de interesse · Shadowing suave ou apenas escuta · Sem celular</div></div>
           <div class="trow"><div class="tslot">Tarde</div><span class="tpill tp-or">ORAL</span><div>15–20 min · Gravação: reconto, improviso ou descrição do dia · Escutar e anotar 1 ponto de pronúncia para corrigir</div></div>
           <div class="trow"><div class="tslot">Banho</div><span class="tpill tp-au">ÁUDIO</span><div>Repetição oral de expressões e shadowing de trechos da aula · 5–10 min</div></div>
           <div class="trow"><div class="tslot">Noite</div><span class="tpill tp-lv">LEVE</span><div>Série ou filme em francês com legenda FR · Exposição leve · 10–20 min</div></div>
@@ -1608,7 +1669,7 @@ const CONTENT = {
         <div class="rot-body">
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-at">ATIVO</span><div>Fluency Academy 30–40 min · Protocolo reduzido: escuta, repetição, shadowing e 1 exercício de fonética</div></div>
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-dr">VOCAB</span><div>Drops / Memrise 10 min · Revisão e 2 frases orais com palavras novas</div></div>
-          <div class="trow"><div class="tslot">Uber</div><span class="tpill tp-au">ÁUDIO</span><div>Escuta extensiva · Conteúdo familiar ou novo em dificuldade moderada</div></div>
+          <div class="trow"><div class="tslot">Ocioso</div><span class="tpill tp-au">ÁUDIO</span><div>Escuta extensiva · Conteúdo familiar ou novo em dificuldade moderada</div></div>
           <div class="trow"><div class="tslot">Noite</div><span class="tpill tp-or">ORAL</span><div>10 min · Descrição da rotina do dia em francês · Atenção à pronúncia</div></div>
         </div>
       </div>
@@ -1616,7 +1677,7 @@ const CONTENT = {
         <div class="rot-head rm" onclick="toggleRot(this.parentElement)"><span class="rot-label">· SESSÃO MÍNIMA</span><div class="rot-meta"><span>~20–30 min</span><span class="rot-chev">▶</span></div></div>
         <div class="rot-body">
           <div class="trow"><div class="tslot">Qualquer</div><span class="tpill tp-dr">VOCAB</span><div>Drops / Memrise 10 min · Apenas revisão · Sem conteúdo novo</div></div>
-          <div class="trow"><div class="tslot">Uber</div><span class="tpill tp-au">ÁUDIO</span><div>Conteúdo familiar e fácil · Sem exigência de compreensão total</div></div>
+          <div class="trow"><div class="tslot">Ocioso</div><span class="tpill tp-au">ÁUDIO</span><div>Conteúdo familiar e fácil · Sem exigência de compreensão total</div></div>
           <div class="trow"><div class="tslot">Banho</div><span class="tpill tp-rv">REVISÃO</span><div>5 min · Repetir expressões já conhecidas em voz alta · Foco em pronúncia</div></div>
         </div>
       </div>
@@ -1834,7 +1895,7 @@ const CONTENT = {
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-at">ATIVO</span><div>Fluency Academy 45–60 min: escuta global → transcrição com pinyin → consulta Pleco pontual → repetição com atenção aos tons → shadowing (tom antes de velocidade) → frases pessoais com pinyin depois sem</div></div>
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-dr">VOCAB</span><div>Drops / Chineasy 10–15 min · Vocabulário com caracteres · Associar som + tom + caractere + significado</div></div>
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-sk">SKRITTER</span><div>Dia 91+: 5–10 min · Apenas caracteres de alta frequência · 2–3×/semana · Nunca no lugar da fala ou escuta</div></div>
-          <div class="trow"><div class="tslot">Uber</div><span class="tpill tp-au">ÁUDIO</span><div>Mandarin Corner / Du Chinese audio / podcast de nível adequado · Shadowing suave com atenção aos tons · Sem celular</div></div>
+          <div class="trow"><div class="tslot">Ocioso</div><span class="tpill tp-au">ÁUDIO</span><div>Mandarin Corner / Du Chinese audio / podcast de nível adequado · Shadowing suave com atenção aos tons · Sem celular</div></div>
           <div class="trow"><div class="tslot">Tarde</div><span class="tpill tp-or">ORAL</span><div>15–20 min · Gravação: frases pessoais, reconto, improviso · Gravar e ouvir · Anotar 1 tom errado para corrigir</div></div>
           <div class="trow"><div class="tslot">Banho</div><span class="tpill tp-au">ÁUDIO</span><div>Shadowing ou repetição de expressões da aula · Foco nos tons difíceis · 5–10 min</div></div>
           <div class="trow"><div class="tslot">Noite</div><span class="tpill tp-lv">LEVE</span><div>Série ou vídeo em mandarim (com legendas em chinês a partir da F2) · Exposição leve · 10–20 min</div></div>
@@ -1845,7 +1906,7 @@ const CONTENT = {
         <div class="rot-body">
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-at">ATIVO</span><div>Fluency Academy 30–40 min · Escuta, repetição com tons e shadowing · HelloChinese se necessário para reforço de pinyin</div></div>
           <div class="trow"><div class="tslot">Manhã</div><span class="tpill tp-dr">VOCAB</span><div>Drops / Chineasy 10 min · Revisão + 2 frases orais com os caracteres novos</div></div>
-          <div class="trow"><div class="tslot">Uber</div><span class="tpill tp-au">ÁUDIO</span><div>Escuta extensiva em nível adequado · Conteúdo familiar ou novo com dificuldade moderada</div></div>
+          <div class="trow"><div class="tslot">Ocioso</div><span class="tpill tp-au">ÁUDIO</span><div>Escuta extensiva em nível adequado · Conteúdo familiar ou novo com dificuldade moderada</div></div>
           <div class="trow"><div class="tslot">Noite</div><span class="tpill tp-or">ORAL</span><div>10 min · 3–5 frases sobre o dia em mandarim · Atenção aos tons</div></div>
         </div>
       </div>
@@ -1853,7 +1914,7 @@ const CONTENT = {
         <div class="rot-head rm" onclick="toggleRot(this.parentElement)"><span class="rot-label">· SESSÃO MÍNIMA</span><div class="rot-meta"><span>~20–30 min</span><span class="rot-chev">▶</span></div></div>
         <div class="rot-body">
           <div class="trow"><div class="tslot">Qualquer</div><span class="tpill tp-dr">VOCAB</span><div>Drops / Chineasy 10 min · Apenas revisão de caracteres conhecidos · Sem conteúdo novo</div></div>
-          <div class="trow"><div class="tslot">Uber</div><span class="tpill tp-au">ÁUDIO</span><div>Conteúdo familiar e fácil · Sem exigência de compreensão total · Apenas exposição aos tons</div></div>
+          <div class="trow"><div class="tslot">Ocioso</div><span class="tpill tp-au">ÁUDIO</span><div>Conteúdo familiar e fácil · Sem exigência de compreensão total · Apenas exposição aos tons</div></div>
           <div class="trow"><div class="tslot">Banho</div><span class="tpill tp-rv">REVISÃO</span><div>5 min · Repetir 5–10 palavras com tons corretos · Falar em voz alta</div></div>
         </div>
       </div>`,
@@ -1980,7 +2041,7 @@ function buildCheckinForm(lang) {
         <input type="text" id="ci-drops" placeholder="Ex: 12 min, transporte e sentimentos"></div>
       <div class="fg"><label>Escuta ativa — conteúdo e tempo</label>
         <input type="text" id="ci-escuta-ativa" placeholder="Ex: Dreaming Spanish 20 min, ~50% compreensão"></div>
-      <div class="fg"><label>Escuta no Uber — somente áudio (sem mexer no celular)</label>
+      <div class="fg"><label>Escuta em momentos ociosos — somente áudio (sem mexer no celular)</label>
         <input type="text" id="ci-escuta-morto" placeholder="Ex: 45 min de música em espanhol, shadowing"></div>
       <div class="fg"><label>Criação de conteúdo (opcional)</label>
         <input type="text" id="ci-criacao" placeholder="Ex: Roteiro de 5 min escrito em espanhol"></div>`,
@@ -1991,7 +2052,7 @@ function buildCheckinForm(lang) {
         <input type="text" id="ci-drops" placeholder="Ex: Memrise 15 min, vocabulário de viagem e emoções"></div>
       <div class="fg"><label>Escuta ativa — conteúdo e tempo</label>
         <input type="text" id="ci-escuta-ativa" placeholder="Ex: InnerFrench ep. 12, 25 min, ~55% compreensão"></div>
-      <div class="fg"><label>Escuta no Uber — somente áudio</label>
+      <div class="fg"><label>Escuta em momentos ociosos — somente áudio</label>
         <input type="text" id="ci-escuta-morto" placeholder="Ex: Coffee Break French, 30 min"></div>
       <div class="fg"><label>Exercício de fonética ativa</label>
         <input type="text" id="ci-fonetica" placeholder="Ex: Pratiquei /y/ em 10 pares mínimos tu/tou"></div>`,
@@ -2002,7 +2063,7 @@ function buildCheckinForm(lang) {
         <input type="text" id="ci-drops" placeholder="Ex: Du Chinese HSK2, 2 textos, sem pinyin"></div>
       <div class="fg"><label>Drops / Chineasy — caracteres estudados</label>
         <input type="text" id="ci-vocab" placeholder="Ex: 8 caracteres novos, categorias: alimentação"></div>
-      <div class="fg"><label>Escuta no Uber / Mandarin Corner</label>
+      <div class="fg"><label>Escuta em momentos ociosos / Mandarin Corner</label>
         <input type="text" id="ci-escuta-morto" placeholder="Ex: Mandarin Corner 30 min, histórias lentas"></div>
       <div class="fg"><label>Skritter — caracteres praticados (Dia 91+)</label>
         <input type="text" id="ci-skritter" placeholder="Ex: 8 min, 6 caracteres HSK1 revisados"></div>`
@@ -2016,7 +2077,7 @@ function buildCheckinForm(lang) {
       </div>
       <span id="draft-indicator">rascunho salvo</span>
     </div>
-    <div class="ci-rapido-toggle" onclick="toggleModoRapido()" role="switch" aria-checked="false" tabindex="0" id="ci-rapido-sw">
+    <div class="ci-rapido-toggle" onclick="toggleModoRapido()" onkeydown="if(event.key===' '||event.key==='Enter'){event.preventDefault();toggleModoRapido();}" role="switch" aria-checked="false" tabindex="0" id="ci-rapido-sw">
       <span><strong>Modo rápido</strong> · só o essencial, para dias de plantão ou cansaço</span>
       <span class="sw"></span>
     </div>
@@ -2171,12 +2232,16 @@ function buildAvaliacoes(lang) {
 }
 
 function buildMetricas(lang) {
+  /* Regularidade pela regra de trechos (ver MODO VIAGEM), não pela semana de 7 dias */
+  const r = ritmoAtual();
+  const trechos2sem = Math.max(1, Math.round(14 / r.ciclo));
+  const ritmoMeta = { label:'Ritmo por trechos', sub:'Meta: ' + r.minimo + '+ dias de estudo a cada ' + r.ciclo + ' (trecho aceso) · sessão mínima conta', pct:Math.round(r.minimo / r.ciclo * 100), color:'var(--p3)', target:r.minimo + '/' + r.ciclo + ' dias' };
   const metricDefs = {
     es: {
       main: [
         { label:'Tempo de exposição', sub:'Acumulado semanal + diário · Meta: 6–10h / semana', pct:70, color:'var(--accent)', target:'6–10h/sem' },
         { label:'Compreensão estimada', sub:'Crescimento 30% → 80%', pct:40, color:'var(--p1)', target:'30→80%' },
-        { label:'Consistência semanal', sub:'Meta: mínimo 5/7 dias', pct:71, color:'var(--p3)', target:'5/7 dias' },
+        ritmoMeta,
       ],
       secondary: [
         { label:'Minutos de fala sem roteiro', sub:'F1: 2 min → F5: 10+ min' },
@@ -2191,7 +2256,7 @@ function buildMetricas(lang) {
       main: [
         { label:'Tempo de exposição', sub:'Acumulado semanal + diário · Meta: 6–10h / semana', pct:70, color:'var(--accent)', target:'6–10h/sem' },
         { label:'Compreensão estimada', sub:'Crescimento 30% → 75%', pct:35, color:'var(--p1)', target:'30→75%' },
-        { label:'Consistência semanal', sub:'Meta: mínimo 5/7 dias', pct:71, color:'var(--p3)', target:'5/7 dias' },
+        ritmoMeta,
       ],
       secondary: [
         { label:'Minutos de fala sem roteiro', sub:'T1: 2 min → T2: 10+ min' },
@@ -2206,7 +2271,7 @@ function buildMetricas(lang) {
       main: [
         { label:'Tempo de exposição', sub:'Acumulado semanal + diário · Meta: 6–10h / semana', pct:70, color:'var(--accent)', target:'6–10h/sem' },
         { label:'Compreensão estimada', sub:'Crescimento 20% → 72–80%', pct:25, color:'var(--p1)', target:'20→80%' },
-        { label:'Consistência semanal', sub:'Meta: mínimo 5/7 dias', pct:71, color:'var(--p3)', target:'5/7 dias' },
+        ritmoMeta,
       ],
       secondary: [
         { label:'Precisão dos tons', sub:'Autoavaliação 0–10 · Meta: acima de 7 a partir da F2' },
@@ -2263,9 +2328,9 @@ function buildMetricas(lang) {
     <div class="card">
       <div class="card-title" style="margin-bottom:12px">Critérios de avanço, revisão e ajuste</div>
       <ul class="ilist">
-        <li><span class="dot d3"></span><div><strong>Avançar:</strong> Meta de compreensão atingida + consistência ≥5/7 por 2 semanas + marco de fala atingido</div></li>
+        <li><span class="dot d3"></span><div><strong>Avançar:</strong> Meta de compreensão atingida + os últimos ${trechos2sem} trechos acesos (~2 semanas) + marco de fala atingido</div></li>
         <li><span class="dot da"></span><div><strong>Revisar:</strong> Compreensão estagnada por 2+ semanas → reduzir dificuldade, revisar protocolo, adicionar conteúdo familiar</div></li>
-        <li><span class="dot d4"></span><div><strong>Simplificar:</strong> Consistência &lt;4/7 por semana → reduzir exigência, focar em sessão mínima até retomar ritmo</div></li>
+        <li><span class="dot d4"></span><div><strong>Simplificar:</strong> 2 trechos seguidos em pausa → reduzir exigência, focar em sessão mínima até retomar ritmo</div></li>
         <li><span class="dot d1"></span><div><strong>Aumentar dificuldade:</strong> Compreensão consistentemente acima do teto por 10+ dias → retirar apoios, introduzir conteúdo mais desafiador</div></li>
       </ul>
     </div>`;
@@ -2273,43 +2338,52 @@ function buildMetricas(lang) {
 
 function buildHistorico(lang) {
   const p = PROGRAMS[lang];
-  const checkins = getStore(lang, 'checkins') || [];
+  const checkins = lerCheckins(lang);
+  /* Importar fica visível mesmo sem dados: é assim que se traz o backup para um aparelho novo */
+  const botoes = `
+    <div class="btns" style="margin-bottom:14px">
+      ${checkins.length ? '<button class="btn btn-g" onclick="exportarCheckins()">Exportar JSON</button>' : ''}
+      <button class="btn btn-g" onclick="importarCheckins()">Importar JSON</button>
+    </div>`;
 
   if (!checkins.length) {
     return `
       <div class="pg-h"><div class="pg-title">Histórico</div>
         <div class="pg-sub">Registros salvos de check-in para ${p.name}.</div></div>
+      ${botoes}
       <div class="planned-banner">
         <div class="planned-icon">📋</div>
         <h2>Nenhum check-in registrado ainda</h2>
-        <p>Seus check-ins salvos aparecerão aqui.<br>Acesse a aba Check-in e clique em Salvar após preencher.</p>
+        <p>Seus check-ins salvos aparecerão aqui.<br>Acesse a aba Check-in e clique em Salvar após preencher.<br>Tem um backup de outro aparelho? Use Importar JSON.</p>
       </div>`;
   }
 
-  const rows = [...checkins].reverse().slice(0, 50).map(c => {
+  const nomeSessao = { completa:'completa', padrao:'padrão', minima:'mínima', zero:'sem estudo' };
+  const valor = (v, suf) => (v === undefined || v === null || v === '' ? '—' : esc(v) + suf);
+  const rows = [...checkins].reverse().map(c => {
     const date = c.timestamp ? new Date(c.timestamp).toLocaleDateString('pt-BR') : '—';
-    const compr = c.compreensao !== undefined ? c.compreensao + '%' : '—';
-    const fala  = c.fala !== undefined ? c.fala + ' min' : '—';
+    /* Ações logo depois do dia: no celular a tabela rola de lado e o fim fica fora da tela */
     return `<tr>
-      <td>${c.dia || '—'}</td>
-      <td>${date}</td>
-      <td>${c.sessao || '—'}</td>
-      <td>${compr}</td>
-      <td>${fala}</td>
-      <td style="color:var(--tx2);font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${c.avanco || '—'}</td>
+      <td>${c.dia}</td>
+      <td class="hist-acoes">
+        <button class="btn btn-g btn-xs" onclick="editarCheckin(${c.dia})" aria-label="Editar o dia ${c.dia}">Editar</button>
+        <button class="btn btn-g btn-xs" onclick="apagarCheckin(${c.dia}, this)" aria-label="Apagar o dia ${c.dia}">Apagar</button>
+      </td>
+      <td>${date}${c.editadoEm ? ' <small style="color:var(--tx3)">· editado</small>' : ''}</td>
+      <td>${esc(nomeSessao[c.sessao] || c.sessao || '—')}</td>
+      <td>${valor(c.compreensao, '%')}</td>
+      <td>${valor(c.fala, ' min')}</td>
+      <td style="color:var(--tx2);font-size:12px;max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.avanco || '—')}</td>
     </tr>`;
   }).join('');
 
   return `
     <div class="pg-h"><div class="pg-title">Histórico</div>
-      <div class="pg-sub">${checkins.length} check-in(s) registrados para ${p.name}. Exibindo os últimos 50.</div></div>
-    <div class="btns" style="margin-bottom:14px">
-      <button class="btn btn-g" onclick="exportarCheckins()">Exportar JSON</button>
-      <button class="btn btn-g" onclick="importarCheckins()">Importar JSON</button>
-    </div>
+      <div class="pg-sub">${checkins.length} ${checkins.length === 1 ? 'dia registrado' : 'dias registrados'} em ${p.name}. Para corrigir um dia, use Editar: o registro é substituído, sem duplicar.</div></div>
+    ${botoes}
     <div class="card" style="padding:0;overflow:hidden">
       <table class="ev-table">
-        <thead><tr><th>Dia</th><th>Data</th><th>Sessão</th><th>Compreensão</th><th>Fala</th><th>Avanço</th></tr></thead>
+        <thead><tr><th>Dia</th><th><span class="jn-vh">Ações</span></th><th>Data</th><th>Sessão</th><th>Compreensão</th><th>Fala</th><th>Avanço</th></tr></thead>
         <tbody>${rows}</tbody>
       </table>
     </div>`;
@@ -2318,7 +2392,7 @@ function buildHistorico(lang) {
 /* ═══════════════════════════════════════════════════════
    VERSÃO E STORAGE — polyglot.{lang}.{key}
 ═══════════════════════════════════════════════════════ */
-const APP_VERSION = '2.1.0';
+const APP_VERSION = '2.3.0';
 
 /* Chave com prefixo polyglot + lang + key
    Exemplo: polyglot.es.checkins */
@@ -2338,6 +2412,80 @@ function setStore(lang, key, value) {
     localStorage.setItem(storageKey(lang, key), JSON.stringify(value));
     return true;
   } catch(e) { return false; }
+}
+
+/* O navegador guarda dados? (modo privado ou bloqueio de cookies podem impedir) */
+function armazenamentoOk() {
+  try {
+    localStorage.setItem('polyglot.meta.teste', '1');
+    localStorage.removeItem('polyglot.meta.teste');
+    return true;
+  } catch(e) { return false; }
+}
+
+/* Data local AAAA-MM-DD. A data em UTC "vira" às 20h ou 21h no Brasil. */
+function dataLocal(ts) {
+  if (ts == null || ts === '') return '';
+  const d = new Date(ts);
+  if (isNaN(d.getTime())) return '';
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
+
+/* Texto do usuário, de arquivo importado ou da IA antes de ir para innerHTML */
+function esc(v) {
+  return immersionEscape(v);
+}
+
+/* Dia do programa válido (inteiro de 1 ao total) ou 0 */
+function diaValido(lang, v) {
+  const n = typeof v === 'string' && v.trim() === '' ? NaN : Number(v);
+  return Number.isInteger(n) && n >= 1 && n <= PROGRAMS[lang].totalDays ? n : 0;
+}
+
+/* Check-ins legíveis: só objetos com dia válido, em ordem de dia */
+function lerCheckins(lang) {
+  const lista = getStore(lang, 'checkins');
+  if (!Array.isArray(lista)) return [];
+  return lista
+    .filter(c => c && typeof c === 'object' && diaValido(lang, c.dia))
+    .map(c => (typeof c.dia === 'number' ? c : { ...c, dia: Number(c.dia) }))
+    .sort((a, b) => a.dia - b.dia);
+}
+
+/* Um registro por dia. Vence a versão editada por último; a data do
+   primeiro registro do dia continua como âncora do dia sugerido.
+   Versões antigas e registros inválidos voltam em `sobras`. */
+function normalizarCheckins(lang, lista) {
+  const criado = c => Date.parse(c.timestamp) || 0;
+  const editado = c => Date.parse(c.editadoEm) || criado(c);
+  const porDia = new Map(), sobras = [];
+  (Array.isArray(lista) ? lista : []).forEach(c => {
+    const dia = c && typeof c === 'object' ? diaValido(lang, c.dia) : 0;
+    if (!dia) { if (c != null) sobras.push(c); return; }
+    const novo = { ...c, dia };
+    const atual = porDia.get(dia);
+    if (!atual) { porDia.set(dia, novo); return; }
+    const vence = editado(novo) >= editado(atual) ? novo : atual;
+    const perde = vence === novo ? atual : novo;
+    const final = { ...vence };
+    const inicio = Math.min(...[criado(atual), criado(novo)].filter(Boolean));
+    if (isFinite(inicio) && inicio !== criado(vence)) {
+      final.timestamp = new Date(inicio).toISOString();
+      final.editadoEm = new Date(editado(vence)).toISOString();
+    }
+    porDia.set(dia, final);
+    if (JSON.stringify(perde) !== JSON.stringify(vence)) sobras.push(perde);
+  });
+  return { lista: [...porDia.values()].sort((a, b) => a.dia - b.dia), sobras };
+}
+
+/* Guarda versões substituídas ou apagadas (as 500 mais recentes), para nada se perder */
+function arquivarCheckins(lang, itens) {
+  if (!itens || !itens.length) return true;
+  const atual = getStore(lang, 'checkinsArquivados');
+  const quando = new Date().toISOString();
+  const novos = itens.map(c => ({ ...(c && typeof c === 'object' ? c : { valor: c }), arquivadoEm: quando }));
+  return setStore(lang, 'checkinsArquivados', (Array.isArray(atual) ? atual : []).concat(novos).slice(-500));
 }
 
 /* ── Migração completa e silenciosa ─────────────────────
@@ -2380,8 +2528,23 @@ function runMigrations() {
     });
   });
 
+  /* v2.3: um check-in por dia. Correções e cliques duplos tinham virado
+     registros repetidos; as versões antigas vão para checkinsArquivados. */
+  ['es', 'fr', 'zh'].forEach(lang => {
+    try {
+      const bruto = getStore(lang, 'checkins');
+      if (!Array.isArray(bruto) || !bruto.length) return;
+      const { lista, sobras } = normalizarCheckins(lang, bruto);
+      const igual = !sobras.length && JSON.stringify(lista) === JSON.stringify(bruto);
+      if (igual) return;
+      if (arquivarCheckins(lang, sobras)) setStore(lang, 'checkins', lista);
+    } catch(e) {}
+  });
+
   localStorage.setItem(migratedKey, APP_VERSION);
-  localStorage.setItem('polyglot.meta.firstSeen', new Date().toISOString());
+  if (!localStorage.getItem('polyglot.meta.firstSeen')) {
+    localStorage.setItem('polyglot.meta.firstSeen', new Date().toISOString());
+  }
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -2430,7 +2593,8 @@ function buildPainel(lang) {
   }
 
   /* ── Barra de progresso inline ─────────────────── */
-  const pct = d.diasEstudados > 0 ? Math.min(100, Math.round((Math.max(...(getStore(lang,'checkins')||[]).map(c=>c.dia||0)) / p.totalDays)*100)) : 0;
+  const maiorDia = Math.max(0, ...lerCheckins(lang).map(c => c.dia));
+  const pct = Math.min(100, Math.round(maiorDia / p.totalDays * 100));
 
   /* ── Pontos fortes / fracos como tags ────────────── */
   const tagStrong = d.pontosFortres.map(t =>
@@ -2444,7 +2608,7 @@ function buildPainel(lang) {
   return `
     <div class="pg-h">
       <div class="pg-title">Painel de Inteligência</div>
-      <div class="pg-sub">Coach automático — ${p.name} · ${d.totalCheckins} check-in(s) analisados · v${APP_VERSION}</div>
+      <div class="pg-sub">Coach automático — ${p.name} · ${d.totalCheckins} ${d.totalCheckins === 1 ? 'dia registrado' : 'dias registrados'} · v${APP_VERSION}</div>
     </div>
 
     <!-- Recomendação principal -->
@@ -2459,8 +2623,8 @@ function buildPainel(lang) {
         <div class="stat-l">dias estudados</div>
       </div>
       <div class="stat">
-        <div class="stat-v">${d.streak}</div>
-        <div class="stat-l">sequência atual (dias)</div>
+        <div class="stat-v">${d.ritmoTotal ? d.ritmoAcesos + '/' + d.ritmoTotal : '—'}</div>
+        <div class="stat-l">ritmo · trechos acesos</div>
       </div>
       <div class="stat">
         <div class="stat-v" style="font-size:18px">${d.projecaoCEFR}</div>
@@ -2480,8 +2644,9 @@ function buildPainel(lang) {
       <div style="display:flex;gap:24px;font-size:13px;flex-wrap:wrap">
         <span><strong style="color:var(--tx)">${d.hrsAcumuladas}h</strong> <span style="color:var(--tx2)">estimadas de estudo</span></span>
         <span><strong style="color:var(--tx)">${Math.round(d.totalMinFala / 60 * 10)/10}h</strong> <span style="color:var(--tx2)">de fala registrada</span></span>
-        <span><strong style="color:var(--tx)">${d.hrsEscutaUber}h</strong> <span style="color:var(--tx2)">escuta Uber estimada</span></span>
-        <span><strong style="color:var(--tx)">${d.maiorStreak}</strong> <span style="color:var(--tx2)">maior sequência</span></span>
+        <span><strong style="color:var(--tx)">${d.hrsEscutaUber}h</strong> <span style="color:var(--tx2)">de escuta em momentos ociosos (estimada)</span></span>
+        <span><strong style="color:var(--tx)">${d.serieTrechos}</strong> <span style="color:var(--tx2)">${d.serieTrechos === 1 ? 'trecho aceso seguido' : 'trechos acesos seguidos'}</span></span>
+        <span><strong style="color:var(--tx)">${d.maiorSerieTrechos}</strong> <span style="color:var(--tx2)">maior série de trechos</span></span>
       </div>
     </div>
 
@@ -2511,25 +2676,31 @@ function buildPainel(lang) {
       </div>`;
     })()}
 
-    <!-- Consistência -->
-    <div class="card">
-      <div class="card-row"><span class="tag t3">Consistência</span><div class="card-title">Regularidade de estudo</div></div>
+    <!-- Ritmo por trechos -->
+    ${(() => {
+      const r = ritmoAtual();
+      const cor = pct => pct >= 85 ? 'var(--p3)' : pct >= 57 ? 'var(--p2)' : 'var(--p4)';
+      const pctPrograma = d.encerradosTotal ? Math.round(d.encerradosAcesos / d.encerradosTotal * 100) : 0;
+      return `<div class="card">
+      <div class="card-row"><span class="tag t3">Ritmo</span><div class="card-title">Regularidade de estudo</div></div>
+      <p class="card-sub">Trecho = ${r.ciclo} dias do programa. Ele acende com ${r.minimo} dias de estudo, e a sessão mínima conta.</p>
       <div class="mrow">
-        <div class="mrow-lbl"><strong>Últimos 7 dias</strong><small>Meta: ≥ 71% (5/7)</small></div>
-        <div class="mrow-track"><div class="mrow-fill" style="width:${d.consistencia7d}%;background:${d.consistencia7d>=71?'var(--p3)':d.consistencia7d>=43?'var(--p2)':'var(--p4)'}"></div></div>
-        <div class="mrow-target">${d.consistencia7d}%</div>
+        <div class="mrow-lbl"><strong>Últimos trechos</strong><small>Até 7 trechos encerrados · Meta: todos acesos</small></div>
+        <div class="mrow-track"><div class="mrow-fill" style="width:${d.ritmoPct}%;background:${cor(d.ritmoPct)}"></div></div>
+        <div class="mrow-target">${d.ritmoTotal ? d.ritmoAcesos + '/' + d.ritmoTotal : '—'}</div>
       </div>
       <div class="mrow">
-        <div class="mrow-lbl"><strong>Últimos 30 dias</strong><small>Meta: ≥ 57% (17/30)</small></div>
-        <div class="mrow-track"><div class="mrow-fill" style="width:${d.consistencia30d}%;background:${d.consistencia30d>=57?'var(--p3)':d.consistencia30d>=33?'var(--p2)':'var(--p4)'}"></div></div>
-        <div class="mrow-target">${d.consistencia30d}%</div>
+        <div class="mrow-lbl"><strong>Programa inteiro</strong><small>Trechos acesos desde o primeiro check-in</small></div>
+        <div class="mrow-track"><div class="mrow-fill" style="width:${pctPrograma}%;background:${cor(pctPrograma)}"></div></div>
+        <div class="mrow-target">${d.encerradosTotal ? d.encerradosAcesos + '/' + d.encerradosTotal : '—'}</div>
       </div>
       <div class="mrow">
-        <div class="mrow-lbl"><strong>Dias perdidos</strong><small>Desde o primeiro check-in</small></div>
-        <div class="mrow-track"><div class="mrow-fill" style="width:${Math.min(100,Math.round(d.diasPerdidos/(d.diasEstudados+d.diasPerdidos||1)*100))}%;background:var(--p4)"></div></div>
-        <div class="mrow-target">${d.diasPerdidos} dias</div>
+        <div class="mrow-lbl"><strong>Pausas seguidas</strong><small>Trechos recentes sem o mínimo · 2 ou mais pedem sessão mínima</small></div>
+        <div class="mrow-track"><div class="mrow-fill" style="width:${Math.min(100, d.pausasSeguidas * 50)}%;background:${d.pausasSeguidas >= 2 ? 'var(--p2)' : 'var(--tx3)'}"></div></div>
+        <div class="mrow-target">${d.pausasSeguidas}</div>
       </div>
-    </div>
+    </div>`;
+    })()}
 
     <!-- Compreensão -->
     <div class="card">
@@ -2558,7 +2729,7 @@ function buildPainel(lang) {
       <div class="card">
         <div class="card-title" style="margin-bottom:10px">⚠ Risco de abandono</div>
         <div style="font-family:'JetBrains Mono',ui-monospace,monospace;font-size:22px;font-weight:700;color:${riscoC};margin-bottom:6px;text-transform:uppercase">${d.riscoAbandono}</div>
-        <div style="font-size:12px;color:var(--tx2)">Calculado com base na consistência dos últimos 7 dias e na energia média registrada.</div>
+        <div style="font-size:12px;color:var(--tx2)">Calculado pelos trechos recentes (pausas seguidas e ritmo dos últimos 7) e pela energia dos últimos 8 dias, sem contar plantões.</div>
       </div>
     </div>
 
@@ -2654,10 +2825,11 @@ function switchLang(lang) {
   const p = PROGRAMS[lang];
   try { localStorage.setItem('polyglot.meta.lang', lang); } catch(e) {}
 
-  // Atualizar CSS vars de accent
-  document.documentElement.style.setProperty('--accent',   p.accent);
-  document.documentElement.style.setProperty('--accent-a', p.accentA);
-  document.documentElement.style.setProperty('--accent-b', p.accentB);
+  // Cor de destaque: aponta para as variáveis do idioma, que já mudam com o tema.
+  // (Antes recebia o hexadecimal do tema escuro, e o tema claro ficava com amarelo sobre branco.)
+  document.documentElement.style.setProperty('--accent',   'var(--' + lang + ')');
+  document.documentElement.style.setProperty('--accent-a', 'var(--' + lang + '-a)');
+  document.documentElement.style.setProperty('--accent-b', 'var(--' + lang + '-b)');
 
   // Botões de idioma
   document.querySelectorAll('.lang-btn').forEach(btn => {
@@ -2670,6 +2842,7 @@ function switchLang(lang) {
 
   // Atualizar topbar
   updateTopbar();
+  syncJornadaNav();
 
   // Renderizar página atual
   renderPage(currentPage);
@@ -2681,7 +2854,7 @@ function switchLang(lang) {
 ═══════════════════════════════════════════════════════ */
 function updateTopbar() {
   const p = PROGRAMS[currentLang];
-  const day = getStore(currentLang, 'currentDay') || 1;
+  const day = diaAtualPrograma(currentLang);
 
   // Badge
   const pad = String(day).padStart(String(p.totalDays).length, '0');
@@ -2696,23 +2869,33 @@ function updateTopbar() {
   const currentPhase = p.phases.findIndex(ph => day <= ph.end);
   const activeIdx = currentPhase === -1 ? p.phases.length - 1 : currentPhase;
 
+  /* Modo viagem: fases viram estações com o código da cidade */
+  const jornada = jornadaAtiva(currentLang);
+  const cidades = JORNADA_CIDADES[currentLang] || [];
+  pipsEl.parentElement.classList.toggle('jn', jornada);
+
   p.phases.forEach((ph, i) => {
+    const cidade = jornada ? cidades[i] : null;
     const pip = document.createElement('div');
     pip.className = 't-pip' + (i > activeIdx ? ' dim' : '');
     pip.style.background = ph.color;
-    pip.title = ph.name + ' · ' + ph.days;
+    pip.title = (cidade ? cidade.nome + ' · ' : '') + ph.name + ' · ' + ph.days;
     pipsEl.appendChild(pip);
 
     const lbl = document.createElement('span');
-    lbl.className = 't-lbl';
-    lbl.textContent = ph.num;
+    lbl.className = 't-lbl' + (cidade && i === activeIdx ? ' on' : '');
+    lbl.textContent = cidade ? cidade.codigo : ph.num;
     labelsEl.appendChild(lbl);
   });
 }
 
 function onDayChange(val) {
   const p = PROGRAMS[currentLang];
-  const day = Math.min(p.totalDays, Math.max(1, parseInt(val) || 1));
+  /* Sem histórico, o campo define o dia de início. Com histórico, o dia
+     de hoje vem do calendário: corrigir um dia antigo não mexe no topo. */
+  const day = lerCheckins(currentLang).length
+    ? diaSugerido(currentLang)
+    : Math.min(p.totalDays, Math.max(1, parseInt(val) || 1));
   setStore(currentLang, 'currentDay', day);
   updateTopbar();
 }
@@ -2737,6 +2920,7 @@ function go(pageId, btn) {
 function renderPage(pageId) {
   const langContent = CONTENT[currentLang];
   const root = document.getElementById('page-root');
+  if (_draftTimer) gravarRascunho();   // não perde o que foi digitado nos últimos 0,4 s
 
   if (!langContent || !langContent[pageId]) {
     root.innerHTML = '<div class="planned-banner"><div class="planned-icon">🚧</div><h2>Conteúdo não disponível</h2><p>Esta seção ainda não está configurada para este idioma.</p></div>';
@@ -2744,12 +2928,16 @@ function renderPage(pageId) {
   }
 
   document.body.classList.toggle('im-route', pageId === 'imersao');
-  root.innerHTML = langContent[pageId]();
+  let html = langContent[pageId]();
+  if (pageId === 'fases' && jornadaDisponivel(currentLang)) html = buildJornada(currentLang) + html;
+  root.innerHTML = html;
+  if (pageId === 'fases') marcarCarimbosVistos(currentLang);
   if (pageId === 'imersao') {
     restoreImmersionDrafts(currentLang);
     return;
   }
   acessibilizarAccordions(root);
+  rotularCampos(root);
 
   // Reinit ranges após renderização
   root.querySelectorAll('input[type="range"]').forEach(r => {
@@ -2835,7 +3023,8 @@ document.addEventListener('keydown', e => {
   }
   /* Ctrl/Cmd+Enter: salva check-in mesmo dentro de um campo */
   if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-    if (currentPage === 'checkin') { e.preventDefault(); salvarCheckin(); }
+    /* Tecla segurada repete o evento: só o primeiro salva */
+    if (currentPage === 'checkin') { e.preventDefault(); if (!e.repeat) salvarCheckin(); }
     return;
   }
   /* Demais atalhos só fora de campos de texto */
@@ -2848,7 +3037,7 @@ document.addEventListener('keydown', e => {
 
 function mostrarAtalhos() {
   const linhas = [
-    ['1','Check-in'],['2','Inteligência'],['3','Fases'],['4','Rotinas'],['5','Método'],
+    ['1','Check-in'],['2','Inteligência'],['3', jornadaAtiva(currentLang) ? 'Viagem' : 'Fases'],['4','Rotinas'],['5','Método'],
     ['6','Avaliações'],['7','Métricas'],['8','Histórico'],['9','Recursos'],
     ['T','Alternar tema'],['Ctrl+↵','Salvar check-in'],['Esc','Fechar menu'],
   ];
@@ -2900,6 +3089,15 @@ function acessibilizarAccordions(root) {
   });
 }
 
+/* Liga cada rótulo ao seu campo, para o leitor de tela dizer o nome do campo */
+function rotularCampos(root) {
+  root.querySelectorAll('.fg').forEach(fg => {
+    const label = fg.querySelector('label');
+    const campo = fg.querySelector('input, select, textarea');
+    if (label && campo && campo.id && !label.htmlFor) label.htmlFor = campo.id;
+  });
+}
+
 /* ═══════════════════════════════════════════════════════
    RANGES
 ═══════════════════════════════════════════════════════ */
@@ -2913,12 +3111,12 @@ function updateRange(el, labelId, suffix) {
 /* ═══════════════════════════════════════════════════════
    TOAST
 ═══════════════════════════════════════════════════════ */
-function toast(msg, type) {
+function toast(msg, type, ms) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.className = 'show ' + (type || 'ok');
   clearTimeout(t._tid);
-  t._tid = setTimeout(() => { t.className = ''; }, 3200);
+  t._tid = setTimeout(() => { t.className = ''; }, ms || 3200);
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -2928,21 +3126,37 @@ function toast(msg, type) {
    RASCUNHO DO CHECK-IN — auto-save silencioso
 ═══════════════════════════════════════════════════════ */
 let _draftTimer = null;
+let _draftLang = null;
 
 function salvarRascunho() {
   clearTimeout(_draftTimer);
-  _draftTimer = setTimeout(() => {
-    const f = collectForm();
-    setStore(currentLang, 'draft', { data: f, ts: Date.now() });
-    marcarRascunho(true);
-  }, 400);
+  _draftLang = currentLang;
+  _draftTimer = setTimeout(gravarRascunho, 400);
+}
+
+/* Grava já o rascunho pendente (também chamado antes de trocar de página) */
+function gravarRascunho() {
+  clearTimeout(_draftTimer);
+  _draftTimer = null;
+  if (!_draftLang || !document.getElementById('ci-dia')) return;
+  setStore(_draftLang, 'draft', { data: collectForm(), ts: Date.now() });
+  marcarRascunho(true);
 }
 
 function restaurarRascunho() {
   const d = getStore(currentLang, 'draft');
   if (!d || !d.data) return false;
-  const f = d.data;
-  const set = (id, v) => { const el = document.getElementById(id); if (el && v !== undefined && v !== '') el.value = v; };
+  /* Rascunho de outro dia do calendário não volta: aquele dia já passou,
+     e restaurá-lo traria o número do dia antigo para o check-in de hoje */
+  if (!d.ts || dataLocal(d.ts) !== dataLocal(Date.now())) { limparRascunho(); return false; }
+  preencherFormulario(d.data);
+  marcarRascunho(true);
+  return true;
+}
+
+/* Coloca no formulário os valores de um rascunho ou de um check-in salvo */
+function preencherFormulario(f) {
+  const set = (id, v) => { const el = document.getElementById(id); if (el && v !== undefined && v !== null && v !== '') el.value = v; };
   Object.entries({
     'ci-dia': f.dia, 'ci-sessao': f.sessao, 'ci-tipo-dia': f.tipoDia,
     'ci-fluency': f.fluency, 'ci-drops': f.drops, 'ci-vocab': f.vocab,
@@ -2959,11 +3173,13 @@ function restaurarRascunho() {
    ['ci-pronuncia','pron-val',''],['ci-tons','ton-val','']].forEach(([r,l,s]) => {
     const el = document.getElementById(r); if (el) updateRange(el, l, s);
   });
-  marcarRascunho(true);
-  return true;
 }
 
 function limparRascunho() {
+  /* Cancela o auto-save pendente: sem isso, ele regravava o rascunho
+     0,4 s depois de salvar, e o check-in do dia seguinte abria com o dia antigo */
+  clearTimeout(_draftTimer);
+  _draftTimer = null;
   try { localStorage.removeItem(storageKey(currentLang, 'draft')); } catch(e) {}
   marcarRascunho(false);
 }
@@ -3017,21 +3233,116 @@ function collectForm() {
 /* ═══════════════════════════════════════════════════════
    SALVAR / EXPORTAR / IMPORTAR / LIMPAR
 ═══════════════════════════════════════════════════════ */
+/* Um registro por dia: salvar de novo o mesmo dia substitui (edição).
+   O relógio monotônico evita que um duplo clique ou Ctrl+Enter segurado
+   repita o salvamento, e um dia à frente de hoje pede um segundo clique. */
+let _ultimoSalvar = -Infinity;
+let _confirmarDia = null;
+
 function salvarCheckin() {
   const lang = currentLang;
-  const data = Object.assign(collectForm(), { timestamp: new Date().toISOString(), lang });
-  let arr = getStore(lang, 'checkins') || [];
-  if (!Array.isArray(arr)) arr = [];
-  arr.push(data);
-  setStore(lang, 'checkins', arr);
-  setStore(lang, 'currentDay', data.dia);
+  const p = PROGRAMS[lang];
+  const agoraMs = performance.now();
+  if (agoraMs - _ultimoSalvar < 800) return;
+
+  const f = collectForm();
+  const campoDia = document.getElementById('ci-dia');
+  const dia = diaValido(lang, campoDia ? campoDia.value : f.dia);
+  if (!dia) {
+    toast('Dia inválido. Use um número inteiro de 1 a ' + p.totalDays + '.', 'err', 5000);
+    if (campoDia) campoDia.focus();
+    return;
+  }
+  if (!f.sessao) {
+    toast('Escolha o tipo de sessão. Se não estudou, marque "Sem estudo hoje".', 'err', 5000);
+    const s = document.getElementById('ci-sessao'); if (s) s.focus();
+    return;
+  }
+
+  const lista = lerCheckins(lang);
+  const hoje = diaSugerido(lang);
+  const fora = lista.length ? dia > hoje : dia > 1;
+  const confirmado = _confirmarDia && _confirmarDia.lang === lang && _confirmarDia.dia === dia
+    && agoraMs - _confirmarDia.desde > 700 && agoraMs - _confirmarDia.desde < 10000;
+  if (fora && !confirmado) {
+    _confirmarDia = { lang, dia, desde: agoraMs };
+    toast(lista.length
+      ? 'O dia ' + dia + ' está à frente de hoje (dia ' + hoje + '). Se o número estiver certo, clique em Salvar de novo.'
+      : 'Primeiro check-in no dia ' + dia + ': a viagem começa daí. Se estiver certo, clique em Salvar de novo.',
+      'err', 8000);
+    return;
+  }
+  _confirmarDia = null;
+
+  const nCiclo = Math.ceil(dia / ritmoAtual().ciclo);
+  const acesoAntes = jornadaAtiva(lang) && !!(calcJornada(lang).ciclos[nCiclo - 1] || {}).aceso;
+  const agora = new Date().toISOString();
+  const i = lista.findIndex(c => c.dia === dia);
+  const anterior = i >= 0 ? lista[i] : null;
+  const registro = Object.assign(f, { dia, lang, timestamp: anterior && anterior.timestamp ? anterior.timestamp : agora });
+  if (anterior) { registro.editadoEm = agora; lista[i] = registro; }
+  else lista.push(registro);
+  lista.sort((a, b) => a.dia - b.dia);
+
+  if (!setStore(lang, 'checkins', lista)) {
+    toast('Não foi possível salvar: este navegador não está guardando dados (espaço cheio ou modo privado). O formulário continua preenchido.', 'err', 9000);
+    return;
+  }
+  _ultimoSalvar = agoraMs;
+  setStore(lang, 'currentDay', diaSugerido(lang));
+  updateTopbar();
   limparRascunho();
-  toast('Check-in do dia ' + data.dia + ' salvo. Total: ' + arr.length + '.');
+  const guia = jornadaAtiva(lang) ? mensagemCheckinViagem(lang, dia, !!anterior, acesoAntes) : '';
+  if (guia) toast(guia, 'ok jn', 6500);
+  else toast('Check-in do dia ' + dia + (anterior ? ' atualizado. ' : ' salvo. ') + lista.length + (lista.length === 1 ? ' dia registrado.' : ' dias registrados.'));
+}
+
+/* Editar: abre o check-in com os dados do dia; salvar substitui o registro */
+function editarCheckin(dia) {
+  const c = lerCheckins(currentLang).find(x => x.dia === dia);
+  if (!c) return;
+  limparRascunho();
+  go('checkin', null);
+  preencherFormulario(c);
+  const campo = document.getElementById('ci-dia');
+  if (campo) campo.value = dia;
+  toast('Editando o dia ' + dia + '. Ao salvar, o registro é substituído.', 'ok', 4500);
+}
+
+/* Apagar pede um segundo toque (um toque duplo rápido não conta) */
+let _apagar = null;
+function desarmarApagar() {
+  if (_apagar && _apagar.btn && _apagar.btn.isConnected) {
+    _apagar.btn.textContent = 'Apagar';
+    _apagar.btn.classList.remove('btn-danger');
+  }
+  _apagar = null;
+}
+function apagarCheckin(dia, btn) {
+  const agora = performance.now();
+  if (!_apagar || _apagar.dia !== dia) {
+    desarmarApagar();
+    const meu = _apagar = { dia, desde: agora, btn };
+    if (btn) { btn.textContent = 'Confirmar?'; btn.classList.add('btn-danger'); }
+    setTimeout(() => { if (_apagar === meu) desarmarApagar(); }, 4000);
+    return;
+  }
+  if (agora - _apagar.desde < 600) return;
+  _apagar = null;
+  const lista = lerCheckins(currentLang);
+  if (!setStore(currentLang, 'checkins', lista.filter(c => c.dia !== dia))) {
+    toast('Não foi possível apagar: o navegador não está guardando dados.', 'err', 6000);
+    return;
+  }
+  arquivarCheckins(currentLang, lista.filter(c => c.dia === dia));
+  updateTopbar();
+  renderPage('historico');
+  toast('Dia ' + dia + ' apagado.');
 }
 
 function exportarCheckins() {
   const lang = currentLang;
-  const arr = getStore(lang, 'checkins') || [];
+  const arr = lerCheckins(lang);
   if (!arr.length) { toast('Nenhum check-in salvo para ' + PROGRAMS[lang].name + '.', 'err'); return; }
   const blob = new Blob([JSON.stringify(arr, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -3049,16 +3360,33 @@ function importarCheckins() {
     const file = e.target.files[0]; if (!file) return;
     const reader = new FileReader();
     reader.onload = ev => {
-      try {
-        const data = JSON.parse(ev.target.result);
-        if (!Array.isArray(data)) throw new Error('Formato inválido');
-        const lang = currentLang;
-        const existing = getStore(lang, 'checkins') || [];
-        const merged = [...existing, ...data.filter(d => d.lang === lang || !d.lang)];
-        setStore(lang, 'checkins', merged);
-        toast('Importados: ' + data.length + ' registro(s). Total: ' + merged.length + '.');
-        renderPage('historico');
-      } catch(err) { toast('Erro ao importar: ' + err.message, 'err'); }
+      let data;
+      try { data = JSON.parse(ev.target.result); }
+      catch(err) { toast('Arquivo inválido: não é um JSON de check-ins.', 'err', 6000); return; }
+      if (!Array.isArray(data)) { toast('Arquivo inválido: esperava uma lista de check-ins.', 'err', 6000); return; }
+      const lang = currentLang;
+      /* Só registros deste idioma e com dia válido; o mesmo dia não duplica */
+      const validos = data
+        .filter(d => d && typeof d === 'object' && (d.lang === lang || !d.lang) && diaValido(lang, d.dia))
+        .map(d => ({ ...d, lang }));
+      const antes = lerCheckins(lang);
+      const porDiaAntes = new Map(antes.map(c => [c.dia, JSON.stringify(c)]));
+      const { lista, sobras } = normalizarCheckins(lang, [...antes, ...validos]);
+      let novos = 0, atualizados = 0;
+      lista.forEach(c => {
+        if (!porDiaAntes.has(c.dia)) novos++;
+        else if (porDiaAntes.get(c.dia) !== JSON.stringify(c)) atualizados++;
+      });
+      if (!arquivarCheckins(lang, sobras) || !setStore(lang, 'checkins', lista)) {
+        toast('Não foi possível importar: o navegador não está guardando dados.', 'err', 7000);
+        return;
+      }
+      const ignorados = data.length - validos.length;
+      toast('Importação: ' + novos + (novos === 1 ? ' dia novo' : ' dias novos') + ', ' + atualizados
+        + (atualizados === 1 ? ' atualizado' : ' atualizados')
+        + (ignorados ? ', ' + ignorados + ' ignorado(s) (outro idioma ou sem dia válido)' : '') + '.', 'ok', 7000);
+      updateTopbar();
+      renderPage('historico');
     };
     reader.readAsText(file);
   };
@@ -3116,27 +3444,33 @@ function _limparCamposReais() {
 ═══════════════════════════════════════════════════════ */
 function diaSugerido(lang) {
   const p = PROGRAMS[lang];
-  const list = getStore(lang, 'checkins') || [];
+  const list = lerCheckins(lang);
   if (!list.length) return 1;
 
-  const ultimo = list.reduce((a, b) => (b.dia > a.dia ? b : a));
+  /* Maior dia registrado; a data dele é a do primeiro registro (editar não move a âncora) */
+  const ultimo = list[list.length - 1];
   const tsUltimo = Date.parse(ultimo.timestamp);
-  if (!tsUltimo) return Math.min(p.totalDays, (ultimo.dia || 0) + 1);
+  if (!tsUltimo) return Math.min(p.totalDays, ultimo.dia + 1);
 
   const hoje = new Date(); hoje.setHours(0,0,0,0);
   const dUlt = new Date(tsUltimo); dUlt.setHours(0,0,0,0);
   const diasPassados = Math.max(0, Math.round((hoje - dUlt) / 86400000));
 
   /* Se já registrou hoje, mantém o mesmo dia (edição). Senão, avança. */
-  const sugerido = diasPassados === 0 ? ultimo.dia : ultimo.dia + diasPassados;
-  return Math.max(1, Math.min(p.totalDays, sugerido));
+  return Math.max(1, Math.min(p.totalDays, ultimo.dia + diasPassados));
+}
+
+/* Dia de hoje no programa, para o topo: com histórico, conta pelo calendário */
+function diaAtualPrograma(lang) {
+  if (lerCheckins(lang).length) return diaSugerido(lang);
+  return diaValido(lang, getStore(lang, 'currentDay')) || 1;
 }
 
 /* ═══════════════════════════════════════════════════════
    COMPARAÇÃO SEMANAL — esta semana vs anterior
 ═══════════════════════════════════════════════════════ */
 function compararSemanas(lang) {
-  const list = getStore(lang, 'checkins') || [];
+  const list = lerCheckins(lang);
   if (list.length < 2) return null;
   const agora = Date.now();
   const d7  = agora - 7  * 86400000;
@@ -3150,7 +3484,8 @@ function compararSemanas(lang) {
     const v = arr.map(c => Number(c[k])).filter(n => !isNaN(n) && n > 0);
     return v.length ? v.reduce((a,b)=>a+b,0) / v.length : 0;
   };
-  const dias = arr => new Set(arr.map(c => (c.timestamp||'').slice(0,10))).size;
+  /* Dias com estudo, pela data local ("sem estudo hoje" não conta) */
+  const dias = arr => new Set(arr.filter(c => c.sessao !== 'zero').map(c => dataLocal(c.timestamp))).size;
   const soma = (arr, k) => arr.reduce((a,c) => a + (Number(c[k]) || 0), 0);
 
   const m = (label, a, b, unit, dec=0) => ({
@@ -3171,78 +3506,83 @@ function compararSemanas(lang) {
 
 /* Verifica se já existe check-in salvo na data de hoje */
 function fezCheckinHoje(lang) {
-  const list = getStore(lang, 'checkins') || [];
-  if (!list.length) return false;
-  const hoje = new Date().toISOString().slice(0, 10);
-  return list.some(c => (c.timestamp || '').slice(0, 10) === hoje);
+  /* Compara a data local: em UTC, um check-in depois das 20h ou 21h caía no dia seguinte */
+  const hoje = dataLocal(Date.now());
+  return lerCheckins(lang).some(c => dataLocal(c.timestamp) === hoje);
 }
 
 function calcAccumulated(lang) {
-  const checkins = getStore(lang, 'checkins') || [];
+  const checkins = lerCheckins(lang);   // um registro por dia, em ordem de dia
   const p = PROGRAMS[lang];
   const total = checkins.length;
   if (!total) return {
     totalCheckins:0, diasEstudados:0, diasPerdidos:0, streak:0,
     maiorStreak:0, consistencia7d:0, consistencia30d:0,
-    mediaCompreensao:0, mediaEnergia:0, totalMinFala:0,
+    mediaCompreensao:0, mediaEnergia:0, energiaRecente:null, totalMinFala:0,
     evolucaoCompreensao:[], projecaoConclusao:'—',
     projecaoCEFR:'—', riscoAbandono:'baixo',
     pontosFortres:[], pontosFrageis:[],
     hrsAcumuladas:0, hrsEscutaUber:0,
+    ritmoAcesos:0, ritmoTotal:0, trechosAcesos:0, ritmoPct:0, pausasSeguidas:0, encerradosAcesos:0, encerradosTotal:0,
+    serieTrechos:0, maiorSerieTrechos:0,
   };
 
-  /* ── Dias estudados e streak ─────────────────────── */
-  const diasSet = new Set(checkins.map(c => c.dia));
-  const diasEstudados = diasSet.size;
-  const diasPerdidos  = Math.max(0, (Math.max(...diasSet) - 1) - (diasEstudados - 1));
+  /* ── Dias estudados e sequência ───────────────────── */
+  /* "Sem estudo hoje" é um registro honesto, mas não é dia de estudo */
+  const estudou = c => c.sessao !== 'zero';
+  const diasEstudo = checkins.filter(estudou).map(c => c.dia);   // em ordem, sem repetição
+  const diasEstudados = diasEstudo.length;
+  const ultimoDia = checkins[total - 1].dia;
+  const hojeDia = diaSugerido(lang);
+  const diasPerdidos = Math.max(0, ultimoDia - diasEstudados);
 
-  // streak atual (dias consecutivos ao final da sequência registrada)
-  const diasOrdenados = [...diasSet].sort((a,b) => a-b);
-  let streak = 1, maiorStreak = 1, tmpStreak = 1;
-  for (let i = 1; i < diasOrdenados.length; i++) {
-    if (diasOrdenados[i] === diasOrdenados[i-1] + 1) {
-      tmpStreak++;
-      maiorStreak = Math.max(maiorStreak, tmpStreak);
-    } else { tmpStreak = 1; }
-  }
-  // streak atual: contar do final
-  streak = 1;
-  for (let i = diasOrdenados.length - 1; i > 0; i--) {
-    if (diasOrdenados[i] === diasOrdenados[i-1] + 1) streak++;
-    else break;
-  }
+  // sequência de dias com estudo (vai para o coach; o Painel mostra trechos seguidos)
+  let streak = 0, maiorStreak = 0, corrida = 0;
+  diasEstudo.forEach((d, i) => {
+    corrida = i > 0 && d === diasEstudo[i - 1] + 1 ? corrida + 1 : 1;
+    maiorStreak = Math.max(maiorStreak, corrida);
+  });
+  // sem estudo ontem nem hoje: a sequência atual terminou
+  if (diasEstudados && diasEstudo[diasEstudados - 1] >= hojeDia - 1) streak = corrida;
 
-  /* ── Consistência (%) ────────────────────────────── */
-  const now = Math.max(...diasOrdenados);
-  const last7  = checkins.filter(c => c.dia >= now - 6);
-  const last30 = checkins.filter(c => c.dia >= now - 29);
-  const consistencia7d  = Math.round((new Set(last7.map(c=>c.dia)).size  / 7)  * 100);
-  const consistencia30d = Math.round((new Set(last30.map(c=>c.dia)).size / 30) * 100);
+  /* ── Consistência (%): dias com estudo nos últimos 7 e 30 dias, contados de hoje ── */
+  const fimJanela = diasEstudo.includes(hojeDia) ? hojeDia : hojeDia - 1;   // hoje só entra se já estudou
+  const naJanela = n => diasEstudo.filter(d => d > fimJanela - n && d <= fimJanela).length;
+  const consistencia7d  = Math.round(naJanela(7)  / 7  * 100);
+  const consistencia30d = Math.round(naJanela(30) / 30 * 100);
 
   /* ── Médias ──────────────────────────────────────── */
-  const comps   = checkins.map(c => c.compreensao).filter(v => v != null && v > 0);
-  const energias= checkins.map(c => c.energia).filter(v => v != null);
-  const falas   = checkins.map(c => c.fala || 0);
+  const num = v => (v === '' || v == null ? null : Number(v));
+  const comps   = checkins.map(c => num(c.compreensao)).filter(v => v != null && v > 0);
+  const energias= checkins.map(c => num(c.energia)).filter(v => v != null && !isNaN(v));
+  const falas   = checkins.map(c => Number(c.fala) || 0);
   const mediaCompreensao = comps.length    ? Math.round(comps.reduce((a,b)=>a+b,0)/comps.length) : 0;
   const mediaEnergia     = energias.length ? +(energias.reduce((a,b)=>a+b,0)/energias.length).toFixed(1) : 0;
+  /* Energia recente: últimos 8 dias do programa, sem plantão (o cansaço do plantão
+     é esperado). Com menos de 3 registros, não pesa no risco. */
+  const recentes = checkins.filter(c => c.dia > hojeDia - 8 && c.tipoDia !== 'plantao')
+    .map(c => num(c.energia)).filter(v => v != null && !isNaN(v));
+  const energiaRecente = recentes.length >= 3 ? +(recentes.reduce((a,b)=>a+b,0)/recentes.length).toFixed(1) : null;
   const totalMinFala     = falas.reduce((a,b)=>a+b,0);
 
   /* ── Horas estimadas ─────────────────────────────── */
+  /* "Sem estudo" vale 0. Só registro antigo, sem sessão informada, usa a estimativa de 50 min. */
   const minPorSessao = { completa:105, padrao:67, minima:28, zero:0 };
-  const hrsAcumuladas = +(checkins.reduce((acc, c) => acc + (minPorSessao[c.sessao] || 50), 0) / 60).toFixed(1);
-  const hrsEscutaUber = +(checkins.filter(c => c.escutaMorto && c.escutaMorto.length > 2).length * 0.6).toFixed(1);
+  const minutos = c => Object.prototype.hasOwnProperty.call(minPorSessao, c.sessao) ? minPorSessao[c.sessao] : 50;
+  const hrsAcumuladas = +(checkins.reduce((acc, c) => acc + minutos(c), 0) / 60).toFixed(1);
+  const hrsEscutaUber = +(checkins.filter(c => typeof c.escutaMorto === 'string' && c.escutaMorto.trim().length > 2).length * 0.6).toFixed(1);
 
   /* ── Evolução da compreensão (últimos 10 pontos) ──── */
   const evolucaoCompreensao = checkins
-    .filter(c => c.compreensao > 0)
+    .filter(c => Number(c.compreensao) > 0)
     .slice(-10)
-    .map(c => ({ dia: c.dia, val: c.compreensao }));
+    .map(c => ({ dia: c.dia, val: Number(c.compreensao) }));
 
   /* ── Projeção de conclusão ───────────────────────── */
   let projecaoConclusao = '—';
   if (diasEstudados >= 5 && mediaCompreensao > 0) {
-    const ritmo = diasEstudados / Math.max(...diasOrdenados); // dias estudados / dias decorridos
-    const diasRestantes = p.totalDays - Math.max(...diasOrdenados);
+    const ritmo = diasEstudados / ultimoDia; // dias estudados / dias decorridos
+    const diasRestantes = p.totalDays - ultimoDia;
     const diasEstimados = Math.round(diasRestantes / Math.max(ritmo, 0.3));
     const dataFim = new Date();
     dataFim.setDate(dataFim.getDate() + diasEstimados);
@@ -3258,38 +3598,470 @@ function calcAccumulated(lang) {
   const cefrMap = cefr[lang] || cefr.es;
   const projecaoCEFR = (cefrMap.find(([thr]) => mediaCompreensao <= thr) || cefrMap.slice(-1)[0])[1];
 
+  /* ── Ritmo por trechos (regra de ciclos) ─────────── */
+  /* A regularidade é medida em trechos de N dias, não na semana de 7:
+     na escala 24/72, estudar só nas folgas mantém todos os trechos
+     acesos. Conta a partir de hoje, então sumir também aparece aqui. */
+  const j = calcJornada(lang);
+  const { ritmoAcesos, ritmoTotal, trechosAcesos, pausasSeguidas, encerradosAcesos, encerradosTotal } = j;
+  const ritmoPct = ritmoTotal ? Math.round(ritmoAcesos / ritmoTotal * 100) : 0;
+
   /* ── Risco de abandono ───────────────────────────── */
+  /* Pausas seguidas e ritmo dos trechos; a energia só entra com dados recentes */
+  const energiaBaixa = energiaRecente !== null && energiaRecente < 4;
+  const energiaMedia = energiaRecente !== null && energiaRecente < 5.5;
   let riscoAbandono = 'baixo';
-  if (consistencia7d < 30 || mediaEnergia < 4) riscoAbandono = 'alto';
-  else if (consistencia7d < 57 || mediaEnergia < 5.5) riscoAbandono = 'médio';
+  if (pausasSeguidas >= 2 || (ritmoTotal >= 3 && ritmoPct < 30) || energiaBaixa) riscoAbandono = 'alto';
+  else if ((ritmoTotal >= 3 && ritmoPct < 57) || energiaMedia) riscoAbandono = 'médio';
 
   /* ── Pontos fortes e fracos ──────────────────────── */
   const pontosFortres = [], pontosFrageis = [];
-  if (consistencia7d >= 70) pontosFortres.push('Consistência semanal alta (' + consistencia7d + '%)');
-  if (totalMinFala >= diasEstudados * 3) pontosFortres.push('Prática oral acima da meta');
+  if (ritmoTotal >= 3 && ritmoPct >= 85) pontosFortres.push((ritmoAcesos === ritmoTotal ? 'Ritmo cheio: ' : 'Ritmo firme: ') + ritmoAcesos + ' de ' + ritmoTotal + ' trechos acesos');
+  if (diasEstudados > 0 && totalMinFala >= diasEstudados * 3) pontosFortres.push('Prática oral acima da meta');
   if (mediaCompreensao >= 60) pontosFortres.push('Compreensão auditiva em boa progressão');
-  if (streak >= 7) pontosFortres.push('Sequência de ' + streak + ' dias consecutivos');
-  if (mediaEnergia >= 7) pontosFortres.push('Energia e motivação elevadas');
+  if (energiaRecente !== null && energiaRecente >= 7) pontosFortres.push('Energia e motivação elevadas');
 
-  if (consistencia7d < 57) pontosFrageis.push('Consistência semanal abaixo de 5/7 dias');
+  if (pausasSeguidas >= 2) pontosFrageis.push(pausasSeguidas + ' trechos seguidos em pausa — retome com sessão mínima');
+  else if (ritmoTotal >= 3 && ritmoPct < 57) pontosFrageis.push('Ritmo baixo: ' + ritmoAcesos + ' de ' + ritmoTotal + ' trechos acesos');
   if (totalMinFala < diasEstudados * 2) pontosFrageis.push('Prática oral abaixo da meta');
   if (mediaCompreensao > 0 && mediaCompreensao < 40) pontosFrageis.push('Compreensão auditiva ainda baixa — aumentar input compreensível');
-  if (mediaEnergia > 0 && mediaEnergia < 5) pontosFrageis.push('Energia/motivação baixa — considerar sessões mínimas até recuperar ritmo');
+  if (energiaRecente !== null && energiaRecente < 5) pontosFrageis.push('Energia/motivação baixa nos últimos dias — considerar sessões mínimas até recuperar ritmo');
 
   /* ── Recomendação automática ─────────────────────── */
   let recomendacao = 'Mantenha o ritmo atual. Consistência acima de tudo.';
-  if (riscoAbandono === 'alto') recomendacao = 'Risco de abandono detectado. Use apenas sessão mínima esta semana. O hábito vale mais que a intensidade.';
-  else if (pontosFrageis.includes('Prática oral abaixo da meta')) recomendacao = 'Prioridade: adicionar 5 min extras de fala por dia. Shadowing no Uber conta.';
+  if (j.voltou) recomendacao = 'Boa volta! ' + (j.cicloAtual.aceso
+    ? 'Este trecho já acendeu. Siga no seu ritmo, sem tentar compensar o tempo parado.'
+    : 'Mais ' + jornadaDias(j.falta) + ' de estudo e este trecho acende. Sessão mínima vale.');
+  else if (riscoAbandono === 'alto') recomendacao = 'Risco de abandono detectado. Use apenas sessão mínima esta semana. O hábito vale mais que a intensidade.';
+  else if (pontosFrageis.includes('Prática oral abaixo da meta')) recomendacao = 'Prioridade: adicionar 5 min extras de fala por dia. Shadowing em momentos ociosos conta.';
   else if (mediaCompreensao > 0 && mediaCompreensao < 40) recomendacao = 'Foque em input compreensível fácil. Reduzir dificuldade melhora a compreensão mais rápido que aumentar volume.';
-  else if (streak >= 14) recomendacao = streak + ' dias seguidos — você está no ritmo. Considere avançar a dificuldade do input.';
+  else if (ritmoTotal >= 4 && ritmoAcesos >= ritmoTotal - 1) recomendacao = 'Ritmo firme: ' + ritmoAcesos + ' de ' + ritmoTotal + ' trechos acesos. Considere avançar a dificuldade do input.';
 
   return {
-    totalCheckins, diasEstudados, diasPerdidos, streak, maiorStreak,
-    consistencia7d, consistencia30d, mediaCompreensao, mediaEnergia,
+    totalCheckins: total, diasEstudados, diasPerdidos, streak, maiorStreak,
+    consistencia7d, consistencia30d, mediaCompreensao, mediaEnergia, energiaRecente,
     totalMinFala, evolucaoCompreensao, projecaoConclusao, projecaoCEFR,
     riscoAbandono, pontosFortres, pontosFrageis, recomendacao,
     hrsAcumuladas, hrsEscutaUber,
+    ritmoAcesos, ritmoTotal, trechosAcesos, ritmoPct, pausasSeguidas, encerradosAcesos, encerradosTotal,
+    serieTrechos: j.serieAtual, maiorSerieTrechos: j.maiorSerie,
   };
+}
+
+/* ═══════════════════════════════════════════════════════
+   MODO VIAGEM (V0) — ritmo por ciclos, passaporte e mapa
+   Ciclo: bloco de N dias do programa. Na escala 24/72
+   (N = 4), todo bloco tem 1 plantão, 1 pós-plantão e
+   2 folgas, então a regra é justa sem cadastrar a escala.
+   Trecho aceso: ciclo com `minimo` dias de estudo
+   (qualquer sessão, menos "sem estudo").
+   Carimbos saem dos check-ins (um por dia; vale o último
+   registro) e dependem só do tipo de dia, nunca das notas.
+   Só a preferência do modo e o último carimbo visto ficam
+   salvos, em polyglot.{lang}.jornada.
+═══════════════════════════════════════════════════════ */
+const RITMOS = {
+  '24x72': { id: '24x72', nome: 'Escala 24/72', ciclo: 4, minimo: 2 },
+};
+const RITMO_PADRAO = '24x72';
+
+const JORNADA_CIDADES = {
+  es: [
+    { nome: 'Bogotá',           local: 'Bogotá',           codigo: 'BOG' },
+    { nome: 'Cidade do México', local: 'Ciudad de México', codigo: 'MEX' },
+    { nome: 'Lima',             local: 'Lima',             codigo: 'LIM' },
+    { nome: 'Buenos Aires',     local: 'Buenos Aires',     codigo: 'BUE' },
+    { nome: 'Madri',            local: 'Madrid',           codigo: 'MAD' },
+  ],
+};
+
+const JORNADA_ICONES = {
+  sol:       '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
+  amanhecer: '<path d="M3 19h18M7 19a5 5 0 0 1 10 0M12 4v6M9 7l3-3 3 3M4.2 12.2l1.4 1.4M19.8 12.2l-1.4 1.4"/>',
+  lua:       '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',
+  descanso:  '<path d="M4 9h5l-5 6h5M13 5h4l-4 5h4M16 14h4l-4 5h4"/>',
+  selo:      '<circle cx="12" cy="6" r="3"/><path d="M10.5 9h3l1 5h-5zM5 14h14v3H5zM7 20h10"/>',
+  pin:       '<path d="M12 21s-6-5.4-6-10a6 6 0 1 1 12 0c0 4.6-6 10-6 10z"/><circle cx="12" cy="11" r="2"/>',
+  aduana:    '<path d="M7 3h7l4 4v14H7z"/><path d="M14 3v4h4M10 14l2 2 3-4"/>',
+  brilho:    '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.6 1.9 1.9.6-1.9.6-.6 1.9-.6-1.9-1.9-.6 1.9-.6z"/>',
+  trem:      '<rect x="5" y="3" width="14" height="13" rx="3"/><path d="M5 10h14M8.5 13h.01M15.5 13h.01M8 16l-2 4M16 16l2 4"/>',
+};
+
+const JORNADA_CARIMBOS = {
+  sol:       { titulo: 'Sellado',           icone: 'sol',       desc: 'Folga' },
+  amanhecer: { titulo: 'Sellado',           icone: 'amanhecer', desc: 'Pós-plantão' },
+  noturno:   { titulo: 'Tren nocturno',     icone: 'lua',       desc: 'Plantão' },
+  descanso:  { titulo: 'Día de descanso',   icone: 'descanso',  desc: 'Dia sem estudo' },
+  sellado:   { titulo: 'Sellado',           icone: 'selo',      desc: 'Check-in' },
+  chegada:   { titulo: 'Llegada',           icone: 'pin',       desc: 'Chegada a uma cidade nova', especial: true },
+  aduana:    { titulo: 'Aduana',            icone: 'aduana',    desc: 'Dia de avaliação',          especial: true },
+  retorno:   { titulo: '¡Qué bueno verte!', icone: 'brilho',    desc: 'Volta depois de uma pausa', especial: true },
+};
+
+function jornadaIcone(nome) {
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (JORNADA_ICONES[nome] || '') + '</svg>';
+}
+
+function ritmoAtual() {
+  return RITMOS[RITMO_PADRAO];
+}
+
+function jornadaDisponivel(lang) {
+  return !!JORNADA_CIDADES[lang];
+}
+
+function jornadaPrefs(lang) {
+  const salvo = getStore(lang, 'jornada') || {};
+  return { ativo: salvo.ativo !== false, visto: Number(salvo.visto) || 0 };
+}
+
+function jornadaAtiva(lang) {
+  return jornadaDisponivel(lang) && jornadaPrefs(lang).ativo;
+}
+
+function tipoCarimbo(c) {
+  if (c.sessao === 'zero') return 'descanso';
+  if (c.tipoDia === 'plantao') return 'noturno';
+  if (c.tipoDia === 'pos-plantao') return 'amanhecer';
+  if (c.tipoDia === 'folga-ok' || c.tipoDia === 'folga-cansado') return 'sol';
+  return 'sellado';
+}
+
+/* Último registro de cada dia do programa */
+function checkinsPorDia(lang) {
+  const porDia = new Map();
+  lerCheckins(lang).forEach((c, ordem) => {
+    const dia = c.dia;
+    const ts = Date.parse(c.timestamp) || 0;
+    const atual = porDia.get(dia);
+    if (!atual || ts > atual._ts || (ts === atual._ts && ordem > atual._ordem)) {
+      porDia.set(dia, { ...c, dia, _ts: ts, _ordem: ordem });
+    }
+  });
+  return porDia;
+}
+
+function calcJornada(lang) {
+  const p = PROGRAMS[lang];
+  const ritmo = ritmoAtual();
+  const N = ritmo.ciclo;
+  const porDia = checkinsPorDia(lang);
+  const hoje = Math.max(1, Math.min(p.totalDays, diaSugerido(lang)));
+  const nAtual = Math.ceil(hoje / N);
+  /* Trechos antes do primeiro check-in não contam como pausa */
+  const primeiroDia = porDia.size ? Math.min(...porDia.keys()) : 0;
+  const nInicio = primeiroDia ? Math.ceil(primeiroDia / N) : nAtual;
+  const estudou = c => !!c && c.sessao !== 'zero';
+  const faseDoDia = dia => {
+    const i = p.phases.findIndex(ph => dia >= ph.start && dia <= ph.end);
+    return i === -1 ? p.phases.length - 1 : i;
+  };
+
+  /* Trechos: um por ciclo do programa */
+  const ciclos = [];
+  for (let n = 1; n <= Math.ceil(p.totalDays / N); n++) {
+    const inicio = (n - 1) * N + 1;
+    const fim = Math.min(p.totalDays, n * N);
+    let estudo = 0;
+    for (let d = inicio; d <= fim; d++) if (estudou(porDia.get(d))) estudo++;
+    const minimo = Math.min(ritmo.minimo, fim - inicio + 1);
+    ciclos.push({
+      n, inicio, fim, estudo, minimo,
+      aceso: estudo >= minimo,
+      atual: n === nAtual,
+      passado: n < nAtual && n >= nInicio,
+      antes: n < nInicio,
+      fase: faseDoDia(inicio),
+      avaliacao: p.evaluationDays.find(d => d >= inicio && d <= fim) || 0,
+      retorno: false,
+    });
+  }
+
+  /* Carimbos: chegada, retorno e aduana antes do carimbo do dia */
+  const carimbos = [];
+  const fasesVistas = new Set();
+  let anterior = 0;
+  [...porDia.keys()].sort((a, b) => a - b).forEach(dia => {
+    const c = porDia.get(dia);
+    const base = { dia, fase: faseDoDia(dia), ts: c._ts };
+    if (!fasesVistas.has(base.fase)) {
+      fasesVistas.add(base.fase);
+      carimbos.push({ ...base, tipo: 'chegada' });
+    }
+    if (anterior && dia - anterior - 1 >= N) {
+      carimbos.push({ ...base, tipo: 'retorno' });
+      ciclos[Math.ceil(dia / N) - 1].retorno = true;
+    }
+    if (p.evaluationDays.includes(dia)) carimbos.push({ ...base, tipo: 'aduana' });
+    carimbos.push({ ...base, tipo: tipoCarimbo(c) });
+    anterior = dia;
+  });
+
+  /* Ritmo: trechos acesos entre os últimos 7 já encerrados */
+  const encerrados = ciclos.filter(c => c.passado).slice(-7);
+  const atual = ciclos[nAtual - 1];
+  const diasLivres = atual.fim - hoje + (estudou(porDia.get(hoje)) ? 0 : 1);
+  const falta = Math.max(0, atual.minimo - atual.estudo);
+
+  /* Pausas seguidas: trechos encerrados sem o mínimo, do mais recente para trás.
+     Estudar no trecho atual encerra a série: a pessoa voltou. */
+  let pausasSeguidas = 0;
+  for (let i = nAtual - 2; i >= nInicio - 1 && !ciclos[i].aceso; i--) pausasSeguidas++;
+  const voltou = pausasSeguidas > 0 && atual.estudo > 0;
+  if (atual.estudo > 0) pausasSeguidas = 0;
+
+  /* Série de trechos acesos seguidos (o trecho em andamento só soma quando acende) */
+  let serieAtual = 0, maiorSerie = 0;
+  ciclos.forEach(c => {
+    if (c.antes || !(c.passado || c.atual)) return;
+    if (c.aceso) { serieAtual++; maiorSerie = Math.max(maiorSerie, serieAtual); }
+    else if (c.passado) serieAtual = 0;
+  });
+
+  return {
+    lang, ritmo, hoje, ciclos, carimbos,
+    cidades: JORNADA_CIDADES[lang] || [],
+    faseAtual: faseDoDia(hoje),
+    cicloAtual: atual,
+    falta,
+    podeAcender: falta > 0 && falta <= diasLivres,
+    proximoInicio: atual.fim < p.totalDays ? atual.fim + 1 : 0,
+    ritmoAcesos: encerrados.filter(c => c.aceso).length,
+    ritmoTotal: encerrados.length,
+    trechosAcesos: ciclos.filter(c => c.aceso).length,
+    pausasSeguidas, voltou, serieAtual, maiorSerie,
+    concluida: porDia.has(p.totalDays),
+    encerradosAcesos: ciclos.filter(c => c.passado && c.aceso).length,
+    encerradosTotal: ciclos.filter(c => c.passado).length,
+    vazio: porDia.size === 0,
+  };
+}
+
+function jornadaDias(n) {
+  return n + (n === 1 ? ' dia' : ' dias');
+}
+
+function jornadaMensagemGuia(j) {
+  const cidade = j.cidades[j.faseAtual] || { nome: '' };
+  if (j.vazio) return 'A viagem começa no primeiro check-in, com o carimbo de chegada em ' + cidade.nome + '.';
+  if (j.concluida && j.hoje === PROGRAMS[j.lang].totalDays) return 'Fim da linha em ' + cidade.nome + ': viagem concluída! Novos registros atualizam o último dia.';
+  const voltouHoje = j.carimbos.some(c => c.dia === j.hoje && c.tipo === 'retorno');
+  if (voltouHoje) return '¡Qué bueno verte! A pausa virou costura dourada no mapa.';
+  if (j.cicloAtual.aceso) return 'Este trecho já está aceso. O resto do ciclo é bônus, sem obrigação.';
+  if (j.podeAcender) return 'Mais ' + jornadaDias(j.falta) + ' de estudo e este trecho acende. Sessão mínima vale.';
+  if (j.proximoInicio) return 'Este trecho fica como pausa, e tudo bem. O próximo começa no dia ' + j.proximoInicio + '.';
+  return 'Última parada: ' + cidade.nome + '.';
+}
+
+function jornadaStatusTrecho(j) {
+  if (j.concluida && j.hoje === PROGRAMS[j.lang].totalDays) return { v: 'fim', l: 'viagem concluída' };
+  if (j.cicloAtual.aceso) return { v: 'aceso', l: 'este trecho' };
+  if (j.podeAcender) return { v: jornadaDias(j.falta), l: 'de estudo para acender este trecho' };
+  if (j.proximoInicio) return { v: 'dia ' + j.proximoInicio, l: 'começa o próximo trecho' };
+  return { v: 'fim', l: 'último trecho da viagem' };
+}
+
+function jornadaMapa(j) {
+  const p = PROGRAMS[j.lang];
+  const estacoes = p.phases.map((ph, i) => {
+    const cidade = j.cidades[i] || { nome: ph.name, codigo: ph.num };
+    const trechos = j.ciclos.filter(c => c.fase === i);
+    const acesos = trechos.filter(c => c.aceso).length;
+    const retornos = trechos.filter(c => c.retorno).length;
+    const situacao = i < j.faseAtual ? 'jn-passada' : i === j.faseAtual ? 'jn-aqui' : 'jn-futura';
+    const pontos = trechos.map(c => {
+      const estado = c.aceso ? 'aceso' : c.passado ? 'pausa' : c.atual ? '' : 'futuro';
+      const classes = ['jn-t', estado, c.atual ? 'atual' : '', c.retorno ? 'rt' : '', c.avaliacao ? 'av' : ''].filter(Boolean).join(' ');
+      const texto = c.aceso ? 'aceso (' + jornadaDias(c.estudo) + ' de estudo)'
+        : c.passado ? 'pausa'
+        : c.antes ? 'antes do primeiro check-in'
+        : c.atual ? 'em andamento (' + c.estudo + ' de ' + c.minimo + ')'
+        : 'pela frente';
+      const titulo = 'Trecho ' + c.n + ' · dias ' + c.inicio + '–' + c.fim + ' · ' + texto
+        + (c.retorno ? ' · retorno' : '') + (c.avaliacao ? ' · aduana no dia ' + c.avaliacao : '');
+      return `<li class="${classes}" title="${titulo}"></li>`;
+    }).join('');
+    return `
+      <li class="jn-est ${situacao}" style="--fc:var(--p${(i % 6) + 1})">
+        <div class="jn-est-head">
+          <span class="jn-est-cod">${cidade.codigo}</span>
+          <span class="jn-est-nome">${cidade.nome}</span>
+          <span class="jn-est-fase">${ph.num} · ${ph.name} · dias ${ph.days}</span>
+          ${i === j.faseAtual ? '<span class="jn-est-aqui">você está aqui</span>' : ''}
+          <span class="jn-est-resumo" aria-hidden="true">${acesos}/${trechos.length}</span>
+        </div>
+        <ul class="jn-trechos" aria-hidden="true">${pontos}</ul>
+        <p class="jn-vh">${cidade.nome}: ${acesos} de ${trechos.length} trechos acesos${retornos ? ', ' + retornos + (retornos === 1 ? ' retorno' : ' retornos') : ''}.</p>
+      </li>`;
+  }).join('');
+
+  return `
+    <div class="card">
+      <div class="card-row"><span class="tag ta">Rota</span><div class="card-title">Mapa da viagem</div></div>
+      <ol class="jn-linha">${estacoes}</ol>
+      <div class="jn-legenda" aria-hidden="true">
+        <span><i class="jn-t aceso"></i>aceso: ${j.ritmo.minimo}+ dias de estudo no ciclo</span>
+        <span><i class="jn-t pausa"></i>pausa, sem culpa</span>
+        <span><i class="jn-t aceso rt"></i>retorno</span>
+        <span><i class="jn-t atual"></i>trecho atual</span>
+        <span><i class="jn-t futuro av"></i>aduana (avaliação)</span>
+      </div>
+    </div>`;
+}
+
+function jornadaCarimbo(c, j, novoDesde) {
+  const def = JORNADA_CARIMBOS[c.tipo];
+  const cidade = j.cidades[c.fase];
+  const hoje = c.dia === j.hoje && !def.especial;
+  const rot = ((c.dia * 47 + c.tipo.length * 13) % 15) - 7;
+  const classes = ['jn-cb', 'jn-cb-' + c.tipo,
+    def.especial ? 'jn-cb-esp' : '',
+    hoje ? 'jn-cb-hoje' : '',
+    novoDesde && c.ts > novoDesde ? 'jn-cb-novo' : ''].filter(Boolean).join(' ');
+  const linha = c.tipo === 'chegada' && cidade ? cidade.local : 'día ' + c.dia + (hoje ? ' · hoy' : '');
+  return `
+        <li class="${classes}" style="--rot:${rot}deg" title="${def.desc} · dia ${c.dia}">
+          ${jornadaIcone(def.icone)}
+          <span class="jn-cb-t">${def.titulo}</span>
+          <span class="jn-cb-d">${linha}</span>
+          <span class="jn-vh">${def.desc}, dia ${c.dia}.</span>
+        </li>`;
+}
+
+function jornadaPassaporte(j) {
+  if (j.vazio) {
+    const primeira = j.cidades[0] || { nome: '' };
+    return `
+    <div class="card">
+      <div class="card-row"><span class="tag ta">Passaporte</span><div class="card-title">Ainda sem carimbos</div></div>
+      <p class="card-sub">O primeiro check-in carimba a chegada em ${primeira.nome}.</p>
+      <button class="btn btn-p" onclick="go('checkin',null)">Fazer check-in</button>
+    </div>`;
+  }
+  const novoDesde = jornadaPrefs(j.lang).visto;
+  const porFase = new Map();
+  j.carimbos.forEach(c => {
+    if (!porFase.has(c.fase)) porFase.set(c.fase, []);
+    porFase.get(c.fase).push(c);
+  });
+  const fases = [...porFase.keys()].sort((a, b) => b - a);
+  const qtd = n => n + (n === 1 ? ' carimbo' : ' carimbos');
+  const lista = arr => '<ol class="jn-pass">' + arr.map(c => jornadaCarimbo(c, j, novoDesde)).join('') + '</ol>';
+  const nomeFase = f => (j.cidades[f] || { nome: PROGRAMS[j.lang].phases[f].name }).nome;
+  const outras = fases.slice(1).map(f => `
+      <details class="jn-outra">
+        <summary>${nomeFase(f)} · ${qtd(porFase.get(f).length)}</summary>
+        ${lista(porFase.get(f))}
+      </details>`).join('');
+  return `
+    <div class="card">
+      <div class="card-row"><span class="tag ta">Passaporte</span><div class="card-title">${nomeFase(fases[0])}</div><span class="jn-cnt">${qtd(porFase.get(fases[0]).length)}</span></div>
+      ${lista(porFase.get(fases[0]))}
+      <p class="jn-nota">O desenho do carimbo muda com o tipo de dia, nunca com as notas do check-in. Dia sem estudo registrado também ganha carimbo.</p>
+      ${outras}
+    </div>`;
+}
+
+function buildJornada(lang) {
+  if (!jornadaAtiva(lang)) {
+    return `
+    <div class="jn-off">
+      <span>Modo viagem desligado. Os check-ins e as fases seguem iguais.</span>
+      <button class="btn btn-g" onclick="alternarJornada()">Ligar o modo viagem</button>
+    </div>`;
+  }
+  const j = calcJornada(lang);
+  const status = jornadaStatusTrecho(j);
+  return `
+    <div class="pg-h">
+      <div class="pg-title">Viagem</div>
+      <div class="pg-sub">${PROGRAMS[lang].name} · ${j.ritmo.nome}: um trecho acende com ${j.ritmo.minimo} dias de estudo a cada ${j.ritmo.ciclo}. Sessão mínima conta.</div>
+    </div>
+    <div class="jn-guia">
+      <span class="jn-guia-av">${jornadaIcone('trem')}</span>
+      <p><small>Guia</small>${jornadaMensagemGuia(j)}</p>
+    </div>
+    <div class="g3">
+      <div class="stat"><div class="stat-v">${j.ritmoTotal ? j.ritmoAcesos + '/' + j.ritmoTotal : '—'}</div><div class="stat-l">ritmo · últimos trechos</div></div>
+      <div class="stat"><div class="stat-v">${j.trechosAcesos}</div><div class="stat-l">trechos acesos no total</div></div>
+      <div class="stat"><div class="stat-v">${status.v}</div><div class="stat-l">${status.l}</div></div>
+    </div>
+    ${jornadaMapa(j)}
+    ${jornadaPassaporte(j)}
+    <div class="jn-rodape">
+      <button class="btn btn-g" onclick="alternarJornada()">Desligar o modo viagem</button>
+      <span>Os check-ins não mudam. Dá para religar quando quiser.</span>
+    </div>
+    <div class="jn-sep" aria-hidden="true"></div>`;
+}
+
+/* Guarda o último carimbo visto para animar só os novos */
+function marcarCarimbosVistos(lang) {
+  if (!jornadaAtiva(lang)) return;
+  const prefs = jornadaPrefs(lang);
+  let ultimo = 0;
+  checkinsPorDia(lang).forEach(c => { if (c._ts > ultimo) ultimo = c._ts; });
+  if (ultimo > prefs.visto) setStore(lang, 'jornada', { ativo: prefs.ativo, visto: ultimo });
+}
+
+function alternarJornada() {
+  const lang = currentLang;
+  const prefs = jornadaPrefs(lang);
+  setStore(lang, 'jornada', { ativo: !prefs.ativo, visto: prefs.visto });
+  syncJornadaNav();
+  updateTopbar();
+  renderPage(currentPage);
+  toast(prefs.ativo ? 'Modo viagem desligado.' : 'Modo viagem ligado.');
+}
+
+function syncJornadaNav() {
+  const rotulo = jornadaAtiva(currentLang) ? 'Viagem' : 'Fases';
+  document.querySelectorAll('.nav-fases-lbl').forEach(el => { el.textContent = rotulo; });
+  const bn = document.querySelector('.bn-item[data-page="fases"]');
+  if (bn) bn.setAttribute('aria-label', rotulo);
+}
+
+/* Fala do guia depois de salvar um check-in.
+   editado: o dia já existia (correção). acesoAntes: o trecho estava aceso antes de salvar. */
+function mensagemCheckinViagem(lang, dia, editado, acesoAntes) {
+  const j = calcJornada(lang);
+  const doDia = j.carimbos.filter(c => c.dia === dia);
+  if (!doDia.length) return '';
+  const tipos = doDia.map(c => c.tipo);
+  const fase = doDia[0].fase;
+  const cidade = j.cidades[fase] || { nome: '', local: '' };
+  const ciclo = j.ciclos[Math.ceil(dia / j.ritmo.ciclo) - 1];
+  const partes = [];
+  if (editado) {
+    partes.push('Dia ' + dia + ' atualizado no passaporte.');
+  } else {
+    const primeiroCarimbo = j.carimbos[0] && j.carimbos[0].dia === dia;
+    if (tipos.includes('retorno')) partes.push('¡Qué bueno verte! A pausa virou costura dourada no mapa.');
+    if (dia === PROGRAMS[lang].totalDays) partes.push('Llegada final a ' + cidade.local + ': viagem concluída!');
+    else if (tipos.includes('chegada')) partes.push(primeiroCarimbo
+      ? 'Llegada a ' + cidade.local + ': a viagem começou.'
+      : 'Llegamos a ' + cidade.local + '. Bairro novo, palavras novas.');
+    if (tipos.includes('aduana')) {
+      /* Quem começou depois do dia 1 ainda não tem amostra para comparar */
+      const temAmostra = j.carimbos.some(c => c.tipo === 'aduana' && c.dia < dia);
+      partes.push(temAmostra
+        ? 'Aduana: dia de avaliação. Grave e compare com a sua primeira amostra.'
+        : dia === PROGRAMS[lang].totalDays
+          ? 'Aduana final: grave uma amostra de hoje para guardar.'
+          : 'Aduana: grave uma amostra de hoje para comparar lá na frente.');
+    }
+    if (!partes.length) {
+      if (tipos.includes('descanso')) partes.push('Dia de descanso também faz parte da viagem. Carimbo no passaporte.');
+      else if (tipos.includes('noturno')) partes.push('Tren nocturno: dia ' + dia + ' carimbado. O trem segue de noite.');
+      else partes.push('Carimbado: dia ' + dia + ' em ' + cidade.nome + '.');
+    }
+  }
+  if (partes.length < 2 && ciclo && !tipos.includes('descanso')) {
+    if (ciclo.aceso && !acesoAntes) partes.push('Este trecho acendeu.');
+    else if (!ciclo.aceso && ciclo.atual && j.podeAcender) partes.push('Mais ' + jornadaDias(j.falta) + ' de estudo e este trecho acende.');
+  }
+  if (partes.length < 2 && ciclo && acesoAntes && !ciclo.aceso) partes.push('Este trecho voltou a ficar em pausa.');
+  return partes.slice(0, 2).join(' ');
 }
 
 /* ═══════════════════════════════════════════════════════
@@ -3397,7 +4169,7 @@ async function analisarIA() {
     return;
   }
 
-  const recentHistory = (getStore(lang, 'checkins') || []).slice(-5).map(h => ({
+  const recentHistory = lerCheckins(lang).slice(-5).map(h => ({
     dia:         h.dia,
     compreensao: h.compreensao,
     fala:        h.fala,
@@ -3412,10 +4184,15 @@ async function analisarIA() {
   }));
 
   const accumulated = calcAccumulated(lang);
+  const secao = (titulo, corpo) => '<div class="ao-sec"><div class="ao-lbl" style="color:var(--p4)">' + titulo + '</div><div>' + corpo + '</div></div>';
+  /* Sem resposta em 45 s, cancela: o botão não pode ficar travado em "Analisando" */
+  const controle = new AbortController();
+  const limite = setTimeout(() => controle.abort(), 45000);
 
   try {
     const res = await fetch(WORKER_URL, {
       method: 'POST',
+      signal: controle.signal,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         appVersion:  APP_VERSION,
@@ -3442,20 +4219,29 @@ async function analisarIA() {
           mediaCompreensao:  accumulated.mediaCompreensao,
           totalMinFala:      accumulated.totalMinFala,
           streak:            accumulated.streak,
+          ritmo:             accumulated.ritmoTotal ? accumulated.ritmoAcesos + '/' + accumulated.ritmoTotal : '',
+          trechosAcesos:     accumulated.trechosAcesos,
+          pausasSeguidas:    accumulated.pausasSeguidas,
         },
         currentCheckin: f,
       })
     });
-    const data = await res.json();
+    /* Resposta que não é JSON (página de erro do servidor, por exemplo) */
+    const bruto = await res.text();
+    let data = null;
+    try { data = JSON.parse(bruto); } catch(e) { data = null; }
+    if (data === null) {
+      out.innerHTML = secao('Serviço de análise indisponível',
+        'O servidor respondeu com erro (HTTP ' + res.status + '). Tente de novo em alguns minutos. A <strong>Análise local</strong> continua funcionando.');
+      return;
+    }
 
     /* Erro devolvido pelo Worker (todos os provedores falharam) */
     if (data && data.error) {
-      const det = (data.tentativas || [])
-        .map(t => `<div style="margin-top:4px;font-size:12px;color:var(--tx2)">${t.provider}: ${t.erro}</div>`)
+      const det = (Array.isArray(data.tentativas) ? data.tentativas : [])
+        .map(t => `<div style="margin-top:4px;font-size:12px;color:var(--tx2)">${esc(t && t.provider)}: ${esc(t && t.erro)}</div>`)
         .join('');
-      out.innerHTML = `<div class="ao-sec"><div class="ao-lbl" style="color:var(--p4)">Falha na análise</div>` +
-                      `<div>${data.error}</div>${det}</div>`;
-      if (btn) btn.disabled = false;
+      out.innerHTML = secao('Falha na análise', esc(data.error) + det);
       return;
     }
 
@@ -3464,7 +4250,11 @@ async function analisarIA() {
     else if (Array.isArray(data?.content)) text = data.content.map(b => b.text || '').join('');
     else if (typeof data?.analysis === 'string') text = data.analysis;
     else if (typeof data?.result === 'string') text = data.result;
-    else text = JSON.stringify(data);
+
+    if (!text.trim()) {
+      out.innerHTML = secao('Análise vazia', 'A IA não devolveu texto desta vez. Tente de novo; a <strong>Análise local</strong> funciona sem internet.');
+      return;
+    }
 
     parseSections(text);
 
@@ -3478,8 +4268,8 @@ async function analisarIA() {
                              "font-family:'JetBrains Mono',ui-monospace,monospace;display:flex;" +
                              'align-items:center;gap:8px;flex-wrap:wrap';
       rodape.innerHTML =
-        `<span>análise por ${nomes[data.provider] || data.provider}` +
-        (data.model ? ` · ${data.model}` : '') + `</span>` +
+        `<span>análise por ${esc(nomes[data.provider] || data.provider)}` +
+        (data.model ? ` · ${esc(data.model)}` : '') + `</span>` +
         (usouFallback
           ? `<span style="color:var(--p2)">↻ fallback após ${data.fallbacks.length} tentativa(s)</span>`
           : '');
@@ -3488,7 +4278,11 @@ async function analisarIA() {
   } catch (err) {
     const msg = String(err && err.message ? err.message : err);
     const rede = /failed to fetch|networkerror|load failed|typeerror/i.test(msg);
-    if (out) {
+    if (err && err.name === 'AbortError') {
+      out.classList.add('vis');
+      out.innerHTML = secao('A análise demorou demais',
+        'Sem resposta em 45 segundos, a análise foi cancelada. Tente de novo; a <strong>Análise local</strong> funciona sem internet.');
+    } else if (out) {
       out.classList.add('vis');
       out.innerHTML = rede
         ? '<div class="ao-sec"><div class="ao-lbl" style="color:var(--p4)">Não foi possível alcançar o Worker</div>' +
@@ -3500,24 +4294,23 @@ async function analisarIA() {
           '3. O código do Worker foi salvo com <strong>Deploy</strong><br>' +
           '4. Se definiu <code>ALLOWED_ORIGIN</code>, ele bate com o domínio deste site<br><br>' +
           '<span style="color:var(--tx2)">A <strong>Análise local</strong> continua funcionando normalmente.</span></div></div>'
-        : '<div class="ao-sec"><div class="ao-lbl" style="color:var(--p4)">Erro</div><div>' + msg + '</div></div>';
+        : secao('Erro', esc(msg));
     }
+  } finally {
+    clearTimeout(limite);
+    if (btn) btn.disabled = false;
   }
-
-  if (btn) btn.disabled = false;
 }
 
 function parseSections(text) {
   const secs = ['DIAGNÓSTICO DO DIA','MÉTRICAS EM FOCO','ALERTA OU REFORÇO','AJUSTE PRIORITÁRIO','PRÓXIMO DIA'];
-  const result = [];
-  for (let i = 0; i < secs.length; i++) {
-    const s = secs[i], next = secs[i + 1];
-    const start = text.indexOf(s);
-    if (start === -1) continue;
-    const end = next ? text.indexOf(next) : text.length;
-    const content = text.slice(start + s.length, end !== -1 ? end : text.length).replace(/^[\s:\n]+/, '').trim();
-    result.push({ label: s, text: content });
-  }
+  /* Acha cada título onde estiver e recorta até o próximo título encontrado.
+     Mostra na ordem padrão, mesmo se a IA trocar a ordem ou pular uma seção. */
+  const achados = secs.map(s => ({ s, i: text.indexOf(s) })).filter(x => x.i !== -1).sort((a, b) => a.i - b.i);
+  const result = achados.map((x, k) => ({
+    label: x.s,
+    text: text.slice(x.i + x.s.length, k + 1 < achados.length ? achados[k + 1].i : text.length).replace(/^[\s:\n]+/, '').trim(),
+  })).filter(r => r.text).sort((a, b) => secs.indexOf(a.label) - secs.indexOf(b.label));
   renderAnalysis(result.length ? result : [{ label: 'RESPOSTA', text }]);
 }
 
@@ -3525,8 +4318,9 @@ function renderAnalysis(sections) {
   const out = document.getElementById('analysis-out');
   if (!out) return;
   out.classList.add('vis');
+  /* Texto da IA vai escapado: HTML na resposta aparece como texto, não executa */
   out.innerHTML = sections.map(s =>
-    `<div class="ao-sec"><div class="ao-lbl">${s.label}</div><div>${s.text}</div></div>`
+    `<div class="ao-sec"><div class="ao-lbl">${esc(s.label)}</div><div class="ao-txt">${esc(s.text)}</div></div>`
   ).join('');
 }
 
@@ -3684,7 +4478,7 @@ const IMMERSION_RESOURCES = {
 
 const IMMERSION_TECHNIQUES = [
   ['Input compreensível', 'Na primeira passada, procure assunto, intenção e dois detalhes; reveja com imagens ou legenda no idioma. Se ainda não conseguir explicar a cena, reduza a dificuldade. Use português para destravar um detalhe indispensável e volte ao idioma.'],
-  ['Tempos mortos', 'Deixe áudio conhecido pronto para lavar louça, caminhar em local seguro ou esperar. Tente lembrar a ideia após ouvir. Em direção, ocorrências ou tarefas que exijam atenção, priorize a tarefa. Se usar áudio dirigindo, escolha antes de sair e deixe a prática ativa para quando parar.'],
+  ['Momentos ociosos','Deixe áudio conhecido pronto para lavar louça, caminhar em local seguro ou esperar. Tente lembrar a ideia após ouvir. Em direção, ocorrências ou tarefas que exijam atenção, priorize a tarefa. Se usar áudio dirigindo, escolha antes de sair e deixe a prática ativa para quando parar.'],
   ['Dispositivos e feed', 'Comece pelo idioma de uma conta ou de um app de lazer. Escolha três buscas no idioma, veja conteúdo que entende até o fim, siga bons criadores e use “Não tenho interesse” para limpar sugestões fora do foco. Mantenha listas prontas para o dia em que o feed falhar.'],
   ['Barril de conteúdos', 'Guarde 3 vídeos curtos, 2 áudios conhecidos, 2 leituras e 1 trecho para repetir. Classifique pelo uso e revise a fila na folga. Salve títulos com nível, assunto e um ponto de partida no campo Nota. Use Em fila para novidades e Repetir para trechos úteis.'],
   ['Micro-hábitos', 'Ao olhar um objeto, descreva a ação real com uma frase: abro a janela agora, guardo a chave aqui. Se travar, procure como um falante diria a frase, diga-a em voz alta e use-a de novo no próximo dia.'],
@@ -3697,7 +4491,7 @@ const IMMERSION_TECHNIQUES = [
 
 const IMMERSION_LANGS = ['es', 'fr', 'zh'];
 const IMMERSION_TYPES = ['Plantão', 'Pós-plantão', 'Folga 1', 'Folga 2'];
-const IMMERSION_FOLDERS = ['Vídeos curtos', 'Áudios para tempos mortos', 'Leituras graduadas', 'Trechos para repetir'];
+const IMMERSION_FOLDERS = ['Vídeos curtos', 'Áudios para momentos ociosos', 'Leituras graduadas', 'Trechos para repetir'];
 const IMMERSION_STATES = ['Em fila', 'Repetir', 'Concluído'];
 const IMMERSION_BANDS = ['Fundação', 'Elementar', 'Intermediário'];
 const IMMERSION_DAY_NAMES = ['Entender a cena', 'Escutar e imitar', 'Ler e minerar frases', 'Responder ao vídeo', 'Escrever com correção', 'Simular uma situação', 'Revisar e medir'];
@@ -4018,7 +4812,7 @@ function immersionStudy(lesson, lang, profile, state, view) {
         <p>${immersionEscape(theme.goal)}.</p>
         <p><strong>Gramática</strong> · ${immersionEscape(lesson.grammar)}</p>
         <p><strong>Missão</strong> · ${immersionEscape(theme.roleplay)} ${immersionEscape(lesson.transfer)}</p>
-        ${profile.passive ? `<p class="im-muted">Em tempos mortos, reserve até ${profile.passive} min para um áudio que você já entende.</p>` : ''}
+        ${profile.passive ? `<p class="im-muted">Em momentos ociosos, reserve até ${profile.passive} min para um áudio que você já entende.</p>` : ''}
       </div>
     </details>
   </section>
@@ -4190,7 +4984,7 @@ function buildImmersion(lang) {
           <label>Nível dos materiais <select name="choice">${immersionOptions(['Automático por fase', ...IMMERSION_BANDS], profile.choice + 1)}</select></label>
           <fieldset class="im-minute-fields"><legend>Minutos ativos</legend>
           ${IMMERSION_TYPES.map((label, i) => `<label>${label}<input type="number" name="min${i}" min="5" max="90" required value="${profile.minutes[i]}"></label>`).join('')}</fieldset>
-          <label>Minutos em tempos mortos <input type="number" name="passive" min="0" max="120" required value="${profile.passive}"></label>
+          <label>Minutos em momentos ociosos <input type="number" name="passive" min="0" max="120" required value="${profile.passive}"></label>
           <div><button type="submit" class="im-button im-primary">Salvar meu plano</button></div>
         </form>
         <details class="im-subpanel im-diagnosis" id="im-diagnosis" data-keep>
@@ -4669,6 +5463,10 @@ function boot() {
     if (!CONTENT[lang] || !CONTENT[lang][page]) page = 'visao';
     if (page !== 'imersao' && !fezCheckinHoje(lang)) page = 'checkin';
     go(page, null);
+    /* Modo privado ou bloqueio de dados: avisa logo, antes de alguém preencher um check-in à toa */
+    if (!armazenamentoOk()) {
+      setTimeout(() => toast('Este navegador não está guardando dados (modo privado ou bloqueio). Os check-ins não ficarão salvos.', 'err', 9000), 600);
+    }
   } catch (err) {
     // Falha no boot não pode deixar a tela vazia
     const root = document.getElementById('page-root');
