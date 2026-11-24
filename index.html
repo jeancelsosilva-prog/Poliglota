@@ -988,6 +988,23 @@ html,body{max-width:100%;overflow-x:hidden}
 .im-edit-form { border-top: 1px solid var(--bd); padding-top: 8px; }
 .im-minute-fields { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 6px; padding: 7px; border: 1px solid var(--bd); }
 .im-minute-fields legend { padding: 0 4px; }
+/* ── Leitor de texto ── */
+.lt { display: grid; gap: 10px; margin: 8px 0 4px; }
+.lt-ajustes { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; }
+.lt-campo { display: flex; align-items: center; gap: 8px; font-size: var(--fs-sm); color: var(--tx2); }
+.lt-campo select { max-width: min(260px, 60vw); }
+.lt-check { display: flex; align-items: center; gap: 8px; font-size: var(--fs-sm); color: var(--tx2); cursor: pointer; }
+/* A caixinha não herda o tamanho dos campos de texto da Imersão */
+.im-layout .lt-check input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; padding: 0; flex-shrink: 0; accent-color: var(--accent); }
+.lt-status { font-size: var(--fs-sm); color: var(--tx2); min-height: 1.5em; margin: 0; }
+.lt-frase { cursor: pointer; border-radius: 3px; padding: 1px 2px; margin: 0 -2px; transition: background-color .15s, box-shadow .15s; }
+.lt-frase:hover { background: var(--accent-a); }
+.lt-frase:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.lt-frase.lt-atual { background: var(--accent-b); color: var(--tx); box-shadow: 0 0 0 2px var(--accent-b); }
+.lt-dica { font-size: var(--fs-xs); }
+.lt-botoes { display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.lt-ouvir { min-width: 44px; }
+@media (prefers-reduced-motion: reduce) { .lt-frase { transition: none; } }
 .im-flash { display: grid; gap: 8px; justify-items: start; border: 1px solid var(--bd); padding: 9px; margin-top: 6px; background: var(--s0); overflow-wrap: anywhere; }
 .im-flash p { white-space: pre-wrap; }
 .im-method-list { display: grid; gap: 8px; }
@@ -1054,7 +1071,11 @@ html,body{max-width:100%;overflow-x:hidden}
 .jn-cb svg{width:18px;height:18px;flex-shrink:0;margin-bottom:3px}
 .jn-cb-t{font-size:var(--fs-xs);font-weight:600}
 .jn-cb-d{font-size:var(--fs-2xs);color:var(--tx3)}
-.jn-cb-esp{border:3px double var(--es);color:var(--es)}
+/* Carimbos especiais na cor do idioma: dourado no espanhol, azul no francês, vermelho de selo no mandarim */
+.jn-cb-esp{border:3px double var(--accent);color:var(--accent)}
+.jn-cb-p{font-size:var(--fs-2xs);font-style:italic;opacity:.85}
+.jn-cb-t:lang(zh-Hans){font-size:var(--fs-sm);letter-spacing:.08em}
+.jn-est-local{font-size:var(--fs-sm);color:var(--tx2)}
 .jn-cb-hoje{border-style:solid;border-color:var(--accent);color:var(--accent)}
 .jn-cb-novo{animation:jn-carimbo .55s cubic-bezier(.2,.8,.2,1) both}
 @keyframes jn-carimbo{from{opacity:0;transform:rotate(var(--rot,0deg)) scale(1.4)}to{opacity:1;transform:rotate(var(--rot,0deg)) scale(1)}}
@@ -2392,7 +2413,7 @@ function buildHistorico(lang) {
 /* ═══════════════════════════════════════════════════════
    VERSÃO E STORAGE — polyglot.{lang}.{key}
 ═══════════════════════════════════════════════════════ */
-const APP_VERSION = '2.3.0';
+const APP_VERSION = '2.4.0';
 
 /* Chave com prefixo polyglot + lang + key
    Exemplo: polyglot.es.checkins */
@@ -2817,7 +2838,7 @@ let currentPage = 'visao';
 ═══════════════════════════════════════════════════════ */
 function switchLang(lang) {
   const resetImmersionScroll = currentPage === 'imersao' && lang !== currentLang;
-  if (resetImmersionScroll) window.speechSynthesis?.cancel();
+  if (lang !== currentLang) leitorParar();   // trocou de idioma: a leitura do outro idioma para
   if (PROGRAMS[lang].status === 'planned' && lang !== 'es') {
     // Permite entrar mesmo em "planejado" para ver o conteúdo
   }
@@ -2904,7 +2925,7 @@ function onDayChange(val) {
    NAVEGAÇÃO
 ═══════════════════════════════════════════════════════ */
 function go(pageId, btn) {
-  if (currentPage === 'imersao' && pageId !== 'imersao') window.speechSynthesis?.cancel();
+  if (currentPage === 'imersao' && pageId !== 'imersao') leitorParar();
   currentPage = pageId;
   try { localStorage.setItem('polyglot.meta.page', pageId); } catch(e) {}
   document.querySelectorAll('.s-item').forEach(s => {
@@ -2934,6 +2955,7 @@ function renderPage(pageId) {
   if (pageId === 'fases') marcarCarimbosVistos(currentLang);
   if (pageId === 'imersao') {
     restoreImmersionDrafts(currentLang);
+    leitorRefletir();   // depois de redesenhar, a frase lida continua destacada
     return;
   }
   acessibilizarAccordions(root);
@@ -3665,15 +3687,101 @@ const RITMOS = {
 };
 const RITMO_PADRAO = '24x72';
 
+/* Uma cidade por fase. `local` é o nome no idioma estudado; `fala` é o
+   comentário do guia na chegada (o sotaque ou a manha de cada lugar). */
 const JORNADA_CIDADES = {
   es: [
-    { nome: 'Bogotá',           local: 'Bogotá',           codigo: 'BOG' },
-    { nome: 'Cidade do México', local: 'Ciudad de México', codigo: 'MEX' },
-    { nome: 'Lima',             local: 'Lima',             codigo: 'LIM' },
-    { nome: 'Buenos Aires',     local: 'Buenos Aires',     codigo: 'BUE' },
-    { nome: 'Madri',            local: 'Madrid',           codigo: 'MAD' },
+    { nome: 'Bogotá',           local: 'Bogotá',           codigo: 'BOG', fala: 'Dizem que o espanhol daqui é dos mais claros da América.' },
+    { nome: 'Cidade do México', local: 'Ciudad de México', codigo: 'MEX', fala: 'Bairro novo, palavras novas, e um "¿mande?" educado quando não entender.' },
+    { nome: 'Lima',             local: 'Lima',             codigo: 'LIM', fala: 'Espanhol pausado e bem articulado: bom lugar para soltar a fala.' },
+    { nome: 'Buenos Aires',     local: 'Buenos Aires',     codigo: 'BUE', fala: 'Aqui o "ll" soa "sh" e o "tú" vira "vos". Che, tranquilo.' },
+    { nome: 'Madri',            local: 'Madrid',           codigo: 'MAD', fala: 'Volta o "vosotros", e o "z" sai com a língua entre os dentes.' },
+  ],
+  /* Temporada 1 na França; temporada 2 pela francofonia */
+  fr: [
+    { nome: 'Paris',            local: 'Paris',            codigo: 'PAR', fala: 'Primeira missão: as vogais nasais.' },
+    { nome: 'Lyon',             local: 'Lyon',             codigo: 'LYS', fala: 'Capital da gastronomia: vocabulário de mesa liberado.' },
+    { nome: 'Marselha',         local: 'Marseille',        codigo: 'MRS', fala: 'Sol, porto e um sotaque que canta as vogais.' },
+    { nome: 'Bruxelas',         local: 'Bruxelles',        codigo: 'BRU', fala: 'A temporada 2 começa onde 70 é septante e 90 é nonante.' },
+    { nome: 'Montreal',         local: 'Montréal',         codigo: 'YUL', fala: 'O francês ganha sotaque, e o inverno ganha opinião.' },
+    { nome: 'Dakar',            local: 'Dakar',            codigo: 'DKR', fala: 'Francês com wolof no ar: o ouvido fica afiado.' },
+  ],
+  /* Do mandarim padrão de Pequim ao mandarim fora da China */
+  zh: [
+    { nome: 'Pequim',           local: '北京',   pinyin: 'Běijīng',  codigo: 'PEK', fala: 'O mandarim padrão nasceu aqui: os quatro tons te esperam.' },
+    { nome: "Xi'an",            local: '西安',   pinyin: "Xī'ān",    codigo: 'XIY', fala: 'Terra do biáng, caractere com mais de 40 traços. Relaxa: ele não cai na prova.' },
+    { nome: 'Chengdu',          local: '成都',   pinyin: 'Chéngdū',  codigo: 'CTU', fala: 'Casa de chá, pandas e conversa sem pressa.' },
+    { nome: 'Xangai',           local: '上海',   pinyin: 'Shànghǎi', codigo: 'SHA', fala: 'Placas, metrô e leitura em alta velocidade.' },
+    { nome: 'Hangzhou',         local: '杭州',   pinyin: 'Hángzhōu', codigo: 'HGH', fala: 'O Lago Oeste pede conversa longa.' },
+    { nome: 'Singapura',        local: '新加坡', pinyin: 'Xīnjiāpō', codigo: 'SIN', fala: 'Mandarim fora da China, entre inglês, malaio e tâmil.' },
   ],
 };
+
+/* Falas da viagem em cada idioma: título dos carimbos, data e guia.
+   Cada idioma fala do seu jeito (o francês tem espaço fino antes de ! e :,
+   o mandarim vem com pinyin e tons), sempre com humor e sem culpa. */
+const FINO = ' ';
+const JORNADA_FALAS = {
+  es: {
+    lang: 'es',
+    titulos: { sol: 'Sellado', amanhecer: 'Sellado', noturno: 'Tren nocturno', descanso: 'Día de descanso', sellado: 'Sellado', chegada: 'Llegada', aduana: 'Aduana', retorno: '¡Qué bueno verte!' },
+    dia: d => 'día ' + d,
+    hoje: 'hoy',
+    comecou: c => `Llegada a ${c.local}: a viagem começou.`,
+    chegou: c => `Llegamos a ${c.local}.`,
+    final: c => `Llegada final a ${c.local}: viagem concluída!`,
+    retorno: '¡Qué bueno verte! A pausa virou costura dourada no mapa.',
+    noturno: d => `Tren nocturno: dia ${d} carimbado. O trem segue de noite.`,
+    descanso: 'Día de descanso: também faz parte da viagem. Carimbo no passaporte.',
+    carimbado: (d, c) => `Sellado: dia ${d} em ${c.nome}.`,
+    aduana: {
+      primeira: 'Aduana: grave uma amostra de hoje para comparar lá na frente.',
+      comparar: 'Aduana: dia de avaliação. Grave e compare com a sua primeira amostra.',
+      final: 'Aduana final: grave uma amostra de hoje para guardar.',
+    },
+  },
+  fr: {
+    lang: 'fr',
+    titulos: { sol: 'Tamponné', amanhecer: 'Tamponné', noturno: 'Train de nuit', descanso: 'Jour de repos', sellado: 'Tamponné', chegada: 'Arrivée', aduana: 'Douane', retorno: `Te revoilà${FINO}!` },
+    dia: d => 'jour ' + d,
+    hoje: 'aujourd’hui',
+    comecou: c => `Arrivée à ${c.local}${FINO}! A viagem começou.`,
+    chegou: c => `On arrive à ${c.local}${FINO}!`,
+    final: c => `Arrivée finale à ${c.local}${FINO}! Viagem concluída. Bravo.`,
+    retorno: `Te revoilà${FINO}! A pausa virou costura dourada no mapa.`,
+    noturno: d => `Train de nuit${FINO}: dia ${d} carimbado. O trem segue de noite, discreto como o s final.`,
+    descanso: `Jour de repos${FINO}: até o francês para para o café. Carimbo no passaporte.`,
+    carimbado: (d, c) => `Tamponné${FINO}: dia ${d} em ${c.nome}.`,
+    aduana: {
+      primeira: `Douane${FINO}: grave uma amostra de hoje para comparar lá na frente.`,
+      comparar: `Douane${FINO}: dia de avaliação. Grave e compare com a sua primeira amostra.`,
+      final: `Douane finale${FINO}: grave uma amostra de hoje para guardar.`,
+    },
+  },
+  zh: {
+    lang: 'zh-Hans',
+    titulos: { sol: '盖章', amanhecer: '盖章', noturno: '夜车', descanso: '休息日', sellado: '盖章', chegada: '到达', aduana: '海关', retorno: '好久不见' },
+    pinyin: { sol: 'gàizhāng', amanhecer: 'gàizhāng', noturno: 'yèchē', descanso: 'xiūxi rì', sellado: 'gàizhāng', chegada: 'dàodá', aduana: 'hǎiguān', retorno: 'hǎojiǔ bú jiàn' },
+    dia: d => '第' + d + '天',
+    hoje: '今天',
+    comecou: c => `到达${c.local}！Dàodá ${c.pinyin}: a viagem começou.`,
+    chegou: c => `我们到${c.local}了！Wǒmen dào ${c.pinyin} le.`,
+    final: c => `终点站：${c.local}！Zhōngdiǎnzhàn: viagem concluída. 了不起 liǎobuqǐ!`,
+    retorno: '好久不见！Hǎojiǔ bú jiàn: a pausa virou costura dourada no mapa.',
+    noturno: d => `夜车 yèchē: dia ${d} carimbado. Yè vem no quarto tom, que desce firme, e o trem segue de noite.`,
+    descanso: '休息日 xiūxi rì: até a palavra descansa, porque o xi vem no tom neutro. Carimbo no passaporte.',
+    carimbado: (d, c) => `盖章 gàizhāng: dia ${d} em ${c.nome}.`,
+    aduana: {
+      primeira: '海关 hǎiguān: grave uma amostra de hoje para comparar lá na frente.',
+      comparar: '海关 hǎiguān: dia de avaliação. Grave e compare com a sua primeira amostra.',
+      final: '海关 hǎiguān: última avaliação. Grave uma amostra para guardar.',
+    },
+  },
+};
+
+function jornadaFala(lang) {
+  return JORNADA_FALAS[lang] || JORNADA_FALAS.es;
+}
 
 const JORNADA_ICONES = {
   sol:       '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
@@ -3687,15 +3795,16 @@ const JORNADA_ICONES = {
   trem:      '<rect x="5" y="3" width="14" height="13" rx="3"/><path d="M5 10h14M8.5 13h.01M15.5 13h.01M8 16l-2 4M16 16l2 4"/>',
 };
 
+/* Tipos de carimbo; o título no idioma estudado vem de JORNADA_FALAS */
 const JORNADA_CARIMBOS = {
-  sol:       { titulo: 'Sellado',           icone: 'sol',       desc: 'Folga' },
-  amanhecer: { titulo: 'Sellado',           icone: 'amanhecer', desc: 'Pós-plantão' },
-  noturno:   { titulo: 'Tren nocturno',     icone: 'lua',       desc: 'Plantão' },
-  descanso:  { titulo: 'Día de descanso',   icone: 'descanso',  desc: 'Dia sem estudo' },
-  sellado:   { titulo: 'Sellado',           icone: 'selo',      desc: 'Check-in' },
-  chegada:   { titulo: 'Llegada',           icone: 'pin',       desc: 'Chegada a uma cidade nova', especial: true },
-  aduana:    { titulo: 'Aduana',            icone: 'aduana',    desc: 'Dia de avaliação',          especial: true },
-  retorno:   { titulo: '¡Qué bueno verte!', icone: 'brilho',    desc: 'Volta depois de uma pausa', especial: true },
+  sol:       { icone: 'sol',       desc: 'Folga' },
+  amanhecer: { icone: 'amanhecer', desc: 'Pós-plantão' },
+  noturno:   { icone: 'lua',       desc: 'Plantão' },
+  descanso:  { icone: 'descanso',  desc: 'Dia sem estudo' },
+  sellado:   { icone: 'selo',      desc: 'Check-in' },
+  chegada:   { icone: 'pin',       desc: 'Chegada a uma cidade nova', especial: true },
+  aduana:    { icone: 'aduana',    desc: 'Dia de avaliação',          especial: true },
+  retorno:   { icone: 'brilho',    desc: 'Volta depois de uma pausa', especial: true },
 };
 
 function jornadaIcone(nome) {
@@ -3846,7 +3955,7 @@ function jornadaMensagemGuia(j) {
   if (j.vazio) return 'A viagem começa no primeiro check-in, com o carimbo de chegada em ' + cidade.nome + '.';
   if (j.concluida && j.hoje === PROGRAMS[j.lang].totalDays) return 'Fim da linha em ' + cidade.nome + ': viagem concluída! Novos registros atualizam o último dia.';
   const voltouHoje = j.carimbos.some(c => c.dia === j.hoje && c.tipo === 'retorno');
-  if (voltouHoje) return '¡Qué bueno verte! A pausa virou costura dourada no mapa.';
+  if (voltouHoje) return jornadaFala(j.lang).retorno;
   if (j.cicloAtual.aceso) return 'Este trecho já está aceso. O resto do ciclo é bônus, sem obrigação.';
   if (j.podeAcender) return 'Mais ' + jornadaDias(j.falta) + ' de estudo e este trecho acende. Sessão mínima vale.';
   if (j.proximoInicio) return 'Este trecho fica como pausa, e tudo bem. O próximo começa no dia ' + j.proximoInicio + '.';
@@ -3863,8 +3972,13 @@ function jornadaStatusTrecho(j) {
 
 function jornadaMapa(j) {
   const p = PROGRAMS[j.lang];
+  const fala = jornadaFala(j.lang);
   const estacoes = p.phases.map((ph, i) => {
     const cidade = j.cidades[i] || { nome: ph.name, codigo: ph.num };
+    /* Nome no idioma estudado quando difere do português (com pinyin no mandarim) */
+    const local = cidade.local && cidade.local !== cidade.nome
+      ? `<span class="jn-est-local" lang="${fala.lang}">${cidade.local}${cidade.pinyin ? ` <span lang="zh-Latn-pinyin">${cidade.pinyin}</span>` : ''}</span>`
+      : '';
     const trechos = j.ciclos.filter(c => c.fase === i);
     const acesos = trechos.filter(c => c.aceso).length;
     const retornos = trechos.filter(c => c.retorno).length;
@@ -3886,6 +4000,7 @@ function jornadaMapa(j) {
         <div class="jn-est-head">
           <span class="jn-est-cod">${cidade.codigo}</span>
           <span class="jn-est-nome">${cidade.nome}</span>
+          ${local}
           <span class="jn-est-fase">${ph.num} · ${ph.name} · dias ${ph.days}</span>
           ${i === j.faseAtual ? '<span class="jn-est-aqui">você está aqui</span>' : ''}
           <span class="jn-est-resumo" aria-hidden="true">${acesos}/${trechos.length}</span>
@@ -3911,6 +4026,7 @@ function jornadaMapa(j) {
 
 function jornadaCarimbo(c, j, novoDesde) {
   const def = JORNADA_CARIMBOS[c.tipo];
+  const fala = jornadaFala(j.lang);
   const cidade = j.cidades[c.fase];
   const hoje = c.dia === j.hoje && !def.especial;
   const rot = ((c.dia * 47 + c.tipo.length * 13) % 15) - 7;
@@ -3918,12 +4034,16 @@ function jornadaCarimbo(c, j, novoDesde) {
     def.especial ? 'jn-cb-esp' : '',
     hoje ? 'jn-cb-hoje' : '',
     novoDesde && c.ts > novoDesde ? 'jn-cb-novo' : ''].filter(Boolean).join(' ');
-  const linha = c.tipo === 'chegada' && cidade ? cidade.local : 'día ' + c.dia + (hoje ? ' · hoy' : '');
+  const linha = c.tipo === 'chegada' && cidade
+    ? cidade.local + (cidade.pinyin ? ' ' + cidade.pinyin : '')
+    : fala.dia(c.dia) + (hoje ? ' · ' + fala.hoje : '');
+  const pinyin = fala.pinyin ? fala.pinyin[c.tipo] : '';
   return `
         <li class="${classes}" style="--rot:${rot}deg" title="${def.desc} · dia ${c.dia}">
           ${jornadaIcone(def.icone)}
-          <span class="jn-cb-t">${def.titulo}</span>
-          <span class="jn-cb-d">${linha}</span>
+          <span class="jn-cb-t" lang="${fala.lang}">${fala.titulos[c.tipo]}</span>
+          ${pinyin ? `<span class="jn-cb-p" lang="zh-Latn-pinyin">${pinyin}</span>` : ''}
+          <span class="jn-cb-d" lang="${fala.lang}">${linha}</span>
           <span class="jn-vh">${def.desc}, dia ${c.dia}.</span>
         </li>`;
 }
@@ -4031,29 +4151,27 @@ function mensagemCheckinViagem(lang, dia, editado, acesoAntes) {
   const fase = doDia[0].fase;
   const cidade = j.cidades[fase] || { nome: '', local: '' };
   const ciclo = j.ciclos[Math.ceil(dia / j.ritmo.ciclo) - 1];
+  const fala = jornadaFala(lang);
   const partes = [];
   if (editado) {
     partes.push('Dia ' + dia + ' atualizado no passaporte.');
   } else {
     const primeiroCarimbo = j.carimbos[0] && j.carimbos[0].dia === dia;
-    if (tipos.includes('retorno')) partes.push('¡Qué bueno verte! A pausa virou costura dourada no mapa.');
-    if (dia === PROGRAMS[lang].totalDays) partes.push('Llegada final a ' + cidade.local + ': viagem concluída!');
-    else if (tipos.includes('chegada')) partes.push(primeiroCarimbo
-      ? 'Llegada a ' + cidade.local + ': a viagem começou.'
-      : 'Llegamos a ' + cidade.local + '. Bairro novo, palavras novas.');
+    if (tipos.includes('retorno')) partes.push(fala.retorno);
+    if (dia === PROGRAMS[lang].totalDays) partes.push(fala.final(cidade));
+    else if (tipos.includes('chegada')) {
+      partes.push((primeiroCarimbo ? fala.comecou(cidade) : fala.chegou(cidade)) + (cidade.fala ? ' ' + cidade.fala : ''));
+    }
     if (tipos.includes('aduana')) {
       /* Quem começou depois do dia 1 ainda não tem amostra para comparar */
       const temAmostra = j.carimbos.some(c => c.tipo === 'aduana' && c.dia < dia);
-      partes.push(temAmostra
-        ? 'Aduana: dia de avaliação. Grave e compare com a sua primeira amostra.'
-        : dia === PROGRAMS[lang].totalDays
-          ? 'Aduana final: grave uma amostra de hoje para guardar.'
-          : 'Aduana: grave uma amostra de hoje para comparar lá na frente.');
+      partes.push(temAmostra ? fala.aduana.comparar
+        : dia === PROGRAMS[lang].totalDays ? fala.aduana.final : fala.aduana.primeira);
     }
     if (!partes.length) {
-      if (tipos.includes('descanso')) partes.push('Dia de descanso também faz parte da viagem. Carimbo no passaporte.');
-      else if (tipos.includes('noturno')) partes.push('Tren nocturno: dia ' + dia + ' carimbado. O trem segue de noite.');
-      else partes.push('Carimbado: dia ' + dia + ' em ' + cidade.nome + '.');
+      if (tipos.includes('descanso')) partes.push(fala.descanso);
+      else if (tipos.includes('noturno')) partes.push(fala.noturno(dia));
+      else partes.push(fala.carimbado(dia, cidade));
     }
   }
   if (partes.length < 2 && ciclo && !tipos.includes('descanso')) {
@@ -4774,13 +4892,13 @@ function immersionStudyDay(lesson, lang, profile, state, view) {
       <span class="im-task-time">${duration} min</span><div><strong>${title}</strong><p>${immersionEscape(action)}</p>
         ${target ? `<div class="im-actions im-task-actions">
           ${target === 'trecho' && index === 0 && step === 0 && day !== PROGRAMS[lang].totalDays
-            ? '<button type="button" class="im-button" data-im-action="speak">Ouvir no app</button>' : ''}
+            ? '<button type="button" class="im-button" id="im-ouvir-app" data-im-action="lt-abrir">Ouvir no app</button>' : ''}
           <button type="button" class="im-text-button" id="im-task-${day}-${step}" data-im-action="${actions[target][0]}" data-value="${target}">${actions[target][1]}</button>
         </div>` : ''}
       </div></li>`).join('')}</ol>
     <details class="im-subpanel im-day-words" id="im-day-words-${day}" data-keep>
       <summary>${lesson.final ? 'Vocabulário para revisar' : 'Vocabulário deste dia'} · ${daily.length} itens</summary>
-      <ul>${daily.map(row => `<li><strong lang="${markupLang}">${immersionEscape(row.word)}</strong>
+      <ul>${daily.map(row => `<li><button type="button" class="im-button lt-ouvir" data-im-action="lt-texto" data-value="${immersionEscape(row.word)}" aria-label="Ouvir ${immersionEscape(row.word)}">🔊</button> <strong lang="${markupLang}">${immersionEscape(row.word)}</strong>
         ${row.pinyin ? `<span lang="zh-Latn">(${immersionEscape(row.pinyin)})</span>` : ''} · ${immersionEscape(row.meaning)}</li>`).join('')}</ul>
     </details>
     <footer class="im-session-footer">
@@ -4826,7 +4944,10 @@ function immersionVocabulary(lesson, lang) {
       <div><strong lang="${lang === 'zh' ? 'zh-Hans' : lang}">${immersionEscape(row.word)}</strong> ${row.core ? '<span class="im-core">Núcleo</span>' : ''}
       ${row.pinyin ? `<small lang="zh-Latn">${immersionEscape(row.pinyin)}</small>` : ''}
       <div class="im-muted">${immersionEscape(row.meaning)}</div></div>
-      <button type="button" class="im-button" data-im-action="save-word" data-value="${group}:${index}" aria-label="Salvar ${immersionEscape(row.word)} nos flashcards">+ Cartão</button>
+      <span class="lt-botoes">
+        <button type="button" class="im-button lt-ouvir" data-im-action="lt-palavra" data-value="${group}:${index}" aria-label="Ouvir ${immersionEscape(row.word)}">🔊</button>
+        <button type="button" class="im-button" data-im-action="save-word" data-value="${group}:${index}" aria-label="Salvar ${immersionEscape(row.word)} nos flashcards">+ Cartão</button>
+      </span>
     </li>`).join('')}</ul>
   </details>`).join('');
 }
@@ -4857,7 +4978,8 @@ function immersionDeck(cards, revealed, lang) {
   const index = cards.findIndex(card => card.due <= today);
   return `<p class="im-muted">${cards.filter(card => card.due <= today).length} para revisar hoje · ${cards.length} no baralho</p>
     ${index < 0 ? '<p>Fila em dia. Adicione uma frase quando encontrar algo que vale repetir.</p>' : `<div class="im-flash">
-      <strong lang="${lang === 'zh' ? 'zh-Hans' : lang}">${immersionEscape(cards[index].front)}</strong>
+      <span class="lt-botoes"><strong lang="${lang === 'zh' ? 'zh-Hans' : lang}">${immersionEscape(cards[index].front)}</strong>
+        <button type="button" class="im-button lt-ouvir" data-im-action="lt-cartao" data-value="${index}" aria-label="Ouvir a frente do cartão">🔊</button></span>
       ${revealed ? `<p>${immersionEscape(cards[index].back)}</p>
         <div class="im-actions"><button type="button" class="im-button" data-im-action="review-again" data-value="${index}">Errei · amanhã</button>
         <button type="button" class="im-button im-primary" data-im-action="review-known" data-value="${index}">Lembrei · ${IMMERSION_INTERVALS[cards[index].step]} d</button>
@@ -4918,11 +5040,9 @@ function buildImmersion(lang) {
       <h2 id="im-trecho-heading" tabindex="-1">Trecho da semana</h2>
       <div class="im-panel-content">
         <p><strong>${IMMERSION_BANDS[lesson.band]}</strong> · ${localGoals[lesson.band]}. Ouça antes de abrir a transcrição.${special}</p>
-        <div class="im-actions"><button type="button" class="im-button im-primary" data-im-action="speak">Ouvir trecho</button>
-          <button type="button" class="im-button" data-im-action="stop">Parar áudio</button></div>
-        <p class="im-muted">O botão usa a voz disponível no dispositivo. Use os links abaixo como referência de fala nativa.</p>
-        <details class="im-subpanel" data-keep id="im-transcript"><summary>Mostrar transcrição</summary><div class="im-reading" lang="${lang === 'zh' ? 'zh-Hans' : lang}"><p>${immersionEscape(lesson.base)}</p>
-          <p>${immersionEscape(lesson.extension)}</p></div></details>
+        ${leitorPainel(lesson, lang)}
+        <p class="im-muted">A voz do aparelho serve para treinar o ouvido e repetir. Para pronúncia nativa, use também os áudios abaixo.</p>
+        <details class="im-subpanel" data-keep id="im-transcript"><summary>Mostrar transcrição</summary><div class="im-reading" lang="${lang === 'zh' ? 'zh-Hans' : lang}">${leitorTranscricao(lesson, lang)}</div></details>
         <details class="im-subpanel" id="im-gloss" data-keep><summary>Conferir o sentido em português</summary><p>${immersionEscape(theme.gloss)}</p></details>
         <p><strong>Para conferir o sentido</strong> · ${immersionEscape(theme.questions[0])} ${lesson.band ? immersionEscape(theme.questions[1]) : ''}</p>
         <p class="im-muted">Para encontrar outro trecho, use as fontes abaixo ou abra o barril.</p>
@@ -5078,7 +5198,7 @@ function immersionSelectDay(day, focusId) {
   view.returnFocus = '';
   saveImmersionPosition(lang, view);
   if (changedWeek) {
-    window.speechSynthesis?.cancel();
+    leitorParar();
     immersionRedraw(false);
   } else {
     refreshImmersionSession(lang);
@@ -5187,27 +5307,375 @@ function addImmersionCard(state, front, back) {
   return true;
 }
 
-function speakImmersion(lesson, lang, profile) {
-  if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
-    toast('A voz do dispositivo não está disponível. Use um dos áudios indicados.', 'err');
-    return;
-  }
-  speechSynthesis.cancel();
-  const text = lesson.band === 0 ? lesson.base : lesson.base + ' ' + lesson.extension;
-  const utterance = new SpeechSynthesisUtterance(text);
-  const voices = speechSynthesis.getVoices();
-  const langTag = profile.voice.toLowerCase();
-  const accent = lang === 'es' ? /^(es-(mx|us|ar|co|cl|pe|419))$/i : lang === 'zh' ? /^zh-(hans|cn)/i : /^fr-fr/i;
-  utterance.voice = voices.find(voice => voice.lang.toLowerCase() === langTag)
-    || voices.find(voice => accent.test(voice.lang))
-    || voices.find(voice => voice.lang.toLowerCase().startsWith(lang + '-'))
-    || null;
-  utterance.lang = utterance.voice?.lang || (lang === 'es' ? 'es-MX' : profile.voice);
-  utterance.rate = [0.83, 0.93, 1][lesson.band];
-  utterance.onerror = event => {
-    if (!['canceled', 'interrupted'].includes(event.error)) toast('Não foi possível reproduzir esta voz. Use o áudio de uma das fontes.', 'err');
+/* ═══════════════════════════════════════════════════════
+   LEITOR DE TEXTO — voz do aparelho, frase por frase
+   · escolhe a melhor voz do idioma e deixa trocar;
+   · lê uma frase por vez (o Chrome corta falas longas) e destaca a frase;
+   · velocidade ajustável, pausar, repetir, anterior e próxima;
+   · pode pausar depois de cada frase para você repetir (shadowing);
+   · sem voz do idioma no aparelho, explica como instalar em vez de ler
+     com sotaque errado. No mandarim lê os caracteres, nunca o pinyin.
+═══════════════════════════════════════════════════════ */
+const LEITOR_IDIOMAS = {
+  es: { prefixo: 'es', nome: 'espanhol', preferidos: ['es-mx', 'es-us', 'es-419', 'es-co', 'es-ar', 'es-cl', 'es-pe', 'es-es'] },
+  fr: { prefixo: 'fr', nome: 'francês',  preferidos: ['fr-fr', 'fr-ca', 'fr-be', 'fr-ch'] },
+  zh: { prefixo: 'zh', nome: 'mandarim', preferidos: ['zh-cn', 'cmn-cn', 'zh-hans-cn', 'zh-hans', 'zh-sg', 'zh-tw', 'cmn-tw'],
+        evitar: /(^|[-_])(hk|yue|mo)([-_]|$)|cantonese|cantonês|粵|粤|廣東|广东/i },
+};
+const LEITOR_VELOCIDADES = [[0.6, 'Bem devagar'], [0.75, 'Devagar'], [0.9, 'Quase normal'], [1, 'Normal'], [1.15, 'Rápido']];
+/* Vozes de efeito ou muito robóticas que vêm no macOS e no iOS: ficam por último */
+const LEITOR_VOZES_RUINS = /\b(eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley|albert|bad news|bahh|bells|boing|bubbles|cellos|good news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|ralph|fred|junior|kathy|espeak|compact)\b/i;
+const LEITOR = { lang: '', chave: '', frases: [], fimContinuo: 0, i: -1, estado: 'parado', token: 0, timer: null, umaSo: false, velocidade: 1, pausar: false, atual: null };
+let LEITOR_VOZES = [];
+
+function leitorSuportado() {
+  return !!(window.speechSynthesis && window.SpeechSynthesisUtterance);
+}
+
+function leitorCarregarVozes() {
+  if (!leitorSuportado()) return;
+  try { LEITOR_VOZES = speechSynthesis.getVoices() || []; } catch (e) { LEITOR_VOZES = []; }
+  if (leitorCarregarVozes.ligado) return;
+  leitorCarregarVozes.ligado = true;
+  const atualizar = () => {
+    try { LEITOR_VOZES = speechSynthesis.getVoices() || []; } catch (e) { return; }
+    leitorAtualizarVozes();
   };
-  speechSynthesis.speak(utterance);
+  if (speechSynthesis.addEventListener) speechSynthesis.addEventListener('voiceschanged', atualizar);
+  else speechSynthesis.onvoiceschanged = atualizar;
+  /* Alguns navegadores nunca avisam: depois de 2 s, o status para de dizer "carregando" */
+  setTimeout(() => { leitorCarregarVozes.esperou = true; atualizar(); }, 2000);
+}
+
+const leitorIdVoz = v => v.voiceURI || v.name;
+const leitorBoaVoz = v => /natural|neural|premium|enhanced|aprimorad|wavenet|studio|siri/i.test(v.name || '');
+const leitorRotuloVoz = v => (v.name || 'Voz') + ' · ' + (v.lang || '') + (leitorBoaVoz(v) ? ' ★' : '');
+
+/* Nota de cada voz para o idioma; null = não é do idioma */
+function leitorPontuar(v, lang) {
+  const cfg = LEITOR_IDIOMAS[lang];
+  const tag = String(v.lang || '').replace(/_/g, '-').toLowerCase();
+  const doIdioma = tag === cfg.prefixo || tag.startsWith(cfg.prefixo + '-') || (lang === 'zh' && tag.startsWith('cmn'));
+  if (!doIdioma) return null;
+  if (cfg.evitar && (cfg.evitar.test(tag) || cfg.evitar.test(v.name || ''))) return null;
+  let p = 10;
+  const pos = cfg.preferidos.indexOf(tag);
+  if (pos >= 0) p += 20 - pos * 2;
+  if (leitorBoaVoz(v)) p += 30;
+  if (/online/i.test(v.name || '')) p += 10;
+  if (/google/i.test(v.name || '')) p += 12;
+  if (v.localService === false) p += 4;
+  if (LEITOR_VOZES_RUINS.test(v.name || '')) p -= 60;
+  return p;
+}
+
+function leitorVozesDo(lang) {
+  return LEITOR_VOZES
+    .map(v => ({ v, p: leitorPontuar(v, lang) }))
+    .filter(x => x.p !== null)
+    .sort((a, b) => b.p - a.p)
+    .map(x => x.v);
+}
+
+function leitorPrefs(lang) {
+  const salvo = getStore(lang, 'leitor') || {};
+  return {
+    voz: typeof salvo.voz === 'string' ? salvo.voz : '',
+    velocidade: LEITOR_VELOCIDADES.some(([v]) => v === salvo.velocidade) ? salvo.velocidade : 0,
+    pausar: salvo.pausar === true,
+  };
+}
+
+function leitorSalvarPrefs(lang, mudanca) {
+  setStore(lang, 'leitor', { ...leitorPrefs(lang), ...mudanca });
+}
+
+function leitorVoz(lang) {
+  const vozes = leitorVozesDo(lang);
+  const escolhida = leitorPrefs(lang).voz;
+  return vozes.find(v => leitorIdVoz(v) === escolhida) || vozes[0] || null;
+}
+
+/* Sem escolha salva, a velocidade acompanha a faixa da semana */
+function leitorVelocidade(lang, band) {
+  return leitorPrefs(lang).velocidade || [0.75, 0.9, 1][band] || 1;
+}
+
+/* Frases do texto. Frase comprida demais vira pedaços nas vírgulas,
+   porque algumas vozes cortam falas longas. */
+function leitorFrases(texto, lang) {
+  const limpo = String(texto || '').replace(/\s+/g, ' ').trim();
+  if (!limpo) return [];
+  let partes = null;
+  try {
+    if (window.Intl && Intl.Segmenter) {
+      partes = [...new Intl.Segmenter(lang, { granularity: 'sentence' }).segment(limpo)].map(s => s.segment);
+    }
+  } catch (e) { partes = null; }
+  if (!partes) partes = limpo.match(lang === 'zh' ? /[^。！？；]+[。！？；]*/g : /[^.!?…]+(?:[.!?…]+["'»”’)\]]*)?/g) || [limpo];
+  const max = lang === 'zh' ? 60 : 200;
+  const alvo = lang === 'zh' ? 40 : 120;
+  const junta = lang === 'zh' ? '' : ' ';
+  return partes.map(s => s.trim()).filter(Boolean).flatMap(f => {
+    if (f.length <= max) return [f];
+    /* Corta nas vírgulas, mas junta os pedaços em blocos de até ~120 letras para a leitura não ficar picada */
+    const pedacos = (f.match(lang === 'zh' ? /[^，、；：]+[，、；：]?/g : /[^,;:]+[,;:]?/g) || [f]).map(s => s.trim()).filter(Boolean);
+    const blocos = [];
+    let atual = '';
+    pedacos.forEach(p => {
+      if (atual && (atual + junta + p).length > alvo) { blocos.push(atual); atual = p; }
+      else atual = atual ? atual + junta + p : p;
+    });
+    if (atual) blocos.push(atual);
+    return blocos;
+  });
+}
+
+function leitorTextoDaLicao(lesson, lang) {
+  const base = leitorFrases(lesson.base, lang);
+  const extra = leitorFrases(lesson.extension, lang);
+  return { frases: base.concat(extra), base: base.length, extra: extra.length };
+}
+
+function leitorPreparar(lesson, lang) {
+  const t = leitorTextoDaLicao(lesson, lang);
+  const chave = lang + '|' + t.frases.join('|');
+  if (LEITOR.chave !== chave) {
+    leitorParar();
+    Object.assign(LEITOR, { lang, chave, frases: t.frases, i: -1 });
+  }
+  /* Na faixa inicial, "Ouvir" lê só o trecho base; a extensão fica para quando quiser */
+  LEITOR.fimContinuo = lesson.band === 0 ? t.base : t.frases.length;
+  LEITOR.velocidade = leitorVelocidade(lang, lesson.band);
+  LEITOR.pausar = leitorPrefs(lang).pausar;
+  return LEITOR;
+}
+
+function leitorTranscricao(lesson, lang) {
+  const t = leitorTextoDaLicao(lesson, lang);
+  const idioma = lang === 'zh' ? 'zh-Hans' : lang;
+  const frase = (f, i) => `<span class="lt-frase" data-im-action="lt-frase" data-value="${i}" role="button" tabindex="0" lang="${idioma}">${immersionEscape(f)}</span>`;
+  return `<p>${t.frases.slice(0, t.base).map(frase).join(' ')}</p>`
+    + (t.extra ? `<p>${t.frases.slice(t.base).map((f, k) => frase(f, t.base + k)).join(' ')}</p>` : '')
+    + '<p class="im-muted lt-dica">Toque numa frase para ouvir só ela.</p>';
+}
+
+function leitorAvisoSemVoz(lang) {
+  return 'Este aparelho não tem voz em ' + LEITOR_IDIOMAS[lang].nome + ' instalada. Para instalar: no Android, Configurações › Sistema › Idiomas › Saída de texto em voz; no iPhone, Ajustes › Acessibilidade › Conteúdo Falado › Vozes; no Windows, Configurações › Hora e idioma › Fala. Depois, recarregue a página.';
+}
+
+function leitorTextoStatus(lang) {
+  if (!leitorSuportado()) return 'Este navegador não lê textos em voz alta.';
+  if (!LEITOR_VOZES.length && !leitorCarregarVozes.esperou) return 'Carregando as vozes do aparelho…';
+  const voz = leitorVoz(lang);
+  if (!voz) return leitorAvisoSemVoz(lang);
+  if (LEITOR.lang === lang && LEITOR.estado !== 'parado' && LEITOR.i >= 0) {
+    return (LEITOR.estado === 'pausado' ? 'Pausado na frase ' : 'Frase ') + (LEITOR.i + 1) + ' de ' + LEITOR.frases.length + ' · ' + voz.name;
+  }
+  return 'Voz: ' + leitorRotuloVoz(voz) + (leitorBoaVoz(voz) ? '' : '. Se soar robótica, escolha outra na lista.');
+}
+
+function leitorOpcoesVoz(lang) {
+  const vozes = leitorVozesDo(lang);
+  if (!vozes.length) return '<option value="">Nenhuma voz deste idioma</option>';
+  const atual = leitorVoz(lang);
+  return vozes.slice(0, 20).map(v => `<option value="${immersionEscape(leitorIdVoz(v))}" ${atual && leitorIdVoz(v) === leitorIdVoz(atual) ? 'selected' : ''}>${immersionEscape(leitorRotuloVoz(v))}</option>`).join('');
+}
+
+function leitorPainel(lesson, lang) {
+  if (!leitorSuportado()) return '<p class="im-muted">Este navegador não lê textos em voz alta. Use os áudios indicados abaixo.</p>';
+  leitorCarregarVozes();
+  const vel = leitorVelocidade(lang, lesson.band);
+  const ativo = LEITOR.lang === lang;
+  const rotulo = ativo && LEITOR.estado === 'tocando' ? '⏸ Pausar' : ativo && LEITOR.estado === 'pausado' ? '▶ Continuar' : '▶ Ouvir o trecho';
+  return `<div class="lt" id="lt-painel" data-lang="${lang}">
+    <div class="im-actions" role="group" aria-label="Controles do leitor">
+      <button type="button" class="im-button im-primary" id="lt-tocar" data-im-action="lt-tocar" aria-pressed="${ativo && LEITOR.estado === 'tocando'}">${rotulo}</button>
+      <button type="button" class="im-button" data-im-action="lt-anterior" aria-label="Frase anterior">⏮</button>
+      <button type="button" class="im-button" data-im-action="lt-repetir" aria-label="Repetir a frase atual">↻ Frase</button>
+      <button type="button" class="im-button" data-im-action="lt-proxima" aria-label="Próxima frase">⏭</button>
+      <button type="button" class="im-button" data-im-action="lt-parar" aria-label="Parar a leitura">⏹ Parar</button>
+    </div>
+    <div class="lt-ajustes">
+      <label class="lt-campo" for="lt-velocidade">Velocidade
+        <select id="lt-velocidade">${LEITOR_VELOCIDADES.map(([v, n]) => `<option value="${v}" ${v === vel ? 'selected' : ''}>${n} · ${String(v).replace('.', ',')}×</option>`).join('')}</select></label>
+      <label class="lt-campo" for="lt-voz">Voz <select id="lt-voz">${leitorOpcoesVoz(lang)}</select></label>
+      <label class="lt-check"><input type="checkbox" id="lt-pausar" ${leitorPrefs(lang).pausar ? 'checked' : ''}> Pausar depois de cada frase para eu repetir (shadowing)</label>
+    </div>
+    <p class="lt-status" id="lt-status" role="status" aria-live="polite">${immersionEscape(leitorTextoStatus(lang))}</p>
+  </div>`;
+}
+
+/* Tempo para repetir a frase em voz alta, pelo tamanho dela */
+function leitorEspera(frase, lang, velocidade) {
+  const segundos = lang === 'zh' ? frase.replace(/\s/g, '').length / 4.5 : frase.split(/\s+/).length / 2.6;
+  return Math.min(12000, Math.max(1500, (segundos / (velocidade || 1)) * 1100 + 800));
+}
+
+function leitorFalar(i, umaSo) {
+  const L = LEITOR;
+  clearTimeout(L.timer);
+  if (!leitorSuportado()) return;
+  if (i < 0 || i >= L.frases.length) { leitorTerminar(); return; }
+  const voz = leitorVoz(L.lang);
+  if (!voz) { L.estado = 'parado'; leitorRefletir(); return; }   // o status explica como instalar a voz
+  const token = ++L.token;
+  L.i = i;
+  L.estado = 'tocando';
+  L.umaSo = !!umaSo;
+  const fala = new SpeechSynthesisUtterance(L.frases[i]);
+  fala.voice = voz;
+  fala.lang = voz.lang;
+  fala.rate = L.velocidade || 1;
+  fala.onend = () => {
+    if (token !== L.token || L.estado !== 'tocando') return;
+    if (L.umaSo) { L.estado = 'pausado'; leitorRefletir(); return; }
+    const limite = i < L.fimContinuo ? L.fimContinuo : L.frases.length;
+    if (i + 1 >= limite) { leitorTerminar(); return; }
+    if (L.pausar) {
+      leitorStatus('Sua vez: repita a frase em voz alta.');
+      L.timer = setTimeout(() => { if (token === L.token && L.estado === 'tocando') leitorFalar(i + 1); }, leitorEspera(L.frases[i], L.lang, fala.rate));
+    } else {
+      leitorFalar(i + 1);
+    }
+  };
+  fala.onerror = ev => {
+    if (token !== L.token || ['interrupted', 'canceled'].includes(ev.error)) return;
+    L.estado = 'parado';
+    leitorRefletir();
+    leitorStatus('Esta voz falhou (' + ev.error + '). Escolha outra voz na lista.');
+  };
+  L.atual = fala;   // segura a referência: sem ela o Chrome às vezes perde o fim da fala
+  leitorRefletir();
+  const ocupado = speechSynthesis.speaking || speechSynthesis.pending;
+  if (ocupado) speechSynthesis.cancel();
+  if (speechSynthesis.paused) speechSynthesis.resume();
+  /* Logo depois de cancelar, alguns navegadores ignoram a próxima fala: espera um instante */
+  if (ocupado) setTimeout(() => { if (token === L.token) speechSynthesis.speak(fala); }, 60);
+  else speechSynthesis.speak(fala);
+}
+
+function leitorPausar() {
+  LEITOR.token++;
+  clearTimeout(LEITOR.timer);
+  if (leitorSuportado() && (speechSynthesis.speaking || speechSynthesis.pending)) speechSynthesis.cancel();
+  LEITOR.estado = 'pausado';
+  leitorRefletir();
+}
+
+function leitorParar() {
+  LEITOR.token++;
+  clearTimeout(LEITOR.timer);
+  if (leitorSuportado() && (speechSynthesis.speaking || speechSynthesis.pending)) speechSynthesis.cancel();
+  LEITOR.estado = 'parado';
+  LEITOR.i = -1;
+  leitorRefletir();
+}
+
+function leitorTerminar() {
+  LEITOR.token++;
+  clearTimeout(LEITOR.timer);
+  LEITOR.estado = 'parado';
+  LEITOR.i = -1;
+  leitorRefletir();
+  leitorStatus('Fim do trecho. Toque numa frase para ouvir de novo.');
+}
+
+/* Botões do painel e frases da transcrição */
+function leitorAcao(acao, lesson, lang, valor) {
+  if (!leitorSuportado()) { toast('Este navegador não lê textos em voz alta. Use os áudios indicados.', 'err'); return; }
+  leitorCarregarVozes();
+  const L = leitorPreparar(lesson, lang);
+  if (!leitorVoz(lang)) { leitorRefletir(); return; }
+  const atual = Math.max(0, L.i);
+  const tocando = L.estado === 'tocando';
+  switch (acao) {
+    case 'lt-tocar':
+      if (tocando) leitorPausar();
+      else leitorFalar(L.estado === 'pausado' ? atual : 0);
+      break;
+    case 'lt-anterior': leitorFalar(Math.max(0, L.i - 1), !tocando); break;
+    case 'lt-proxima': leitorFalar(Math.min(L.frases.length - 1, L.i + 1), !tocando); break;
+    case 'lt-repetir': leitorFalar(atual, true); break;
+    case 'lt-parar': leitorParar(); break;
+    case 'lt-frase': leitorFalar(Math.min(L.frases.length - 1, Math.max(0, Number(valor) || 0)), true); break;
+  }
+}
+
+/* Uma palavra ou a frente de um cartão, sem mexer na leitura do trecho */
+function leitorPalavra(texto, lang) {
+  if (!leitorSuportado() || !texto) return;
+  leitorCarregarVozes();
+  const voz = leitorVoz(lang);
+  if (!voz) { toast(leitorAvisoSemVoz(lang), 'err', 9000); return; }
+  if (LEITOR.estado === 'tocando') leitorPausar();
+  const fala = new SpeechSynthesisUtterance(texto);
+  fala.voice = voz;
+  fala.lang = voz.lang;
+  fala.rate = Math.min(1, leitorPrefs(lang).velocidade || 0.85);
+  LEITOR.atualPalavra = fala;
+  if (speechSynthesis.speaking || speechSynthesis.pending) {
+    speechSynthesis.cancel();
+    setTimeout(() => speechSynthesis.speak(fala), 60);
+  } else {
+    speechSynthesis.speak(fala);
+  }
+}
+
+/* Velocidade, voz e pausa para repetir */
+function leitorAjuste(campo) {
+  const lang = currentLang;
+  if (campo.id === 'lt-velocidade') {
+    const v = Number(campo.value);
+    leitorSalvarPrefs(lang, { velocidade: v });
+    if (LEITOR.lang === lang) LEITOR.velocidade = v;
+  } else if (campo.id === 'lt-voz') {
+    leitorSalvarPrefs(lang, { voz: campo.value });
+  } else if (campo.id === 'lt-pausar') {
+    leitorSalvarPrefs(lang, { pausar: campo.checked });
+    if (LEITOR.lang === lang) LEITOR.pausar = campo.checked;
+  }
+  /* Trocou voz ou velocidade no meio da leitura: recomeça a frase atual já com o ajuste */
+  if (campo.id !== 'lt-pausar' && LEITOR.lang === lang && LEITOR.estado === 'tocando') leitorFalar(Math.max(0, LEITOR.i));
+  else leitorStatus(leitorTextoStatus(lang));
+}
+
+function leitorStatus(texto) {
+  const el = document.getElementById('lt-status');
+  if (el) el.textContent = texto;
+}
+
+/* Botão, frase destacada e status acompanham o estado do leitor */
+function leitorRefletir() {
+  const painel = document.getElementById('lt-painel');
+  const L = LEITOR;
+  const meu = !!painel && painel.dataset.lang === L.lang;
+  const botao = document.getElementById('lt-tocar');
+  if (botao) {
+    const tocando = meu && L.estado === 'tocando';
+    botao.textContent = tocando ? '⏸ Pausar' : meu && L.estado === 'pausado' ? '▶ Continuar' : '▶ Ouvir o trecho';
+    botao.setAttribute('aria-pressed', String(tocando));
+  }
+  document.querySelectorAll('.lt-frase.lt-atual').forEach(el => { el.classList.remove('lt-atual'); el.removeAttribute('aria-current'); });
+  if (meu && L.estado !== 'parado' && L.i >= 0) {
+    const el = document.querySelector('.lt-frase[data-value="' + L.i + '"]');
+    if (el) {
+      el.classList.add('lt-atual');
+      el.setAttribute('aria-current', 'true');
+      const suave = !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+      if (el.offsetParent) el.scrollIntoView({ block: 'nearest', behavior: suave ? 'smooth' : 'auto' });
+    }
+  }
+  if (painel) leitorStatus(leitorTextoStatus(painel.dataset.lang));
+}
+
+/* As vozes chegaram (ou mudaram) depois de a página aparecer */
+function leitorAtualizarVozes() {
+  const painel = document.getElementById('lt-painel');
+  if (!painel) return;
+  const seletor = document.getElementById('lt-voz');
+  if (seletor) seletor.innerHTML = leitorOpcoesVoz(painel.dataset.lang);
+  leitorStatus(leitorTextoStatus(painel.dataset.lang));
 }
 
 function immersionPrompt(kind, lesson, lang, profile) {
@@ -5297,8 +5765,31 @@ function immersionClick(event) {
     }
     case 'select-day': immersionSelectDay(index, button.id); break;
     case 'select-week': selectImmersionWeek(index, button.id); break;
-    case 'speak': speakImmersion(lesson, lang, profile); break;
-    case 'stop': window.speechSynthesis?.cancel(); break;
+    case 'lt-tocar':
+    case 'lt-anterior':
+    case 'lt-proxima':
+    case 'lt-repetir':
+    case 'lt-parar':
+    case 'lt-frase':
+      leitorAcao(action, lesson, lang, value);
+      break;
+    case 'lt-palavra': {
+      const [group, row] = String(value).split(':').map(Number);
+      const item = lesson.lexicon[group] && lesson.lexicon[group][row];
+      if (item) leitorPalavra(item.word, lang);   // no mandarim, só os caracteres: o pinyin não é lido
+      break;
+    }
+    case 'lt-cartao': {
+      const card = state.cards[index];
+      if (card) leitorPalavra(card.front, lang);
+      break;
+    }
+    case 'lt-texto': leitorPalavra(value, lang); break;
+    case 'lt-abrir':
+      /* "Ouvir no app" no roteiro do dia: abre o trecho e já começa a ler */
+      openImmersionMaterial('trecho', button.id);
+      leitorAcao('lt-tocar', lesson, lang);
+      break;
     case 'checkin': go('checkin', null); break;
     case 'writing':
     case 'roleplay': void copyImmersionPrompt(immersionPrompt(action, lesson, lang, profile)); break;
@@ -5375,6 +5866,8 @@ function immersionChange(event) {
     view.type = value;
     saveImmersionPosition(currentLang, view);
     refreshImmersionSession(currentLang);
+  } else if (['lt-velocidade', 'lt-voz', 'lt-pausar'].includes(input.id)) {
+    leitorAjuste(input);
   } else {
     trackImmersionDraft(event);
   }
@@ -5439,6 +5932,11 @@ immersionRoot.addEventListener('click', immersionClick);
 immersionRoot.addEventListener('change', immersionChange);
 immersionRoot.addEventListener('input', trackImmersionDraft);
 immersionRoot.addEventListener('keydown', immersionTabKeys);
+/* Frases da transcrição respondem a Enter e Espaço, como botões */
+immersionRoot.addEventListener('keydown', event => {
+  const frase = event.target.closest && event.target.closest('.lt-frase');
+  if (frase && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); frase.click(); }
+});
 immersionRoot.addEventListener('submit', immersionSubmit);
 
 for (const lang of IMMERSION_LANGS) CONTENT[lang].imersao = () => buildImmersion(lang);
